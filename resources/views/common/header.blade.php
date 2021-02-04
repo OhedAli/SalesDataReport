@@ -28,7 +28,7 @@
     <meta name="description" content="Premium Quality and Responsive UI for Dashboard.">
     <meta name="author" content="ThemePixels">
 
-    <title>Slim Responsive Bootstrap 4 Admin Template</title>
+    <title>Admin Dashboard</title>
 
     <!-- vendor css -->
     <link href="app/lib/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -41,10 +41,11 @@
 
   </head>
   <body>
-<div class="slim-header">
+  
+ <div class="slim-header">
       <div class="container">
         <div class="slim-header-left">
-          <h2 class="slim-logo"><a href="index.html">slim<span>.</span></a></h2>
+          <h2 class="slim-logo"><a href="index.html">Admin Dashboard</a></h2>
 
           <div class="search-box">
             <input type="text" class="form-control" placeholder="Search">
@@ -169,16 +170,19 @@
           <div class="dropdown dropdown-c">
             <a href="#" class="logged-user" data-toggle="dropdown">
               <img src="http://via.placeholder.com/500x500" alt="">
-              <span>Katherine</span>
+              <span>{{ Auth::user()->name }}</span>
               <i class="fa fa-angle-down"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-right">
               <nav class="nav">
                 <a href="page-profile.html" class="nav-link"><i class="icon ion-person"></i> View Profile</a>
-                <a href="page-edit-profile.html" class="nav-link"><i class="icon ion-compose"></i> Edit Profile</a>
+                <!--<a href="page-edit-profile.html" class="nav-link"><i class="icon ion-compose"></i> Edit Profile</a>
                 <a href="page-activity.html" class="nav-link"><i class="icon ion-ios-bolt"></i> Activity Log</a>
-                <a href="page-settings.html" class="nav-link"><i class="icon ion-ios-gear"></i> Account Settings</a>
-                <a href="page-signin.html" class="nav-link"><i class="icon ion-forward"></i> Sign Out</a>
+                <a href="page-settings.html" class="nav-link"><i class="icon ion-ios-gear"></i> Account Settings</a>-->
+                <form method="POST" action="{{ route('logout') }}">
+                @csrf
+            <a href="javascript:void(0);" onclick="event.preventDefault(); this.closest('form').submit();" class="nav-link"><i class="icon ion-forward"></i>  {{ __('Logout') }}</a>
+                </form>
               </nav>
             </div><!-- dropdown-menu -->
           </div><!-- dropdown -->
