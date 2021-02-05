@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SaleslogsController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,16 +20,9 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/backend', function () {
-    return view('index');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard',[DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/saleslogs',[SaleslogsController::class, 'index'])->name('admin.saleslogs');
+
 });
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth'])->name('dashboard');
-
-Route::get('/dashboard', function () {
-    return view('admin-dashboard');
-})->middleware(['auth'])->name('dashboard');
-
 require __DIR__.'/auth.php';
