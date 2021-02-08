@@ -155,5 +155,4 @@
 
     @include('common/footer')
 
-  </body>
-</html>
+

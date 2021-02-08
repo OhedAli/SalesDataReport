@@ -20,3 +20,6 @@
     <script src="{{asset('app/js/dashboard.js')}}"></script>
     
     <script src="{{asset('app/js/slim.js')}}"></script>
+
+    </body>
+</html>
