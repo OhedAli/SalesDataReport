@@ -12,19 +12,19 @@
               <div class="col-sm-4">
                 <div class="card card-earning-summary">
                   <h6>Today's Lead</h6>
-                  <h1>950</h1>
+                  <h1>{{$todaycount}}</h1>
                 </div><!-- card -->
               </div><!-- col-6 -->
               <div class="col-sm-4">
                 <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t">
                   <h6>This Week's Lead</h6>
-                  <h1>12,420</h1>
+                  <h1>{{$weeklycount}}</h1>
                 </div><!-- card -->
               </div><!-- col-6 -->
               <div class="col-sm-4">
                 <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t">
                   <h6>This Week's Lead</h6>
-                  <h1>12,420</h1>
+                  <h1>{{$monthlycount}}</h1>
                 </div><!-- card -->
               </div><!-- col-6 -->
             </div><!-- row -->
