@@ -28,14 +28,12 @@ Route::get('/sales',[SaleslogsController::class, 'index'])->name('saleslogs');
 
 });
 
+
+
+
 Route::get('/profile-page', function(){
 return view('profile-page');
 })->middleware(['auth'])->name('view.profile');
-
-
-/*Route::get('/profile-page', function(){
-  return view('profile-page');
-})->middleware(['auth'])->name('view.profile');*/
 
 
 require __DIR__.'/auth.php';
