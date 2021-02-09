@@ -9,7 +9,7 @@
         
           </li>
           <li class="nav-item with-sub mega-dropdown">
-            <a class="nav-link" href="/dashboard/sales">
+            <a class="nav-link" href="/sales">
               <i class="icon ion-ios-filing-outline"></i>
               <span>Sales</span>
             </a>
