@@ -32,14 +32,15 @@
     <title>AutoProtect USA</title>
 
     <!-- vendor css -->
-    <link href="app/lib/font-awesome/css/font-awesome.css" rel="stylesheet">
-    <link href="app/lib/Ionicons/css/ionicons.css" rel="stylesheet">
-    <link href="app/lib/chartist/css/chartist.css" rel="stylesheet">
-    <link href="app/lib/rickshaw/css/rickshaw.min.css" rel="stylesheet">
+    <link href="{{asset('app/lib/font-awesome/css/font-awesome.css')}}" rel="stylesheet">
+    <link href="{{asset('app/lib/Ionicons/css/ionicons.css')}}" rel="stylesheet">
+    <link href="{{asset('app/lib/chartist/css/chartist.css')}}" rel="stylesheet">
+    <link href="{{asset('app/lib/rickshaw/css/rickshaw.min.css')}}" rel="stylesheet">
 
     <!-- Slim CSS -->
-    <link rel="stylesheet" href="app/css/slim.css">
-    
+
+    <link rel="stylesheet" href="{{asset('app/css/slim.css')}}">
+
 
   </head>
   <body>
