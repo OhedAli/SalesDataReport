@@ -11,14 +11,17 @@ class DashboardController extends Controller
 {
     public function index(){
        
-        $lastweek = date('Y-m-d', strtotime('-7 days'));
-        $lastmonth = date('Y-m-d', strtotime('-30 days'));
-        $todayDate = date('Y-m-d'); 
-        $todayorders = Saleslogs::where('create_at',$todayDate)->get();
-        $todaycount = Saleslogs::where('create_at',$todayDate)->count();
+        $lastweek = date('Y-m-d 00:00:00', strtotime('-6 days'));
+        $lastmonth = date('Y-m-d 00:00:00', strtotime('-29 days'));
+        $todayDate = date('Y-m-d');
+
+        $todayDate_start = date('Y-m-d 00:00:00'); 
+        $todayDate_end = date('Y-m-d 23:59:00');
+
+        $todaycount = Saleslogs::whereBetween('create_at',[$todayDate_start, $todayDate_end])->count();
         
-        $weeklycount = Saleslogs::whereBetween('create_at',[$lastweek,$todayDate])->count();
-        $monthlycount = Saleslogs::whereBetween('create_at',[$lastmonth,$todayDate])->count();
+        $weeklycount = Saleslogs::whereBetween('create_at',[$lastweek,$todayDate_end])->count();
+        $monthlycount = Saleslogs::whereBetween('create_at',[$lastmonth,$todayDate_end])->count();
       
         
         return view('admin-dashboard',compact('todaycount','weeklycount','monthlycount'));
