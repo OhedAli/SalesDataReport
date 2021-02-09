@@ -34,9 +34,8 @@
     <!-- vendor css -->
     <link href="{{asset('app/lib/font-awesome/css/font-awesome.css')}}" rel="stylesheet">
     <link href="{{asset('app/lib/Ionicons/css/ionicons.css')}}" rel="stylesheet">
-    <link href="{{asset('app/lib/chartist/css/chartist.css')}}" rel="stylesheet">
-    <link href="{{asset('app/lib/rickshaw/css/rickshaw.min.css')}}" rel="stylesheet">
-
+    <link href="{{asset('app/lib/select2/css/select2.min.css')}}" rel="stylesheet">
+    <link href="{{asset('app/lib/datatables/css/jquery.dataTables.css')}}" rel="stylesheet">
     <!-- Slim CSS -->
 
     <link rel="stylesheet" href="{{asset('app/css/slim.css')}}">

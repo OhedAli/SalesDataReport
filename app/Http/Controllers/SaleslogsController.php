@@ -10,8 +10,11 @@ class SaleslogsController extends Controller
 
         $total_customers = Saleslogs::all();
         // print_r($total_customers);
-        return view('sales');
+        return view('sales',compact('total_customers'));
 
       
     }
+
+    
+
 }

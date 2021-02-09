@@ -11,8 +11,8 @@ class DashboardController extends Controller
 {
     public function index(){
        
-        $lastweek = date('Y-m-d'.strtotime('-7 days'));
-        $lastmonth = date('Y-m-d'.strtotime('-30 days'));
+        $lastweek = date('Y-m-d', strtotime('-7 days'));
+        $lastmonth = date('Y-m-d', strtotime('-30 days'));
         $todayDate = date('Y-m-d'); 
         $todayorders = Saleslogs::where('create_at',$todayDate)->get();
         $todaycount = Saleslogs::where('create_at',$todayDate)->count();
