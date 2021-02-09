@@ -20,17 +20,20 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/saleslogs',[SaleslogsController::class, 'index'])->name('saleslogs');
-    //Route::resource('/profile',[ProfileController::class, 'index'])->name('profile');
+Route::get('/dashboard',[DashboardController::class, 'index','getRecord'])->name('dashboard');
+Route::get('/sales',[SaleslogsController::class, 'index'])->name('saleslogs');
+//Route::resource('/profile',[ProfileController::class, 'index'])->name('profile');
 
 });
 
 
 
+
 Route::get('/profile-page', function(){
-  return view('profile-page');
+return view('profile-page');
 })->middleware(['auth'])->name('view.profile');
+
 
 require __DIR__.'/auth.php';

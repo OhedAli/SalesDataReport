@@ -4,6 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
 
     <!-- Twitter -->
     <meta name="twitter:site" content="@themepixels">
@@ -28,16 +29,18 @@
     <meta name="description" content="Premium Quality and Responsive UI for Dashboard.">
     <meta name="author" content="ThemePixels">
 
-    <title>Admin Dashboard</title>
+    <title>AutoProtect USA</title>
 
     <!-- vendor css -->
-    <link href="app/lib/font-awesome/css/font-awesome.css" rel="stylesheet">
-    <link href="app/lib/Ionicons/css/ionicons.css" rel="stylesheet">
-    <link href="app/lib/chartist/css/chartist.css" rel="stylesheet">
-    <link href="app/lib/rickshaw/css/rickshaw.min.css" rel="stylesheet">
+    <link href="{{asset('app/lib/font-awesome/css/font-awesome.css')}}" rel="stylesheet">
+    <link href="{{asset('app/lib/Ionicons/css/ionicons.css')}}" rel="stylesheet">
+    <link href="{{asset('app/lib/chartist/css/chartist.css')}}" rel="stylesheet">
+    <link href="{{asset('app/lib/rickshaw/css/rickshaw.min.css')}}" rel="stylesheet">
 
     <!-- Slim CSS -->
-    <link rel="stylesheet" href="app/css/slim.css">
+
+    <link rel="stylesheet" href="{{asset('app/css/slim.css')}}">
+
 
   </head>
   <body>
@@ -45,7 +48,7 @@
  <div class="slim-header">
       <div class="container">
         <div class="slim-header-left">
-          <h2 class="slim-logo"><a href="index.html">Auto Protect</a></h2>
+          <h2 class="slim-logo"><a href="#"><img src="/images/logo.png" width="" height="" alt="Site Logo"></a></h2>
 
       
         </div><!-- slim-header-left -->
@@ -54,7 +57,7 @@
           
           <div class="dropdown dropdown-c">
             <a href="#" class="logged-user" data-toggle="dropdown">
-              <img src="http://via.placeholder.com/500x500" alt="">
+              <img src="/images/icon_profile.png" alt="">
               <span>{{ Auth::user()->name }}</span>
               <i class="fa fa-angle-down"></i>
             </a>
