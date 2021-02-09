@@ -4,8 +4,8 @@
       <div class="container pd-t-50">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="tx-inverse mg-b-15">Welcome back, Logan!</h3>
-            <p class="mg-b-40">Please see the chart.</p>
+            <h3 class="tx-inverse mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
+            <p class="mg-b-40">Please see the reports given below :</p>
 
             <h6 class="slim-card-title mg-b-15">Your Lead Summary</h6>
             <div class="row no-gutters">
@@ -23,7 +23,7 @@
               </div><!-- col-6 -->
               <div class="col-sm-4">
                 <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t">
-                  <h6>This Week's Lead</h6>
+                  <h6>This Month's Lead</h6>
                   <h1>{{$monthlycount}}</h1>
                 </div><!-- card -->
               </div><!-- col-6 -->
