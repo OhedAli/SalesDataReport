@@ -4,8 +4,13 @@
       <div class="container pd-t-50">
         <div class="row">
           <div class="col-lg-12">
+<<<<<<< HEAD
             <h3 class="tx-inverse mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
             <p class="mg-b-40">Please see the reports given below :</p>
+=======
+            <h3 class="tx-inverse mg-b-15">Welcome back, {{ Auth::user()->name }}</h3>
+            <p class="mg-b-40">Please see your Lead details here.</p>
+>>>>>>> 87369ee4b1d06e6606c1252b411f820605e37131
 
             <h6 class="slim-card-title mg-b-15">Your Lead Summary</h6>
             <div class="row no-gutters">
@@ -154,5 +159,4 @@
     </div><!-- slim-mainpanel -->
 
     @include('common/footer')
-
 
