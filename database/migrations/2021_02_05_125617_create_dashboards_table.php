@@ -13,9 +13,8 @@ class CreateDashboardsTable extends Migration
      */
     public function up()
     {
-        Schema::Connection('mysql2')->create('dashboards', function (Blueprint $table) {
+        Schema::create('dashboards', function (Blueprint $table) {
             $table->id();
-            $table->name();
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ class CreateDashboardsTable extends Migration
      */
     public function down()
     {
-        Schema:: Schema::Connection('mysql2')->dropIfExists('dashboards');
+        Schema::dropIfExists('dashboards');
     }
 }
