@@ -36,6 +36,7 @@
     <link href="{{asset('app/lib/Ionicons/css/ionicons.css')}}" rel="stylesheet">
     <link href="{{asset('app/lib/select2/css/select2.min.css')}}" rel="stylesheet">
     <link href="{{asset('app/lib/datatables/css/jquery.dataTables.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="{{asset('css/custom.css')}}">
     <!-- Slim CSS -->
 
     <link rel="stylesheet" href="{{asset('app/css/slim.css')}}">
