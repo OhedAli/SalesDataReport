@@ -3,7 +3,7 @@
     <div class="slim-mainpanel">
       <div class="container">
         <div class="slim-pageheader">
-          <ol class="breadcrumb slim-breadcrumb">
+          <ol class="breadcrumb slim-breadcrumb" style="display:none;">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
             <li class="breadcrumb-item"><a href="#">Saleslog</a></li>
           </ol>
@@ -30,9 +30,9 @@
                   <td>{{$customer->first_name}} {{$customer->last_name}}</td>
                   <td>{{$customer->model}}</td>
                   <td>{{ date('d M Y', strtotime($customer->create_at)) }}</td>
-                  <td><a href="{{Route('saleslogs-show',[$customer->id])}}" class="btn btn-primary btn-sm">View Details</a></td>
+                  <td><a href="{{route('sales-view',$customer->id)}}" class="dt-btn">View Details</a></td>
                 </tr>
-                @endforeach;
+                @endforeach
               
               </tbody>
             </table>

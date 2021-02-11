@@ -1,0 +1,68 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+.scroll-to-top {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    display: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    text-align: center;
+    color: #fff;
+    background: rgba(56,68,144,.3);
+    line-height: 46px;
+    z-index: 999;
+    -webkit-animation-name: fade;
+    -webkit-animation-duration: 1.5s;
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+@-webkit-keyframes fade {
+    from {
+        opacity: .1
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: .1
+    }
+
+    to {
+        opacity: 1
+    }
+}
+.rounded {
+    border-radius: .35rem !important;
+}
+.fa-chevron-up {
+    color: #4c4249;
+}
+#view-page-top {
+    max-width: 1140px;
+    margin: 0 auto;
+}
+.hdr {
+    border-left: 4px solid #4662D4;
+    padding-left: 15px;
+    color: #000;
+    margin-left: 15px;
+}
+.field {
+    color: #292525;
+    font-weight: bold;
+}
+.dt-btn {
+    color: #fff;
+    background: #6778a5;
+    padding: 5px 6px;
+    border-radius: 4px;
+    transition: 0.4s;
+}
+.dt-btn:hover {
+    color: #fff;
+    background: #0c1d4a;
+}
