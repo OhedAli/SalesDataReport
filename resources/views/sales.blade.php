@@ -25,13 +25,12 @@
               <tbody>
               @foreach($total_customers as $key=>$customer)
             
-
                 <tr>
                   <td>{{$customer->app_number}}</td>
                   <td>{{$customer->first_name}} {{$customer->last_name}}</td>
                   <td>{{$customer->model}}</td>
                   <td>{{ date('d M Y', strtotime($customer->create_at)) }}</td>
-                  <td><a href="">View Details</a></td>
+                  <td><a href="{{Route('saleslogs-show',[$customer->id])}}" class="btn btn-primary btn-sm">View Details</a></td>
                 </tr>
                 @endforeach;
               

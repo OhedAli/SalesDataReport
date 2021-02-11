@@ -15,6 +15,12 @@ class SaleslogsController extends Controller
       
     }
 
+    public  function show(Request $request){
+        $customer = Saleslogs::find($request->id);
+        
+        return view('SalesShow',compact('customer'));
+    }
+
     
 
 }

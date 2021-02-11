@@ -35025,13 +35025,13 @@ a.hover-white-8:hover, a.hover-white-8:focus {
   color: #1b84e7; }
 
 .tx-success {
-  color: #23BF08; }
+  color: #23BF08 !important; }
 
 .tx-warning {
   color: #F49917; }
 
 .tx-danger {
-  color: #dc3545; }
+  color: #dc3545 !important; }
 
 .tx-info {
   color: #5B93D3; }
