@@ -13,7 +13,7 @@ class Saleslogs extends Model
     public function SalesFind($date){
 
     }
-    public function SalesFindByDate(array $date){
-
+    public function plan(){
+        return $this->belongsTo(Plan::class);
     }
 }

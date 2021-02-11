@@ -25,7 +25,6 @@
               <tbody>
               @foreach($total_customers as $key=>$customer)
             
-
                 <tr>
                   <td>{{$customer->app_number}}</td>
                   <td>{{$customer->first_name}} {{$customer->last_name}}</td>
