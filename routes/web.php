@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleslogsController;
@@ -17,7 +17,11 @@ use App\Http\Controllers\SaleslogsController;
 */
 
 Route::get('/', function () {
-    return view('auth.login');
+    if (Auth::check()) {
+        return redirect('dashboard');
+    }
+    else
+        return view('auth.login');
 });
 
 
