@@ -25,7 +25,9 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
 Route::get('/dashboard',[DashboardController::class, 'index','getRecord'])->name('dashboard');
 Route::get('/sales',[SaleslogsController::class, 'index'])->name('saleslogs');
-Route::get('/sales/{id}',[SaleslogsController::class, 'show'])->name('saleslogs-show');
+
+Route::get('sales/{id}',[SaleslogsController::class, 'showdetails'])->name('sales-view');
+
 Route::get('/profile',[ProfileController::class, 'index'])->name('profile');
 
 });

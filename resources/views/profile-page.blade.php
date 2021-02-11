@@ -20,7 +20,6 @@
                   <img src="/images/user.png" alt="">
                   <div class="media-body">
                     <h3 class="card-profile-name">{{ Auth::user()->name}}</h3>
-                    <p class="card-profile-position">Executive Director at <a href="">ThemePixels, Inc.</a></p>
                     <p>San Francisco, California</p>
 
                     <p class="mg-b-0">

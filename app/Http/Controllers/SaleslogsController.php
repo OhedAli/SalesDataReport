@@ -15,12 +15,11 @@ class SaleslogsController extends Controller
       
     }
 
-    public  function show(Request $request){
-        $customer = Saleslogs::find($request->id);
-        
-        return view('SalesShow',compact('customer'));
-    }
-
-    
+    public function showdetails($id){
+        $customer_details = Saleslogs::where('id','=',$id)->get()->toArray();
+        //echo '<pre>';
+        //print_r($custome_details);
+        return view('sales-view',compact('customer_details'));
+    }    
 
 }
