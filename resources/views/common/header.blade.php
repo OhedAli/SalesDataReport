@@ -56,7 +56,12 @@
           
           <div class="dropdown dropdown-c">
             <a href="#" class="logged-user" data-toggle="dropdown">
-              <img src="/images/icon_profile.png" alt="">
+             @if (Auth::user()->avatar != '')
+                <img  src="/storage/{{Auth::user()->avatar}}" alt="profile-avatar">
+                @else
+                <img src="/images/icon_profile.png" alt="">
+                @endif
+              
               <span>{{ Auth::user()->name }}</span>
               <i class="fa fa-angle-down"></i>
             </a>

@@ -556,6 +556,18 @@ pre {
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto; }
+
+  .profile-class {
+    width: 170px !important;
+    height: 170px;
+    object-fit: cover;
+  }
+  .profile-avatar{
+    display: flex;
+    align-items: center;
+  }
+
+
   @media (min-width: 576px) {
     .container {
       max-width: 540px; } }
@@ -12078,6 +12090,7 @@ textarea.parsley-success:focus {
   .logged-user img {
     width: 45px;
     height: 45px;
+    object-fit: cover;
     padding: 3px;
     border: 1px solid #1b84e7;
     border-radius: 100%; }

@@ -16,15 +16,10 @@
           <div class="col-lg-8">
             <div class="card card-profile">
               <div class="card-body">
-                <div class="media profile-avatar">
-                @if (Auth::user()->avatar != '')
-                <img class="profile-class" src="/storage/{{Auth::user()->avatar}}" alt="profile-avatar">
-                @else
-                <img class="profile-class" src="/images/user.png" alt="profile-avatar">
-                @endif
-                  
+                <div class="media">
+                  <img src="/images/user.png" alt="">
                   <div class="media-body">
-                    <h3 class="card-profile-name">{{ Auth::user()->name}}</h3>
+                    <h3 class="card-profile-name">{{ $user->name}}</h3>
                     <p class="card-profile-position">Executive Director at <a href="">ThemePixels, Inc.</a></p>
                     <p>San Francisco, California</p>
 
@@ -40,7 +35,7 @@
               <div class="card-footer">
                 <!--<a href="" class="card-profile-direct">http://thmpxls.me/profile?id=katherine</a>-->
                 <div>
-                  <a href="profile/{{ Auth::user()->id }}/edit">Edit Profile</a>
+                  <a href="/profile/{{ $user->id }}/edit">Edit Profile</a>
                   <!--<a href="">Profile Settings</a>-->
                 </div>
               </div><!-- card-footer -->
@@ -135,7 +130,7 @@
                   <div><i class="icon ion-ios-email-outline tx-24 lh-0"></i></div>
                   <div class="media-body mg-l-15 mg-t-4">
                     <h6 class="tx-14 tx-gray-700">Email Address</h6>
-                    <span class="d-block">{{ Auth::user()->email}}</span>
+                    <span class="d-block">{{ $user->email}}</span>
                   </div><!-- media-body -->
                 </div><!-- media -->
                 <!--<div class="media mg-t-25">
