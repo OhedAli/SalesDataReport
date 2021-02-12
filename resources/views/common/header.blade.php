@@ -29,7 +29,7 @@
     <meta name="description" content="Premium Quality and Responsive UI for Dashboard.">
     <meta name="author" content="ThemePixels">
 
-    <title>AutoProtect USA</title>
+    <title>Admin Dashboard</title>
 
     <!-- vendor css -->
     <link href="{{asset('app/lib/font-awesome/css/font-awesome.css')}}" rel="stylesheet">

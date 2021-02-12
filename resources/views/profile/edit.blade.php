@@ -20,7 +20,7 @@
            @csrf
            @method('PATCH')
               <label class="section-title">Edit Profile Info : </label>
-              <p class="mg-b-20 mg-sm-b-40">A basic form where labels are aligned in left.</p>
+              <p class="mg-b-20 mg-sm-b-40"></p>
 
               <div class="form-layout form-layout-4">
                 <div class="row">
@@ -53,6 +53,12 @@
                     <input type="file" name="avatar" class="form-control" >
                   </div>
                 </div>
+                <div class="row mg-t-20">
+                  
+                  <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                  <img style="object-fit: cover;" width="250px" height="200px" src="/storage/{{Auth::user()->avatar}}" alt="profile-avatar">
+                  </div>
+                </div>
                 <!--<div class="row mg-t-20">
                   <label class="col-sm-4 form-control-label">Address: <span class="tx-danger">*</span></label>
                   <div class="col-sm-8 mg-t-10 mg-sm-t-0">
@@ -61,7 +67,7 @@
                 </div>-->
                 <div class="form-layout-footer mg-t-30">
                   <input type="submit" name="submit" value="Submit Form" class="btn btn-primary bd-0">
-                  <input type="reset"  name="reset" value="Reset" class="btn btn-secondary bd-0">
+                  <!--<input type="reset"  name="reset" value="Reset" class="btn btn-secondary bd-0">-->
                 </div><!-- form-layout-footer -->
               </div><!-- form-layout -->
               </form>

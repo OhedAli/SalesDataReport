@@ -40,7 +40,7 @@
               <div class="card-footer">
                 <!--<a href="" class="card-profile-direct">http://thmpxls.me/profile?id=katherine</a>-->
                 <div>
-                  <a href="profile/{{ Auth::user()->id }}/edit">Edit Profile</a>
+                  <a class="btn btn-info active btn-block mg-20" href="profile/{{ Auth::user()->id }}/edit">Edit Profile</a>
                   <!--<a href="">Profile Settings</a>-->
                 </div>
               </div><!-- card-footer -->

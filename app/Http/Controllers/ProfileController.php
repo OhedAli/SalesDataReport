@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+
 
 class ProfileController extends Controller
 {
@@ -82,6 +84,7 @@ class ProfileController extends Controller
         ]);
 
         $user = User::find($id);
+        $previousEmail = $user->email; // store the previous email id in the variable
         $user->name = request('name');
         $user->email = request('email');
 
@@ -92,6 +95,13 @@ class ProfileController extends Controller
 
         //$user->password = Hash::make(request('password'));
         $user->save();
+
+        // checks if the user has updated the previous email id, then make the user logout
+        // comapre the previous email with the email that user has entered
+        if($previousEmail != request('email')){
+         Auth::logout();
+        }
+        
         return redirect('/profile-page');
       }
 

@@ -28,7 +28,7 @@ Route::get('/sales',[SaleslogsController::class, 'index'])->name('saleslogs');
 //Route::resource('/profile',[ProfileController::class, 'index'])->name('profile');
 //Route::get('/profile/{id}', [ProfileController::class, 'show']);
 Route::patch('/profile/{id}', [ProfileController::class, 'update']);
-Route::get('/profile/{id}/edit', [ProfileController::class, 'edit']);
+Route::get('/profile/{id}/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 
 });
 
