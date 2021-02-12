@@ -36,6 +36,7 @@
     <link href="{{asset('app/lib/Ionicons/css/ionicons.css')}}" rel="stylesheet">
     <link href="{{asset('app/lib/select2/css/select2.min.css')}}" rel="stylesheet">
     <link href="{{asset('app/lib/datatables/css/jquery.dataTables.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="{{asset('css/custom.css')}}">
     <!-- Slim CSS -->
 
     <link rel="stylesheet" href="{{asset('app/css/slim.css')}}">
@@ -67,7 +68,7 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right">
               <nav class="nav">
-                <a href="{{ route('view.profile') }}" class="nav-link"><i class="icon ion-person"></i> View Profile</a>
+                <a href="{{ route('profile') }}" class="nav-link"><i class="icon ion-person"></i> View Profile</a>
                 <!--<a href="page-edit-profile.html" class="nav-link"><i class="icon ion-compose"></i> Edit Profile</a>
                 <a href="page-activity.html" class="nav-link"><i class="icon ion-ios-bolt"></i> Activity Log</a>
                 <a href="page-settings.html" class="nav-link"><i class="icon ion-ios-gear"></i> Account Settings</a>-->

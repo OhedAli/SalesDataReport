@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\app",
+    "\\app\\Models",
+    "\\public",
+    "\\public\\css",
+    "\\public\\js",
+    "\\resources",
+    "\\resources\\views",
+    "\\resources\\views\\common"
+  ],
+  "SelectedNode": "\\resources\\views\\common\\footer.blade.php",
+  "PreviewInSolutionExplorer": false
+}

@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleslogsController;
@@ -18,7 +18,11 @@ use App\Http\Controllers\ProfileController;
 */
 
 Route::get('/', function () {
-    return view('auth.login');
+    if (Auth::check()) {
+        return redirect('dashboard');
+    }
+    else
+        return view('auth.login');
 });
 
 
@@ -30,14 +34,16 @@ Route::get('/sales',[SaleslogsController::class, 'index'])->name('saleslogs');
 Route::patch('/profile/{id}', [ProfileController::class, 'update']);
 Route::get('/profile/{id}/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 
+Route::get('sales/{id}',[SaleslogsController::class, 'showdetails'])->name('sales-view');
+
+Route::get('/profile',[ProfileController::class, 'index'])->name('profile');
+
 });
 
 
-
-
-Route::get('/profile-page', function(){
-return view('profile-page');
-})->middleware(['auth'])->name('view.profile');
+//Route::get('/profile-page', function(){
+//return view('profile-page');
+//})->middleware(['auth'])->name('view.profile');
 
 
 require __DIR__.'/auth.php';
