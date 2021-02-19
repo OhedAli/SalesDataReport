@@ -2,14 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\app",
-    "\\app\\Models",
-    "\\public",
-    "\\public\\css",
-    "\\public\\js",
-    "\\resources",
+    "\\app\\Http",
+    "\\public\\app",
+    "\\public\\app\\lib",
+    "\\public\\app\\lib\\datatables",
+    "\\public\\app\\lib\\datatables\\css",
     "\\resources\\views",
-    "\\resources\\views\\common"
+    "\\resources\\views\\auth",
+    "\\routes"
   ],
-  "SelectedNode": "\\resources\\views\\common\\footer.blade.php",
+  "SelectedNode": "\\routes\\web.php",
   "PreviewInSolutionExplorer": false
 }
