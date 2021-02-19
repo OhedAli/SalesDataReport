@@ -8,7 +8,7 @@ class SaleslogsController extends Controller
 {
     public function index(){
 
-        $total_customers = Saleslogs::all();
+        $total_customers = Saleslogs::where('label1','!=','WHOLESALE')->get();
         // print_r($total_customers);
         return view('sales',compact('total_customers'));
 
@@ -20,6 +20,12 @@ class SaleslogsController extends Controller
         //echo '<pre>';
         //print_r($custome_details);
         return view('sales-view',compact('customer_details'));
-    }    
+    }
+    
+    public function WholeSales(){
+        $total_customers = Saleslogs::where('label1','=','WHOLESALE')->get();
+        //print_r($total_customers);
+        return view('wholesales',compact('total_customers'));
+    }
 
 }

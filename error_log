@@ -1,0 +1,11 @@
+[11-Feb-2021 14:02:59 UTC] PHP Warning:  require(/home/vsctools/public_html/autoprotect/SalesDataReport/vendor/autoload.php): failed to open stream: No such file or directory in /home/vsctools/public_html/autoprotect/SalesDataReport/artisan on line 18
+[11-Feb-2021 14:02:59 UTC] PHP Fatal error:  require(): Failed opening required '/home/vsctools/public_html/autoprotect/SalesDataReport/vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/vsctools/public_html/autoprotect/SalesDataReport/artisan on line 18
+[12-Feb-2021 14:07:24 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library 'php_fileinfo.dll' (tried: /opt/cpanel/ea-php74/root/usr/lib64/php/modules/php_fileinfo.dll (/opt/cpanel/ea-php74/root/usr/lib64/php/modules/php_fileinfo.dll: cannot open shared object file: No such file or directory), /opt/cpanel/ea-php74/root/usr/lib64/php/modules/php_fileinfo.dll.so (/opt/cpanel/ea-php74/root/usr/lib64/php/modules/php_fileinfo.dll.so: cannot open shared object file: No such file or directory)) in Unknown on line 0
+[12-Feb-2021 14:08:44 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library 'fileinfo' (tried: /opt/cpanel/ea-php74/root/usr/lib64/php/modules/fileinfo (/opt/cpanel/ea-php74/root/usr/lib64/php/modules/fileinfo: cannot open shared object file: No such file or directory), /opt/cpanel/ea-php74/root/usr/lib64/php/modules/fileinfo.so (/opt/cpanel/ea-php74/root/usr/lib64/php/modules/fileinfo.so: cannot open shared object file: No such file or directory)) in Unknown on line 0
+[12-Feb-2021 14:17:28 UTC] PHP Warning:  Module 'fileinfo' already loaded in Unknown on line 0
+[12-Feb-2021 14:18:07 UTC] PHP Warning:  Module 'fileinfo' already loaded in Unknown on line 0
+[12-Feb-2021 14:18:17 UTC] PHP Warning:  Module 'fileinfo' already loaded in Unknown on line 0
+[12-Feb-2021 14:20:03 UTC] PHP Warning:  Module 'fileinfo' already loaded in Unknown on line 0
+[12-Feb-2021 14:30:12 UTC] PHP Warning:  Module 'fileinfo' already loaded in Unknown on line 0
+[12-Feb-2021 14:41:30 UTC] PHP Warning:  Module 'fileinfo' already loaded in Unknown on line 0
+[12-Feb-2021 14:42:18 UTC] PHP Warning:  Module 'fileinfo' already loaded in Unknown on line 0

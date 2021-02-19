@@ -4,12 +4,13 @@
 <div class="slim-mainpanel">
       <div class="container">
         <div class="slim-pageheader">
-          <ol class="breadcrumb slim-breadcrumb">
+         
+          <h6 class="slim-pagetitle">My Profile</h6>
+           <ol class="breadcrumb slim-breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
             <!--<li class="breadcrumb-item"><a href="#">Pages</a></li>-->
             <li class="breadcrumb-item active" aria-current="page">Profile Page</li>
           </ol>
-          <h6 class="slim-pagetitle">My Profile</h6>
         </div><!-- slim-pageheader -->
 
         <div class="row row-sm">
@@ -17,7 +18,7 @@
             <div class="card card-profile">
               <div class="card-body">
                 <div class="media">
-                  <img src="/images/user.png" alt="">
+                  <img src="{{asset('/images/user.png') }}" alt="">
                   <div class="media-body">
                     <h3 class="card-profile-name">{{ Auth::user()->name}}</h3>
                     <p>San Francisco, California</p>

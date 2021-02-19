@@ -48,7 +48,7 @@
  <div class="slim-header">
       <div class="container">
         <div class="slim-header-left">
-          <h2 class="slim-logo"><a href="#"><img src="/images/logo.png" width="" height="" alt="Site Logo"></a></h2>
+          <h2 class="slim-logo"><a href="#"><img src="{{asset('images/logo.png') }}" width="" height="" alt="Site Logo"></a></h2>
 
       
         </div><!-- slim-header-left -->
@@ -57,7 +57,7 @@
           
           <div class="dropdown dropdown-c">
             <a href="#" class="logged-user" data-toggle="dropdown">
-              <img src="/images/icon_profile.png" alt="">
+              <img src="{{asset('images/icon_profile.png')}}" alt="">
               <span>{{ Auth::user()->name }}</span>
               <i class="fa fa-angle-down"></i>
             </a>

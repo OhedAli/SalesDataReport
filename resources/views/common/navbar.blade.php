@@ -10,12 +10,17 @@
           </li>
           <li class="nav-item with-sub mega-dropdown">
 
-            <a class="nav-link" href="{{Route('saleslogs')}}" name="saleslogs">
+            <a class="nav-link" href="#" name="saleslogs">
 
               <i class="icon ion-ios-filing-outline"></i>
               <span>Saleslogs</span>
             </a>
-            
+            <div class="sub-item">
+              <ul>
+                <li><a href="{{Route('saleslogs')}}">Sales</a></li>
+                <li><a href="{{Route('wholesaleslogs')}}">WholeSales</a></li>
+              </ul>
+            </div><!-- sub-item -->
           </li>
           <li class="nav-item with-sub mega-dropdown">
 
