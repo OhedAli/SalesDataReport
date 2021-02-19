@@ -3,6 +3,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleslogsController;
+use App\Http\Controllers\ProfileController;
 
 
 /*
@@ -31,16 +32,14 @@ Route::get('/sales',[SaleslogsController::class, 'index'])->name('saleslogs');
 
 Route::get('sales/{id}',[SaleslogsController::class, 'showdetails'])->name('sales-view');
 
-//Route::resource('/profile',[ProfileController::class, 'index'])->name('profile');
+Route::get('/profile',[ProfileController::class, 'index'])->name('profile');
 
 });
 
 
-
-
-Route::get('/profile-page', function(){
-return view('profile-page');
-})->middleware(['auth'])->name('view.profile');
+//Route::get('/profile-page', function(){
+//return view('profile-page');
+//})->middleware(['auth'])->name('view.profile');
 
 
 require __DIR__.'/auth.php';
