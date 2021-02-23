@@ -9,6 +9,7 @@ use App\Models\Saleslogs;
 
 class DashboardController extends Controller
 {
+    
     public function index(){
        
         $lastweek = date('Y-m-d 00:00:00', strtotime('-6 days'));
@@ -55,5 +56,7 @@ class DashboardController extends Controller
                 return 0;
             }
         }
+
+   
       
 }

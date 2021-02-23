@@ -26,6 +26,7 @@
                   <span class="valign-middle"><span class="@if($weeklydata[0]=='pos')tx-success @else tx-danger @endif">
                   <i class="icon @if($weeklydata[0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i> {{$weeklydata[1]}}%</span> from last week</span>
                 </div><!-- card -->
+               
               </div><!-- col-6 -->
               <div class="col-sm-4">
                 <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t">
@@ -35,6 +36,7 @@
                   <span class="valign-middle"><span class="@if($monthlydata[0]=='pos')tx-success @else tx-danger @endif">
                   <i class="icon @if($monthlydata[0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$monthlydata[1]}}%</span> from last Month</span>
                 </div><!-- card -->
+                
               </div><!-- col-6 -->
             </div><!-- row -->
           </div><!-- col-6 -->
