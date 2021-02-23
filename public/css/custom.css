@@ -66,3 +66,25 @@
     color: #fff;
     background: #0c1d4a;
 }
+.time_list {
+    list-style-type: none;
+    white-space: nowrap;
+    display: inline-flex;
+    float: right;
+}
+.dash_table {
+    padding: 5px;
+    border-top: 0px !important;
+}
+.dash_table .dataTables_filter input {
+    margin-left: 0.4em;
+}
+.sales_info{
+    margin-top: 50px;
+}
+.active {
+    border: 1px solid #11114e !important;
+    box-shadow: 0px 0px 17px -1px rgba(0,0,0,0.48);
+    -webkit-box-shadow: 0px 0px 17px -1px rgba(0,0,0,0.48);
+    -moz-box-shadow: 0px 0px 17px -1px rgba(0,0,0,0.48);
+}
