@@ -14,11 +14,18 @@ class DashboardController extends Controller
     public function index(){
 
         date_default_timezone_set("America/Chicago");
-       
-        $lastweek = date('Y-m-d 00:00:00', strtotime('-6 days'));
-        $Secondlastweek = date('Y-m-d 00:00:00', strtotime('-14 days'));
-        $lastmonth = date('Y-m-d 00:00:00', strtotime('-29 days'));
-        $Secondlastmonth = date('Y-m-d 00:00:00', strtotime('-59 days'));
+
+        if(date('D') != 'Mon'){
+            $lastweek = date('Y-m-d 00:00:00', strtotime('last Monday'));
+            $Secondlastweek = date('Y-m-d 00:00:00', strtotime('-7 days', strtotime($lastweek)));
+        }
+        else{
+            $lastweek = date('Y-m-d 00:00:00');
+            $Secondlastweek = date('Y-m-d 00:00:00', strtotime('last Monday'));
+        }
+           
+        $lastmonth = date('Y-m-1 00:00:00');
+        $Secondlastmonth = date('Y-m-1 00:00:00', strtotime('-29 days'));
         $todayDate_start = date('Y-m-d 00:00:00'); 
         $yesterdayDate_start = date('Y-m-d 00:00:00', strtotime('-1 days')); 
         $todayDate_end = date('Y-m-d 23:59:00');
@@ -34,7 +41,7 @@ class DashboardController extends Controller
         $weeklydata = $this->FlagSighCheck($weeklycount, $Secondweeklycount);
         
         $monthlycount = Saleslogs::whereBetween('create_at',[$lastmonth,$todayDate_end])->count();
-        $monthly_details = Saleslogs::whereBetween('create_at',[$lastmonth,$todayDate_end])->get();
+        $monthly_details = Saleslogs::select('salesman', 'team', Saleslogs::raw('count(salesman) as sales_count '))->whereBetween('create_at',[$lastmonth,$todayDate_end])->groupBy('salesman','team')->get();
         $Secondmonthlycount = Saleslogs::whereBetween('create_at',[$Secondlastmonth,$lastmonth])->count();
         $monthlydata = $this->FlagSighCheck($monthlycount, $Secondmonthlycount);
 

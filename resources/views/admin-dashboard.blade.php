@@ -51,11 +51,11 @@
             <table id="datatable1" class="table mg-b-0 table display responsive nowrap">
                 <thead>
                 <tr>
-                    <th>App Number</th>
-                    <th>Salesman Name</th>
+                    <th>Sales Man</th>
+                    <th>Sales</th>
                     <th>Team</th>
-                    <th>Model</th>
-                    <th>Created At</th>
+                    <th>Calls</th>
+                    <th>Converstion</th>
                 </tr>
                 </thead>
                 <tbody id="sales_info_data">
