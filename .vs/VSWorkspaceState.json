@@ -2,14 +2,13 @@
   "ExpandedNodes": [
     "",
     "\\app",
-    "\\app\\Models",
-    "\\public",
-    "\\public\\css",
+    "\\app\\Http\\Controllers",
+    "\\public\\app\\css",
     "\\public\\js",
     "\\resources",
     "\\resources\\views",
-    "\\resources\\views\\common"
+    "\\resources\\views\\layouts"
   ],
-  "SelectedNode": "\\resources\\views\\common\\footer.blade.php",
+  "SelectedNode": "\\resources\\views\\sales.blade.php",
   "PreviewInSolutionExplorer": false
 }

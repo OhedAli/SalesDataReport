@@ -12485,9 +12485,9 @@ textarea.parsley-success:focus {
         .slim-navbar .nav-link span:not(.square-8) {
           display: block; } }
   .slim-navbar .mega-dropdown {
-    position: static; }
+    position: relative; }
     .slim-navbar .mega-dropdown .sub-item {
-      padding: 25px;
+      padding: 15px;
       width: 100%; }
       .slim-navbar .mega-dropdown .sub-item a {
         padding: 5px 9px;
