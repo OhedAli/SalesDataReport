@@ -29,11 +29,11 @@ function insert_table_data(res_details) {
     if (result.length != 0) {
         $.each(result, function (key, value) {
             html_data += '<tr>' +
-                '<td>' + value.app_number + '</td>' +
                 '<td>' + value.salesman + '</td>' +
+                '<td>' + value.sales_count + '</td>' +
                 '<td>' + value.team + '</td>' +
-                '<td>' + value.model + '</td>' +
-                '<td>' + value.create_at + '</td>' +
+                '<td>' + '' + '</td>' +
+                '<td>' + '' + '</td>' +
                 '</tr>';
         });
         //console.log(html_data);
