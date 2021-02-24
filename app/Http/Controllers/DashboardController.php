@@ -31,12 +31,12 @@ class DashboardController extends Controller
         $todayDate_end = date('Y-m-d 23:59:00');
 
         $todaycount = Saleslogs::whereBetween('create_at',[$todayDate_start, $todayDate_end])->count();
-        $today_details = Saleslogs::whereBetween('create_at',[$todayDate_start, $todayDate_end])->get();
+        $today_details = Saleslogs::select('salesman', 'team', Saleslogs::raw('count(salesman) as sales_count '))->whereBetween('create_at',[$todayDate_start, $todayDate_end])->groupBy('salesman','team')->get();
         $yesterdaycount = Saleslogs::whereBetween('create_at',[$yesterdayDate_start, $todayDate_start])->count();
         $dailydata = $this->FlagSighCheck($todaycount, $yesterdaycount);
         
         $weeklycount = Saleslogs::whereBetween('create_at',[$lastweek,$todayDate_end])->count();
-        $weekly_details = Saleslogs::whereBetween('create_at',[$lastweek,$todayDate_end])->get();
+        $weekly_details = Saleslogs::select('salesman', 'team', Saleslogs::raw('count(salesman) as sales_count '))->whereBetween('create_at',[$lastweek,$todayDate_end])->groupBy('salesman','team')->get();
         $Secondweeklycount = Saleslogs::whereBetween('create_at',[$Secondlastweek,$lastweek])->count();
         $weeklydata = $this->FlagSighCheck($weeklycount, $Secondweeklycount);
         
