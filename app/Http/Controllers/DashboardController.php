@@ -35,12 +35,15 @@ class DashboardController extends Controller
         $dailydata = $this->FlagSighCheck($todaycount, $yesterdaycount);
         
         $weeklycount = Saleslogs::whereBetween('create_at',[$lastweek,$todayDate_end])->count();
-        $weekly_details = Saleslogs::select('salesman', 'team', Saleslogs::raw('count(salesman) as sales_count '))->whereBetween('create_at',[$lastweek,$todayDate_end])->groupBy('salesman','team')->get();
+        $weekly_details = Saleslogs::select('salesman', Saleslogs::raw('count(salesman) as sales_count '))->whereBetween('create_at',[$lastweek,$todayDate_end])->groupBy('salesman','team')->get();
         $Secondweeklycount = Saleslogs::whereBetween('create_at',[$Secondlastweek,$lastweek])->count();
         $weeklydata = $this->FlagSighCheck($weeklycount, $Secondweeklycount);
         
         $monthlycount = Saleslogs::whereBetween('create_at',[$lastmonth,$todayDate_end])->count();
-        $monthly_details = Saleslogs::select('salesman', 'team', Saleslogs::raw('count(salesman) as sales_count '))->whereBetween('create_at',[$lastmonth,$todayDate_end])->groupBy('salesman','team')->get();
+        $monthly_details =  Saleslogs::select('salesman','team',Saleslogs::raw('count(salesman) as sales_count '))
+                           ->whereBetween('create_at',[$lastmonth,$todayDate_end])
+                           ->groupBy('salesman','team')
+                           ->get();
         $Secondmonthlycount = Saleslogs::whereBetween('create_at',[$Secondlastmonth,$lastmonth])->count();
         $monthlydata = $this->FlagSighCheck($monthlycount, $Secondmonthlycount);
 
