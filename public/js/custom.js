@@ -20,7 +20,7 @@ function markActiveNav(page) {
 }
 
 function insert_table_data(res_details) {
-    console.log(1);
+    //console.log(1);
     if ($.fn.DataTable.isDataTable("#datatable1"))
         $('#datatable1').DataTable().clear().destroy();
 

@@ -1,13 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\app",
     "\\public",
-    "\\public\\css",
+    "\\public\\app",
     "\\public\\js",
-    "\\resources",
     "\\resources\\views",
-    "\\resources\\views\\layouts"
+    "\\resources\\views\\common"
   ],
   "SelectedNode": "\\public\\js\\custom.js",
   "PreviewInSolutionExplorer": false

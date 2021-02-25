@@ -31,6 +31,9 @@
 
     <title>AutoProtect USA</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Hind:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <!-- vendor css -->
     <link href="{{asset('app/lib/font-awesome/css/font-awesome.css')}}" rel="stylesheet">
     <link href="{{asset('app/lib/Ionicons/css/ionicons.css')}}" rel="stylesheet">
