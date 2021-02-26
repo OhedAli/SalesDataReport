@@ -12,34 +12,62 @@
               <div class="col-sm-4 span" id="daily" style="cursor:pointer;">
                 <div class="card card-earning-summary active">
                   <h6>Today's Lead</h6>
-                  <h1>{{$todaycount}}</h1>
-                  {{$dailydata[2]}}
-                  <span class="valign-middle"><span class="@if($dailydata[0]=='pos')tx-success @else tx-danger @endif">
-                  <i class="icon @if($dailydata[0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$dailydata[2]}}%</span> from last Day</span>
+                  <h1>{{$result['todaycount']}}</h1>
+                  {{$result['dailydata'][2]}}
+                  <span class="valign-middle"><span class="@if($result['dailydata'][0]=='pos')tx-success @else tx-danger @endif">
+                  <i class="icon @if($result['dailydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['dailydata'][2]}}%</span> from last Day</span>
                 </div><!-- card -->
               </div><!-- col-6 -->
               <div class="col-sm-4 weekly span" id="weekly" style="cursor:pointer;">
                 <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t">
                   <h6>This Week's Lead</h6>
-                  <h1>{{$weeklycount}}</h1>
-                  {{$weeklydata[2]}}
-                  <span class="valign-middle"><span class="@if($weeklydata[0]=='pos')tx-success @else tx-danger @endif">
-                  <i class="icon @if($weeklydata[0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i> {{$weeklydata[1]}}%</span> from last week</span>
+                  <h1>{{$result['weeklycount']}}</h1>
+                  {{$result['weeklydata'][2]}}
+                  <span class="valign-middle"><span class="@if($result['weeklydata'][0]=='pos')tx-success @else tx-danger @endif">
+                  <i class="icon @if($result['weeklydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i> {{$result['weeklydata'][1]}}%</span> from last week</span>
                 </div><!-- card -->
               </div><!-- col-6 -->
               <div class="col-sm-4 span" id="monthly" style="cursor:pointer;">
                 <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t">
                   <h6>This Month's Lead</h6>
-                  <h1>{{$monthlycount}}</h1>
-                  {{$monthlydata[2]}}
-                  <span class="valign-middle"><span class="@if($monthlydata[0]=='pos')tx-success @else tx-danger @endif">
-                  <i class="icon @if($monthlydata[0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$monthlydata[1]}}%</span> from last Month</span>
+                  <h1>{{$result['monthlycount']}}</h1>
+                  {{$result['monthlydata'][2]}}
+                  <span class="valign-middle"><span class="@if($result['monthlydata'][0]=='pos')tx-success @else tx-danger @endif">
+                  <i class="icon @if($result['monthlydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['monthlydata'][1]}}%</span> from last Month</span>
                 </div><!-- card -->
               </div><!-- col-6 -->
             </div><!-- row -->
           </div><!-- col-6 -->
          
         </div><!-- row -->
+
+        <div class="adv_srch">
+            <div class="frm-box">
+                   <h1>Advance Search</h1>
+                   <form action="" method="post">
+                  <!--  Details -->
+                  @csrf
+                  <div class="form-group">
+                      <div class="controls f1">
+                         <label for="arrive" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;From:</label>
+                        <input type="date" name="start_date" placeholder="Select date" class="adv_date" data-polyfill="all" required>
+                      </div>      
+                      <div class="controls">
+                         <label for="depart" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;To:</label>
+                        <input type="date" name="end_date" placeholder="Select date" class="adv_date" data-polyfill="all" required>
+        
+                      </div>      
+                    <div class="btn">
+                       <input type="submit" value="SUBMIT" class="btn-frm" name="">
+                    </div>
+                  </div>
+                </form>
+
+                <P class="dtxt">Showing Data from <span class='drng'>'{{ $result['start_date'] }}'</span> to <span class='drng'>'{{ $result['end_date'] }}'</span></p>
+
+               </div>
+
+        </div>
 
         <div class="section-wrapper sales_info">
             <label class="section-title">Sales Info</label>
@@ -70,17 +98,27 @@
 
     <script>
       $(document).ready(function(){
-        data = "{{ $today_details }}";
+        var data;
+        if("{{ $result['adv_range_flag'] }}" == false){
+            data = "{{ $result['today_details'] }}";
+        }
+        else{
+            data = "{{ $result['adv_range_sales_details'] }}";
+            $('.span').children('div').removeClass('active');
+            $('.dtxt').show();
+        }
+        
         insert_table_data(data);
         $('.span').click(function(){
+            $('.dtxt').hide();
             $('.span').children('div').removeClass('active');
             $(this).children('div').addClass('active');
             if($(this).attr('id') == 'monthly')
-                data = "{{ $monthly_details }}";
+                data = "{{ $result['monthly_details'] }}";
             else if($(this).attr('id') == 'weekly')
-                data = "{{ $weekly_details }}";
+                data = "{{ $result['weekly_details'] }}";
             else
-                data = "{{ $today_details }}";
+                data = "{{ $result['today_details'] }}";
 
             insert_table_data(data);
         });
