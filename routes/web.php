@@ -29,6 +29,8 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
 Route::get('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
 Route::post('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard/salesman/{sm_name}',[DashboardController::class, 'salesman_details'])->name('salesman-details');
+Route::post('/dashboard/salesman/{sm_name}',[DashboardController::class, 'salesman_details'])->name('salesman-details');
 Route::get('/sales',[SaleslogsController::class, 'index'])->name('saleslogs');
 Route::get('/wholesales',[SaleslogsController::class, 'WholeSales'])->name('wholesaleslogs');
 

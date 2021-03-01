@@ -88,6 +88,7 @@ function datatable_reset() {
 
     $('#datatable1').DataTable({
         responsive: true,
+        "order": [[1, "desc"]],
         language: {
             searchPlaceholder: 'Search...',
             sSearch: '',
@@ -105,7 +106,7 @@ function table_data_insertion(salesman,sales_count,sales_team) {
     data = '';
 
     data += '<tr>' +
-        '<td>' + salesman + '</td>' +
+        '<td><a class="sm_name" href="javascript:void(0);">' + salesman + '</a></td>' +
         '<td>' + sales_count + '</td>' +
         '<td>' + sales_team + '</td>' +
         '<td>' + '' + '</td>' +
