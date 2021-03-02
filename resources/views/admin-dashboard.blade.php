@@ -4,11 +4,12 @@
       <div class="container pd-t-50">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="tx-inverse mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
+            <h3 class="tx-inverse tp-h mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
+            <h3 class="h3-txt">Leader Board</h3>
 
-           <div>
+           <div class="user-box">
               @if(!empty($result['montly_top']))
-              <div class="card-contact mg-b-20">
+              <div class="card-contact">
                 <div class="tx-center">
                   <a href=""><img src="{{asset('images/profile.png')}}" class="card-img" alt=""></a>
                   <h5 class="mg-t-10 mg-b-5"><a href="{{route('salesman-details',str_replace(' ','_',$result['montly_top'][0]['salesman']))}}" class="contact-name">{{ $result['montly_top'][0]['salesman'] }}</a></h5>
@@ -22,7 +23,7 @@
               </div>
               @endif
               @if(!empty($result['weekly_top']))
-              <div class="card-contact mg-b-20">
+              <div class="card-contact">
                 <div class="tx-center">
                   <a href=""><img src="{{asset('images/profile.png')}}" class="card-img" alt=""></a>
                   <h5 class="mg-t-10 mg-b-5"><a href="{{route('salesman-details',str_replace(' ','_',$result['weekly_top'][0]['salesman']))}}" class="contact-name">{{ $result['weekly_top'][0]['salesman'] }}</a></h5>
@@ -37,9 +38,9 @@
               @endif
             </div>
 
-            <p class="mg-b-40">Please see the reports given below :</p>
+            <p class="mg-b-20">Please see the reports given below :</p>
 
-            <h6 class="slim-card-title mg-b-15">Your Lead Summary</h6>
+            
 
             <div class="adv_srch">
                 <div class="frm-box">
@@ -47,6 +48,7 @@
                       <!--  Details -->
                       @csrf
                       <div class="form-group">
+                      <h6 class="slim-card-title">Your Lead Summary</h6>
                           <div class="controls f1">
                              <label for="arrive" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;From:</label>
                             <input type="date" name="start_date" placeholder="Select date" class="adv_date" data-polyfill="all" required>

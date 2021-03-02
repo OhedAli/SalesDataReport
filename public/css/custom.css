@@ -113,7 +113,13 @@
     display: -webkit-flex;
     justify-content: flex-start;
     -webkit-justify-content: flex-start;
-    margin-top: 35px;
+    margin-bottom: 30px !important;
+    align-items: center;
+    -webkit-align-items: center;
+}
+.form-group h6{
+    padding: 0px;
+    margin: 0px 30px 0px 0px;
 }
 
 input {
@@ -171,4 +177,108 @@ input {
 }
 .drng {
     color: #6f83cc;
+}
+.user-box{
+    display: flex;
+    display: -webkit-flex;
+    padding: 0px;
+    animation: pulse 2s infinite;
+    width: 60%;
+    margin: 30px auto;
+}
+
+.h3-txt{
+    text-align: center;
+    color: #343a40;
+}
+@keyframes pulse {
+    0% {transform:scale(1);
+        box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);
+        -webkit-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);
+        -moz-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);}
+    50% {transform:scale(1.05);
+        box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.75);
+        -webkit-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.75);
+        -moz-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.75);}
+    100% {transform:scale(1);
+        box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);
+        -webkit-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);
+        -moz-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);}
+  }
+.user-box .card-contact{
+    width:50%;
+}
+.user-box .card-contact:not(:first-child){
+    border-left: 0px;
+}
+.contact-item{
+    font-size: 1rem !important;
+}
+.contact-item span:nth-child(2){
+    color: #000 !important;
+    font-weight: 700 !important;
+}
+#datatable1 th{
+    min-width: 100px !important;
+}
+
+
+@media screen and (min-width:768px) and (max-width: 991px) {
+
+    input {
+        width: 134px;
+        padding: 0px 10px;
+    }
+   
+}
+
+@media screen and (max-width:767px) {
+
+    .form-group{
+        display: block;
+    }
+    .card-contact .card-img {
+        width: 100px  !important;
+    }
+
+    .card-contact h5, .h5 {
+        font-size: 1rem;
+    }
+    .controls {
+        padding: 0px 5px;
+        width: 50%;
+        float: left;
+        margin: 15px 0px;
+    }
+    input {
+        width: 100%;
+    }
+    .card-earning-summary h6 {  
+        min-height: 28px;
+    }
+    .user-box {
+        padding: 0px 0px;
+        width: 100%;
+    }
+    .slim-navbar .mega-dropdown .sub-item {
+        width: 120px !important;
+    }
+    table{
+        width: 100% !important;
+    }
+    dateinput-picker{
+        width: 300px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    } 
+    .tp-h{
+        text-align: center;
+    }
+
+}
+
+@media screen and (max-width:450px) {
+    dateinput-picker{
+        width: 220px !important;
+    }  
 }

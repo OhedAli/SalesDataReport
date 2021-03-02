@@ -8,7 +8,7 @@
             <h3 class="tx-inverse mg-b-15">Salesman : {{$result['sm_name']}}!</h3>
             <p class="mg-b-40">Please see the reports given below :</p>
 
-            <h6 class="slim-card-title mg-b-15">Lead Summary</h6>
+            
 
             <div class="adv_srch">
                 <div class="frm-box">
@@ -16,6 +16,7 @@
                       <!--  Details -->
                       @csrf
                       <div class="form-group">
+                      <h6 class="slim-card-title mg-b-15">Lead Summary</h6>
                           <div class="controls f1">
                              <label for="arrive" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;From:</label>
                             <input type="date" name="start_date" placeholder="Select date" class="adv_date" data-polyfill="all" required>
