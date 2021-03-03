@@ -10,14 +10,9 @@ use App\Models\Saleslogs;
 
 class DashboardController extends Controller
 {
-<<<<<<< HEAD
-    
-    public function index(){
-=======
     public function index(Request $request){
 
         $result = array();
->>>>>>> 1cf5d8e0b53a170ec973ff8bff42c4e1dc6d62a6
 
         date_default_timezone_set("America/Chicago");
 
