@@ -32,7 +32,7 @@
                       </div>
                     </form>
 
-                    <P class="dtxt" style="display: none;">Showing Data from <span class='drng'>'{{ $result['start_date'] }}'</span> to <span class='drng'>'{{ $result['end_date'] }}'</span></p>
+                    <P class="dtxt" style="display: none;">Total sales made by <span>{{$result['sm_name']}}</sapn> from <span class='drng'>'{{ $result['start_date'] }}'</span> to <span class='drng'>'{{ $result['end_date'] }}' </span> is <span class='drng'>{{ $result['adv_range_sales_count'] }}</span></p>
 
                    </div>
 
@@ -41,7 +41,7 @@
 
             <div class="row no-gutters">
               <div class="col-sm-4 span" id="daily" style="cursor:pointer;">
-                <div class="card card-earning-summary active">
+                <div class="card card-earning-summary">
                   <h6>Today's Lead</h6>
                   <h1>{{$result['todaycount']}}</h1>
                   {{$result['dailydata'][2]}}
@@ -72,29 +72,27 @@
          
         </div><!-- row -->
 
-        <div class="section-wrapper sales_info">
-            <label class="section-title">Sales Info</label>
-            <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
 
-            <div class="table-responsive table-wrapper dash_table">
-            <table id="datatable1" class="table mg-b-0 table display responsive nowrap">
-                <thead>
-                <tr>
-                    <th>Sales Man</th>
-                    <th>Sales</th>
-                    <th>Team</th>
-                    <th>Calls</th>
-                    <th>Converstion</th>
-                </tr>
-                </thead>
-                <tbody id="">
-                    
-                </tbody>
-            </table>
-            </div><!-- table-responsive -->
-        </div>
+        <div class="card pd-25 calen" style="display:none;">
+          <div id="fullCalendar"></div>
+        </div><!-- card -->
 
       </div><!-- container -->
     </div><!-- slim-mainpanel -->
 
     @include('common/footer')
+
+    <script>
+      $(document).ready(function(){
+        var data;
+        if("{{ $result['adv_range_flag'] }}" == true){
+            $('.dtxt').show();
+            $('.span').children('div').removeClass('active');
+        }
+        
+        data = "{{ $result['monthly_sm_details'] }}";
+        deal_calendar(data);
+        
+      }); 
+      
+    </script>

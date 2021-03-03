@@ -222,9 +222,22 @@ input {
     min-width: 100px !important;
 }
 
+.fc-lead {
+    width: 100%;
+    text-align: center;
+    font-size: 15px;
+    color: #3290e9;
+    position: absolute;
+    bottom: 0px;
+}
+.fc-day-top {
+    position: relative;
+}
+.calen {
+    margin-top: 15px !important;
+}
 
 @media screen and (min-width:768px) and (max-width: 991px) {
-
     input {
         width: 134px;
         padding: 0px 10px;

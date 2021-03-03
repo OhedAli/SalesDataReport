@@ -114,7 +114,6 @@
                 <tr>
                     <th>Sales Man</th>
                     <th>Sales</th>
-                    <th>Team</th>
                     <th>Calls</th>
                     <th>Converstion</th>
                 </tr>

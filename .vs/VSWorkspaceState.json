@@ -1,8 +1,8 @@
 {
   "ExpandedNodes": [
     "",
+    "\\config",
     "\\public",
-    "\\public\\app",
     "\\public\\js",
     "\\resources\\views",
     "\\resources\\views\\common"
