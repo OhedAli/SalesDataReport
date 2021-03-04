@@ -116,7 +116,7 @@
                 <tr>
                     <th>Sales Man</th>
                     <th>Sales</th>
-                    <th>downpayment %</th>
+                    <th>downpayment</th>
                     <th>finance term</th>
                     <th>discount</th>
                     <th>Calls</th>

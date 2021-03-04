@@ -45,7 +45,7 @@ function insert_table_data(res_details) {
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
             if (datavalue.salesman != '')
-                html_data += table_data_insertion(datavalue.salesman, datavalue.sales_count,datavalue.downpay_add,datavalue.cuscost_add);
+                html_data += table_data_insertion(datavalue.salesman, datavalue.sales_count,datavalue.downpay_add,datavalue.cuscost_add,datavalue.finterm_add,datavalue.retail_add);
 
         });
 
@@ -75,16 +75,17 @@ function datatable_reset() {
 
 }
 
-function table_data_insertion(salesman,sales_count,downpay_add,cuscost_add) {
-    var downpayment = downpay_add/cuscost_add;
+function table_data_insertion(salesman,sales_count,downpay_add,cuscost_add,finterm_add,retail_add) {
+    var downpayment = cuscost_add/downpay_add;
+    var discount = retail_add-cuscost_add;
     data = '';
 
     data += '<tr>' +
         '<td><a class="sm_name" href="javascript:void(0);">' + salesman + '</a></td>' +
         '<td>' + sales_count + '</td>' +
         '<td>' + downpayment.toFixed(2) + '%'+ '</td>' +
-        '<td>' + '' + '</td>' +
-        '<td>' + '' + '</td>' +
+        '<td>' + finterm_add + '</td>' +
+        '<td>' + discount.toFixed(2) + '</td>' +
         '<td>' + '' + '</td>' +
         '</tr>';
 
