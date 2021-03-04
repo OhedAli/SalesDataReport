@@ -1,3 +1,17 @@
+var today = new Date();
+var dd = today.getDate();
+
+var ac_mm = today.getMonth() + 1;
+
+var yyyy = today.getFullYear();
+if (dd < 10) {
+    dd = '0' + dd;
+}
+
+if (ac_mm < 10) {
+    mm = '0' + ac_mm;
+}
+today = yyyy + '-' + mm + '-' + dd;
 
 ! function (s) {
     "use strict";
@@ -15,6 +29,8 @@ function markActiveNav(page) {
     $(".nav-item").removeClass('active');
     if (page == 'sales-view' || page == 'wholesaleslogs')
         $("a[name='saleslogs']").parent().addClass('active');
+    else if (page == 'salesman-details')
+        $("a[name='dashboard']").parent().addClass('active');
     else
         $("a[name='"+page+"']").parent().addClass('active');
 }
@@ -26,55 +42,13 @@ function insert_table_data(res_details) {
 
     let result = JSON.parse($("<div/>").html(res_details).text());
     html_data = '';
-    var sl_cnt = 0;
-    var team_name_flag = false;
     if (result.length != 0) {
-        for (i = 0; i < result.length-1; i++) {
-            if (result[i].salesman == result[i + 1].salesman) {
-                sl_cnt += result[i].sales_count;
-                if (result[i].sales_count > result[i + 1].sales_count) {
-                    if (result[i].team != '')
-                        team_name = result[i].team;
-                }
-                else {
-                    if (result[i + 1].team != '')
-                        team_name = result[i + 1].team;
-                }
+        $.each(result, function (datakey, datavalue) {
+            if (datavalue.salesman != '')
+                html_data += table_data_insertion(datavalue.salesman, datavalue.sales_count,datavalue.downpay_add,datavalue.cuscost_add);
 
-                team_name_flag = true;
-            }
-            else {
-                sl_cnt += result[i].sales_count;
-                if (team_name_flag == false) {
-                    if (result[i].team == '') {
-                        sl_cnt = 0;
-                        team_name_flag = false;
-                        continue;
-                    }
-                    else
-                        team_name = result[i].team;
-                }
-                    
-                html_data += table_data_insertion(result[i].salesman, sl_cnt, team_name);
+        });
 
-                sl_cnt = 0;
-                team_name_flag = false;
-            }
-            
-        }
-
-        sl_cnt += result[result.length-1].sales_count;
-        if (team_name_flag == false) {
-            if (result[result.length - 1].team != '') {
-                team_name = result[result.length - 1].team;
-                html_data += table_data_insertion(result[result.length - 1].salesman, sl_cnt, team_name);
-            }    
-        }
-
-        else
-            html_data += table_data_insertion(result[result.length - 1].salesman, sl_cnt, team_name);
-
-        //console.log(html_data);
         $("#sales_info_data").html(html_data);
     }
     else {
@@ -88,6 +62,7 @@ function datatable_reset() {
 
     $('#datatable1').DataTable({
         responsive: true,
+        "order": [[1, "desc"]],
         language: {
             searchPlaceholder: 'Search...',
             sSearch: '',
@@ -100,17 +75,72 @@ function datatable_reset() {
 
 }
 
-function table_data_insertion(salesman,sales_count,sales_team) {
-
+function table_data_insertion(salesman,sales_count,downpay_add,cuscost_add) {
+    var downpayment = downpay_add/cuscost_add;
     data = '';
 
     data += '<tr>' +
-        '<td>' + salesman + '</td>' +
+        '<td><a class="sm_name" href="javascript:void(0);">' + salesman + '</a></td>' +
         '<td>' + sales_count + '</td>' +
-        '<td>' + sales_team + '</td>' +
+        '<td>' + downpayment.toFixed(2) + '%'+ '</td>' +
+        '<td>' + '' + '</td>' +
         '<td>' + '' + '</td>' +
         '<td>' + '' + '</td>' +
         '</tr>';
 
     return data;
 }
+
+
+function deal_calendar(res) {
+    var data_arr = [];
+    let result = JSON.parse($("<div/>").html(res).text());
+    $.each(result, function (dkey, dvalue) {
+        let temp_arr = [];
+        data_arr[dvalue.purchdate] = dvalue.sales_count;
+    });
+    place_lead_count(data_arr);
+}
+
+function place_lead_count(data_arr) {
+    //console.log(data_arr);
+    $('#fullCalendar').fullCalendar({
+        header: {
+            left: 'prev',
+            center: 'title',
+            right: 'today next'
+        },
+
+        viewRender: function (view, element) {
+            var lead_cnt;
+            $.each($(".fc-day-top"), function (key, val) {
+                let cal_date = $(this).attr("data-date");
+                let temp_date = new Date(cal_date)
+                //console.log(temp_date.getMonth());
+                if (temp_date.getMonth() + 1 == window.ac_mm) {
+                    if (cal_date != window.today) {
+                        keys = Object.keys(data_arr);
+                        if (keys.indexOf(cal_date) != -1) {
+                            $.each(keys, function (k, key_date) {
+                                if (cal_date == key_date) {
+                                    lead_cnt = data_arr[key_date];
+                                }
+                            });
+                            $(this).append("<div class='fc-lead'>Lead: <strong>" + lead_cnt + "</strong></div>");
+                        }
+                        else
+                            $(this).append("<div class='fc-lead'>Lead: <strong> 0 </strong></div>");
+                    }
+                    else {
+                        $(this).append("<div class='fc-lead'><strong> counting... </strong></div>");
+                        return false;
+                    }  
+                }
+                
+            });
+        },
+    });
+    $(".calen").show();
+}
+
+

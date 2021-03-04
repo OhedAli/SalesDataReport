@@ -17,6 +17,8 @@
     <script src="{{asset('app/lib/datatables/js/jquery.dataTables.js')}}"></script>
     <script src="{{asset('app/lib/datatables-responsive/js/dataTables.responsive.js')}}"></script>
     <script src="{{asset('app/lib/select2/js/select2.min.js')}}"></script>
+    <script src="{{asset('app/lib/fullcalendar/js/moment.js')}}"></script>
+    <script src="{{asset('app/lib/fullcalendar/js/fullcalendar.js')}}"></script>
     <script src="{{asset('js/better-dom.min.js')}}"></script>
     <script src="{{asset('js/better-dateinput-polyfill.js')}}"></script>
 

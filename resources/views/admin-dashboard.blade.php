@@ -4,10 +4,73 @@
       <div class="container pd-t-50">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="tx-inverse mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
-            <p class="mg-b-40">Please see the reports given below :</p>
+            <h3 class="tx-inverse tp-h mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
+            <h3 class="h3-txt">Leader Board</h3>
 
-            <h6 class="slim-card-title mg-b-15">Your Lead Summary</h6>
+           <div class="user-box">
+              @if(!empty($result['montly_top']))
+              <div class="card-contact">
+                <div class="tx-center">
+                  <a href=""><img src="{{asset('images/profile.png')}}" class="card-img" alt=""></a>
+                  <h5 class="mg-t-10 mg-b-5"><a href="{{route('salesman-details',str_replace(' ','_',$result['montly_top'][0]['salesman']))}}" class="contact-name">{{ $result['montly_top'][0]['salesman'] }}</a></h5>
+                  <p>Salesman of the Month</p>
+                </div><!-- tx-center -->
+
+                <p class="contact-item">
+                  <span>Lead:</span>
+                  <span>{{ $result['montly_top'][0]['sales_count'] }}</span>
+                </p><!-- contact-item -->
+              </div>
+              @endif
+              @if(!empty($result['weekly_top']))
+              <div class="card-contact">
+                <div class="tx-center">
+                  <a href=""><img src="{{asset('images/profile.png')}}" class="card-img" alt=""></a>
+                  <h5 class="mg-t-10 mg-b-5"><a href="{{route('salesman-details',str_replace(' ','_',$result['weekly_top'][0]['salesman']))}}" class="contact-name">{{ $result['weekly_top'][0]['salesman'] }}</a></h5>
+                  <p>Salesman of the Week</p>
+                </div><!-- tx-center -->
+
+                <p class="contact-item">
+                  <span>Lead:</span>
+                  <span>{{ $result['weekly_top'][0]['sales_count'] }}</span>
+                </p><!-- contact-item -->
+              </div>
+              @endif
+            </div>
+
+            <p class="mg-b-20">Please see the reports given below :</p>
+
+            
+
+            <div class="adv_srch">
+                <div class="frm-box">
+                       <form action="" method="post">
+                      <!--  Details -->
+                      @csrf
+                      <div class="form-group">
+                      <h6 class="slim-card-title">Your Lead Summary</h6>
+                          <div class="controls f1">
+                             <label for="arrive" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;From:</label>
+                            <input type="date" name="start_date" placeholder="Select date" class="adv_date" data-polyfill="all" required>
+                          </div>      
+                          <div class="controls">
+                             <label for="depart" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;To:</label>
+                            <input type="date" name="end_date" placeholder="Select date" class="adv_date" data-polyfill="all" required>
+        
+                          </div>      
+                        <div class="btn">
+                           <input type="submit" value="SUBMIT" class="btn-frm" name="">
+                        </div>
+                      </div>
+                    </form>
+
+                    <P class="dtxt" style="display: none;">Showing Data from <span class='drng'>'{{ $result['start_date'] }}'</span> to <span class='drng'>'{{ $result['end_date'] }}'</span></p>
+
+                   </div>
+
+            </div>
+
+
             <div class="row no-gutters">
               <div class="col-sm-4 span" id="daily" style="cursor:pointer;">
                 <div class="card card-earning-summary active">
@@ -43,34 +106,6 @@
          
         </div><!-- row -->
 
-        <div class="adv_srch">
-            <div class="frm-box">
-                   <h1>Advance Search</h1>
-                   <form action="" method="post">
-                  <!--  Details -->
-                  @csrf
-                  <div class="form-group">
-                      <div class="controls f1">
-                         <label for="arrive" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;From:</label>
-                        <input type="date" name="start_date" placeholder="Select date" class="adv_date" data-polyfill="all" required>
-                      </div>      
-                      <div class="controls">
-                         <label for="depart" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;To:</label>
-                        <input type="date" name="end_date" placeholder="Select date" class="adv_date" data-polyfill="all" required>
-        
-                      </div>      
-                    <div class="btn">
-                       <input type="submit" value="SUBMIT" class="btn-frm" name="">
-                    </div>
-                  </div>
-                </form>
-
-                <P class="dtxt" style="display: none;">Showing Data from <span class='drng'>'{{ $result['start_date'] }}'</span> to <span class='drng'>'{{ $result['end_date'] }}'</span></p>
-
-               </div>
-
-        </div>
-
         <div class="section-wrapper sales_info">
             <label class="section-title">Sales Info</label>
             <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
@@ -81,7 +116,9 @@
                 <tr>
                     <th>Sales Man</th>
                     <th>Sales</th>
-                    <th>Team</th>
+                    <th>downpayment %</th>
+                    <th>finance term</th>
+                    <th>discount</th>
                     <th>Calls</th>
                     <th>Converstion</th>
                 </tr>
@@ -124,6 +161,17 @@
 
             insert_table_data(data);
         });
+        
       });
+
+      
+      $(document).on('click','.sm_name',function(){
+            var name = ($(this).text()).replace(' ','_');
+            var url = "{{ route('salesman-details',':name') }}";
+            url = url.replace(':name',name);
+            window.location.href = url;
+            
+       });
+        
 
     </script>
