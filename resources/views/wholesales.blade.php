@@ -18,7 +18,7 @@
                   <th class="wd-15p">App Number</th>
                   <th class="wd-15p">Name</th>
                   <th class="wd-20p">Model</th>
-                  <th class="wd-15p">Created At</th>
+                  <th class="wd-15p">Purchase At</th>
                   <th class="wd-10p">Details</th>
                 </tr>
               </thead>
@@ -29,7 +29,7 @@
                   <td>{{$customer->app_number}}</td>
                   <td>{{$customer->first_name}} {{$customer->last_name}}</td>
                   <td>{{$customer->model}}</td>
-                  <td>{{ date('d M Y', strtotime($customer->create_at)) }}</td>
+                  <td>{{ date('d M Y', strtotime($customer->purchdate)) }}</td>
                   <td><a href="{{route('sales-view',$customer->id)}}" class="dt-btn">View Details</a></td>
                 </tr>
                 @endforeach
