@@ -79,14 +79,17 @@ function datatable_reset() {
 function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, finterm_add, retail_add) {
     
     var downpayment = cuscost_add / downpay_add;
+    var finterm = finterm_add / sales_count;
     var discount = retail_add - cuscost_add;
+    var discount = discount / sales_count;
+
     data = '';
 
     data += '<tr>' +
         '<td><a class="sm_name" href="javascript:void(0);">' + salesman + '</a></td>' +
         '<td>' + sales_count + '</td>' +
         '<td>' + downpayment.toFixed(2) + '%</td>' +
-        '<td>' + finterm_add + '</td>' +
+        '<td>' + finterm.toFixed(2) + '</td>' +
         '<td>' + discount.toFixed(2) + '</td>' +
         '<td>' + '' + '</td>' +
         '<td>' + '' + '</td>' +
