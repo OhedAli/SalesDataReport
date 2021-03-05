@@ -59,7 +59,7 @@ function insert_table_data(res_details) {
 }
 
 function datatable_reset() {
-
+    console.log('test');
     $('#datatable1').DataTable({
         responsive: true,
         "order": [[1, "desc"]],
@@ -86,6 +86,7 @@ function table_data_insertion(salesman,sales_count,downpay_add,cuscost_add,finte
         '<td>' + downpayment.toFixed(2) + '%'+ '</td>' +
         '<td>' + finterm_add + '</td>' +
         '<td>' + discount.toFixed(2) + '</td>' +
+        '<td>' + '' + '</td>' +
         '<td>' + '' + '</td>' +
         '</tr>';
 

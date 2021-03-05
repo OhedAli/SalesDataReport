@@ -107,7 +107,12 @@ class DashboardController extends Controller
             $result['start_date'] = date("dS F, Y", strtotime($request->post('start_date')));
             $result['end_date'] = date("dS F, Y", strtotime($request->post('end_date')));
             $result['adv_range_sales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])->count();
-            $result['adv_range_sales_details'] =  Saleslogs::select('salesman',Saleslogs::raw('count(salesman) as sales_count '))
+            $result['adv_range_sales_details'] =  Saleslogs::select('salesman',
+                                      Saleslogs::raw('SUM(downpay) as downpay_add'),
+                                      Saleslogs::raw('SUM(cuscost) as cuscost_add'),
+                                      Saleslogs::raw('SUM(finterm) as finterm_add'), 
+                                      Saleslogs::raw('SUM(retail) as retail_add'),
+                                      Saleslogs::raw('count(salesman) as sales_count '))
                                ->whereBetween('purchdate',[$start_range, $end_range])
                                ->groupBy('salesman')
                                ->get();
