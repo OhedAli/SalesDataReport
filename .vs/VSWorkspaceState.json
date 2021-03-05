@@ -3,9 +3,7 @@
     "",
     "\\config",
     "\\public",
-    "\\public\\js",
-    "\\resources\\views",
-    "\\resources\\views\\common"
+    "\\public\\js"
   ],
   "SelectedNode": "\\public\\js\\custom.js",
   "PreviewInSolutionExplorer": false

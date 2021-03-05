@@ -139,7 +139,10 @@ function place_lead_count(data_arr,date) {
                         $(this).append("<div class='fc-lead'>Lead: <strong> 0 </strong></div>");
                 }
                 else {
-                    $(this).append("<div class='fc-lead'><strong> counting... </strong></div>");
+                    lead_cnt = data_arr[window.today];
+                    if (lead_cnt == undefined)
+                        lead_cnt = 0
+                    $(this).append("<div class='fc-lead'>Lead: <strong>" + lead_cnt +"</strong></div>");
                     return false;
                 }
             }
