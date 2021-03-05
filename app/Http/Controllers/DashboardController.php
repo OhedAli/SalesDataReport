@@ -178,33 +178,53 @@ class DashboardController extends Controller
             $result['monthlydata'] = $this->FlagSighCheck($result['monthlycount'], $result['Secondmonthlycount']);
 
             $result['monthly_sm_details'] =  Saleslogs::select('salesman','purchdate',Saleslogs::raw('count(salesman) as sales_count '))
-                                   ->whereBetween('purchdate',[$lastmonth, $todayDate_end])
-                                   ->where('salesman',$sm_name)
-                                   ->groupBy('salesman','purchdate')
-                                   ->get();
+                                             ->whereBetween('purchdate',[$lastmonth, $todayDate_end])
+                                             ->where('salesman',$sm_name)
+                                             ->groupBy('salesman','purchdate')
+                                             ->get();
+
+            $result['adv_range_flag'] = false;
+            $result['adv_range_sales_count'] = '';
+            $result['start_date'] = '';
+            $result['end_date'] = '';
+            $result['prev_sales_details'] = '';
+            
             
             if($request->isMethod('get'))
             {
-                $result['adv_range_flag'] = false;
-                $result['adv_range_sales_count'] = '';
-                $result['start_date'] = '';
-                $result['end_date'] = '';
-                $result['adv_range_sales_details'] = '';
                 return view('salesman-details',compact('result'));
             }
 
             elseif($request->isMethod('post'))
             {
-                $result['adv_range_flag'] = true;
-                $start_range = $request->post('start_date');
-                $end_range = $request->post('end_date');
+                //echo $request->post('month');
+                //die();
+                if($request->post('month') !== null){
 
-                $result['start_date'] = date("dS F, Y", strtotime($request->post('start_date')));
-                $result['end_date'] = date("dS F, Y", strtotime($request->post('end_date')));
-                $result['adv_range_sales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])->where('salesman',$sm_name)->count();
+                    $full_date = $request->post('year').'-'.$request->post('month').'-1';
+                    $first_date = date('Y-m-1', strtotime($full_date));
+                    $last_date = date('Y-m-t', strtotime($full_date));
+
+                    $result['prev_sales_details'] = Saleslogs::select('salesman','purchdate',Saleslogs::raw('count(salesman) as sales_count '))
+                                                    ->whereBetween('purchdate',[$first_date, $last_date])
+                                                    ->where('salesman',$sm_name)
+                                                    ->groupBy('salesman','purchdate')
+                                                    ->get();
+                    return $result['prev_sales_details'];
+                }
+                    
+                else{
+                    $result['adv_range_flag'] = true;
+                    $start_range = $request->post('start_date');
+                    $end_range = $request->post('end_date');
+
+                    $result['start_date'] = date("dS F, Y", strtotime($request->post('start_date')));
+                    $result['end_date'] = date("dS F, Y", strtotime($request->post('end_date')));
+                    $result['adv_range_sales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])->where('salesman',$sm_name)->count();
+                    return view('salesman-details',compact('result'));
+                }
+
                 
-
-                return view('salesman-details',compact('result'));
             }
 
             else{

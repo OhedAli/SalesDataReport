@@ -89,7 +89,6 @@
                   <span class="valign-middle"><span class="@if($result['weeklydata'][0]=='pos')tx-success @else tx-danger @endif">
                   <i class="icon @if($result['weeklydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i> {{$result['weeklydata'][1]}}%</span> from last week</span>
                 </div><!-- card -->
-               
               </div><!-- col-6 -->
               <div class="col-sm-4 span" id="monthly" style="cursor:pointer;">
                 <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t">
@@ -99,7 +98,6 @@
                   <span class="valign-middle"><span class="@if($result['monthlydata'][0]=='pos')tx-success @else tx-danger @endif">
                   <i class="icon @if($result['monthlydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['monthlydata'][1]}}%</span> from last Month</span>
                 </div><!-- card -->
-                
               </div><!-- col-6 -->
             </div><!-- row -->
           </div><!-- col-6 -->
@@ -116,9 +114,9 @@
                 <tr>
                     <th>Sales Man</th>
                     <th>Sales</th>
-                    <th>downpayment</th>
-                    <th>finance term</th>
-                    <th>discount</th>
+                    <th>DOWN PAYMENT</th>
+                    <th>FINANCE TERM</th>
+                    <th>DISCOUNT</th>
                     <th>Calls</th>
                     <th>Converstion</th>
                 </tr>

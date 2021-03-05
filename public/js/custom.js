@@ -1,11 +1,11 @@
 var today = new Date();
-var dd = today.getDate();
+var ac_dd = today.getDate();
 
 var ac_mm = today.getMonth() + 1;
 
 var yyyy = today.getFullYear();
-if (dd < 10) {
-    dd = '0' + dd;
+if (ac_dd < 10) {
+    dd = '0' + ac_dd;
 }
 
 if (ac_mm < 10) {
@@ -32,7 +32,7 @@ function markActiveNav(page) {
     else if (page == 'salesman-details')
         $("a[name='dashboard']").parent().addClass('active');
     else
-        $("a[name='"+page+"']").parent().addClass('active');
+        $("a[name='" + page + "']").parent().addClass('active');
 }
 
 function insert_table_data(res_details) {
@@ -44,8 +44,9 @@ function insert_table_data(res_details) {
     html_data = '';
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
+            
             if (datavalue.salesman != '')
-                html_data += table_data_insertion(datavalue.salesman, datavalue.sales_count,datavalue.downpay_add,datavalue.cuscost_add,datavalue.finterm_add,datavalue.retail_add);
+                html_data += table_data_insertion(datavalue.salesman, datavalue.sales_count, datavalue.downpay_add, datavalue.cuscost_add, datavalue.finterm_add, datavalue.retail_add);
 
         });
 
@@ -75,73 +76,98 @@ function datatable_reset() {
 
 }
 
-function table_data_insertion(salesman,sales_count,downpay_add,cuscost_add,finterm_add,retail_add) {
-    var downpayment = cuscost_add/downpay_add;
-    var discount = retail_add-cuscost_add;
+function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, finterm_add, retail_add) {
+    
+    var downpayment = cuscost_add / downpay_add;
+    var discount = retail_add - cuscost_add;
     data = '';
 
     data += '<tr>' +
         '<td><a class="sm_name" href="javascript:void(0);">' + salesman + '</a></td>' +
         '<td>' + sales_count + '</td>' +
-        '<td>' + downpayment.toFixed(2) + '%'+ '</td>' +
+        '<td>' + downpayment.toFixed(2) + '%</td>' +
         '<td>' + finterm_add + '</td>' +
         '<td>' + discount.toFixed(2) + '</td>' +
         '<td>' + '' + '</td>' +
+        '<td>' + '' + '</td>' +
         '</tr>';
-
     return data;
 }
 
 
-function deal_calendar(res) {
+function deal_calendar(res, prev) {
     var data_arr = [];
-    let result = JSON.parse($("<div/>").html(res).text());
+    var result;
+    if (prev == 0)
+        result = JSON.parse($("<div/>").html(res).text());
+    else
+        result = res;
+    //console.log(result);
     $.each(result, function (dkey, dvalue) {
         let temp_arr = [];
         data_arr[dvalue.purchdate] = dvalue.sales_count;
     });
-    place_lead_count(data_arr);
+
+    var cal_date = get_calendar_date();
+    place_lead_count(data_arr, cal_date['month']);
 }
 
-function place_lead_count(data_arr) {
+function place_lead_count(data_arr,mn) {
     //console.log(data_arr);
+    var keys = Object.keys(data_arr);
+    console.log(keys);
+    var lead_cnt;
+
+        $.each($(".fc-day-top"), function (key, val) {
+            let cal_date = $(this).attr("data-date");
+            let temp_date = new Date(cal_date);
+            //console.log(temp_date.getMonth());
+            if (temp_date.getMonth() + 1 == mn && mn <= ac_mm) {
+                if (cal_date != window.today) {
+                    if (keys.indexOf(cal_date) != -1) {
+                        $.each(keys, function (k, key_date) {
+                            if (cal_date == key_date) {
+                                lead_cnt = data_arr[key_date];
+                            }
+                        });
+                        $(this).append("<div class='fc-lead'>Lead: <strong>" + lead_cnt + "</strong></div>");
+                    }
+                    else
+                        $(this).append("<div class='fc-lead'>Lead: <strong> 0 </strong></div>");
+                }
+                else {
+                    $(this).append("<div class='fc-lead'><strong> counting... </strong></div>");
+                    return false;
+                }
+            }
+
+        });
+    
+}
+
+function get_calendar_date() {
+
+    var date_arr = [];
+    var cal_date_val = $('.fc-center h2').text();
+    var d_obj = new Date(cal_date_val);
+    var mnth = d_obj.getMonth() + 1;
+    var yr = d_obj.getFullYear();
+    date_arr['month'] = mnth;
+    date_arr['year'] = yr;
+    return date_arr;
+
+}
+
+
+$(function(){
+
     $('#fullCalendar').fullCalendar({
         header: {
             left: 'prev',
             center: 'title',
-            right: 'today next'
-        },
+            right: 'next'
+        }
 
-        viewRender: function (view, element) {
-            var lead_cnt;
-            $.each($(".fc-day-top"), function (key, val) {
-                let cal_date = $(this).attr("data-date");
-                let temp_date = new Date(cal_date)
-                //console.log(temp_date.getMonth());
-                if (temp_date.getMonth() + 1 == window.ac_mm) {
-                    if (cal_date != window.today) {
-                        keys = Object.keys(data_arr);
-                        if (keys.indexOf(cal_date) != -1) {
-                            $.each(keys, function (k, key_date) {
-                                if (cal_date == key_date) {
-                                    lead_cnt = data_arr[key_date];
-                                }
-                            });
-                            $(this).append("<div class='fc-lead'>Lead: <strong>" + lead_cnt + "</strong></div>");
-                        }
-                        else
-                            $(this).append("<div class='fc-lead'>Lead: <strong> 0 </strong></div>");
-                    }
-                    else {
-                        $(this).append("<div class='fc-lead'><strong> counting... </strong></div>");
-                        return false;
-                    }  
-                }
-                
-            });
-        },
     });
     $(".calen").show();
-}
-
-
+});
