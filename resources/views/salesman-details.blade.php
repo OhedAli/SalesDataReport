@@ -91,8 +91,36 @@
         }
         
         data = "{{ $result['monthly_sm_details'] }}";
-        deal_calendar(data);
+        deal_calendar(data,prev=0);
         
-      }); 
+      });
+
+      
+
+    $(document).on('click','.fc-button',function () {
+
+        var cal_date = get_calendar_date();
+
+        let name = ("{{$result['sm_name']}}").replace(' ','_');
+        var src_url = "{{ route('salesman-details',':name') }}";
+        src_url = src_url.replace(':name',name);
+        $.ajax({
+            url : src_url,
+            method: 'post',
+            data : {
+                month : cal_date['month'],
+                year : cal_date['year'],
+                _token : "{{ csrf_token() }}"
+            },
+            success: function(result){
+                //console.log(result);
+                deal_calendar(result,prev=1);
+            },
+            error: function(err){
+                console.log(err);
+            }
+
+        });
+    });
       
     </script>
