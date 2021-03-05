@@ -112,20 +112,20 @@ function deal_calendar(res, prev) {
     });
 
     var cal_date = get_calendar_date();
-    place_lead_count(data_arr, cal_date['month']);
+    place_lead_count(data_arr, cal_date);
 }
 
-function place_lead_count(data_arr,mn) {
+function place_lead_count(data_arr,date) {
     //console.log(data_arr);
     var keys = Object.keys(data_arr);
-    console.log(keys);
+    //console.log(keys);
     var lead_cnt;
 
         $.each($(".fc-day-top"), function (key, val) {
             let cal_date = $(this).attr("data-date");
             let temp_date = new Date(cal_date);
             //console.log(temp_date.getMonth());
-            if (temp_date.getMonth() + 1 == mn && mn <= ac_mm) {
+            if (temp_date.getMonth() + 1 == date['month'] && date['month'] <= window.ac_mm && date['year'] == window.yyyy) {
                 if (cal_date != window.today) {
                     if (keys.indexOf(cal_date) != -1) {
                         $.each(keys, function (k, key_date) {
@@ -142,6 +142,23 @@ function place_lead_count(data_arr,mn) {
                     $(this).append("<div class='fc-lead'><strong> counting... </strong></div>");
                     return false;
                 }
+            }
+
+            else if (temp_date.getMonth() + 1 == date['month'] && date['year'] < window.yyyy) {
+                if (keys.indexOf(cal_date) != -1) {
+                    $.each(keys, function (k, key_date) {
+                        if (cal_date == key_date) {
+                            lead_cnt = data_arr[key_date];
+                        }
+                    });
+                    $(this).append("<div class='fc-lead'>Lead: <strong>" + lead_cnt + "</strong></div>");
+                }
+                else
+                    $(this).append("<div class='fc-lead'>Lead: <strong> 0 </strong></div>");
+            }
+
+            else {
+                // do nothing
             }
 
         });
