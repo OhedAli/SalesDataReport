@@ -1,9 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\config",
+    "\\app\\Http\\Controllers",
     "\\public",
-    "\\public\\js"
+    "\\public\\js",
+    "\\resources",
+    "\\resources\\views"
   ],
   "SelectedNode": "\\public\\js\\custom.js",
   "PreviewInSolutionExplorer": false
