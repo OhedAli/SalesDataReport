@@ -47,6 +47,7 @@
 
         $('#datatable1').DataTable({
           responsive: true,
+          "columnDefs" : [{targets:3, type:"stringMonthYear"}],
           language: {
             searchPlaceholder: 'Search...',
             sSearch: '',
