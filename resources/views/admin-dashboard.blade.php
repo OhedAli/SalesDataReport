@@ -67,7 +67,17 @@
                     <P class="dtxt" style="display: none;">Showing Data from <span class='drng'>'{{ $result['start_date'] }}'</span> to <span class='drng'>'{{ $result['end_date'] }}'</span></p>
 
                    </div>
-
+                <div>
+                <select class="test" id="changedays"> 
+                <option value="">Select</option>
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="weekly">Week-to-date</option>
+                <option value="last_week">Last Week</option>
+                <option value="monthly">Month-To-Date</option>
+                <option value="last_month">Last Month</option>
+                </select>
+                </div>
             </div>
 
 
@@ -159,6 +169,22 @@
 
             insert_table_data(data);
         });
+        $('#changedays').change(function(){
+          console.log(this.value);
+          if(this.value == 'monthly')
+              data = "{{ $result['monthly_details'] }}";
+          else if(this.value == 'last_month')
+              data = "{{ $result['Secondmonthly_details'] }}";
+          else if(this.value == 'weekly')
+              data = "{{ $result['weekly_details'] }}";
+          else if(this.value == 'last_week')
+             data = "{{ $result['Secondweekly_details'] }}";
+          else if(this.value == 'yesterday')
+              data = "{{ $result['yesterday_details'] }}";
+          else
+              data = "{{ $result['today_details'] }}";
+          insert_table_data(data);
+        })
         
       });
 

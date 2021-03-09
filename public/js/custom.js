@@ -81,7 +81,7 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
     var downpayment = cuscost_add / downpay_add;
     var finterm = finterm_add / sales_count;
     var discount = retail_add - cuscost_add;
-    var discount = discount / sales_count;
+    discount = discount / sales_count;
 
     data = '';
 

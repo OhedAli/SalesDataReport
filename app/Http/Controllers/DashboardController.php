@@ -47,7 +47,16 @@ class DashboardController extends Controller
                                 ->whereBetween('purchdate',[$todayDate_start, $todayDate_end])
                                 ->groupBy('salesman')
                                 ->get();
-        $result['yesterdaycount'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $todayDate_start])->count();
+        $result['yesterdaycount'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])->count();
+        $result['yesterday_details'] = Saleslogs::select('salesman', 
+                                Saleslogs::raw('SUM(downpay) as downpay_add'),
+                                Saleslogs::raw('SUM(cuscost) as cuscost_add'),
+                                Saleslogs::raw('SUM(finterm) as finterm_add'), 
+                                Saleslogs::raw('SUM(retail) as retail_add'),
+                                Saleslogs::raw('count(salesman) as sales_count '))
+                                ->whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])
+                                ->groupBy('salesman')
+                                ->get();
         $result['dailydata'] = $this->FlagSighCheck($result['todaycount'], $result['yesterdaycount']);
         
         $result['weeklycount'] = Saleslogs::whereBetween('purchdate',[$lastweek,$todayDate_end])->count();
@@ -69,6 +78,14 @@ class DashboardController extends Controller
                                 ->toArray();
 
         $result['Secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])->count();
+        $result['Secondweekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),
+                                    Saleslogs::raw('SUM(cuscost) as cuscost_add'), 
+                                    Saleslogs::raw('SUM(finterm) as finterm_add'), 
+                                    Saleslogs::raw('SUM(retail) as retail_add'), 
+                                    Saleslogs::raw('count(salesman) as sales_count '))
+                                    ->whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])
+                                    ->groupBy('salesman')
+                                    ->get();
         $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['Secondweeklycount']);
         
         $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->count();
@@ -92,6 +109,14 @@ class DashboardController extends Controller
         //dd($result['montly_top']);
 
         $result['Secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastmonth_start,$Secondlastmonth_end])->count();
+        $result['Secondmonthly_details'] =  Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add'),
+                                      Saleslogs::raw('SUM(cuscost) as cuscost_add'),
+                                      Saleslogs::raw('SUM(finterm) as finterm_add'), 
+                                      Saleslogs::raw('SUM(retail) as retail_add'),
+                                      Saleslogs::raw('count(salesman) as sales_count '))
+                                      ->whereBetween('purchdate',[$Secondlastmonth_start,$Secondlastmonth_end])
+                                      ->groupBy('salesman')
+                                      ->get();
         $result['monthlydata'] = $this->FlagSighCheck($result['monthlycount'], $result['Secondmonthlycount']);
         
         if($request->isMethod('get'))
