@@ -55,6 +55,12 @@ class DashboardController extends Controller
                                     ->groupBy('salesman')
                                     ->get();
 
+        //$result['weekly_details'] = $this->call_search_ytel($result['weekly_details']->toArray());
+
+        // echo '<pre>';
+        // print_r($result['weekly_details']);
+        // die();
+
         $result['weekly_top'] = Saleslogs::select('salesman', Saleslogs::raw('count(salesman) as sales_count '))
                                 ->whereBetween('purchdate',[$lastweek,$todayDate_end])
                                 ->groupBy('salesman')
@@ -146,6 +152,36 @@ class DashboardController extends Controller
                 return 0;
             }
         }
+
+
+    public function call_search_ytel($dataArr)
+    {
+    
+        $resArr = array();
+        foreach ($dataArr as $datakey => $dataValue) {
+        $name = $dataValue['salesman'];
+        $start_date = '2021-03-08 00:00:00';
+        $end_date = date('Y-m-d H:i:s');
+        $total_call = DB::connection('mysql3')->table('vicidial_closer_log')
+                ->join('vicidial_users',function($join1) use($name,$start_date,$end_date) {
+                $join1->on('vicidial_users.user','=','vicidial_closer_log.user')
+                ->where('vicidial_users.full_name', $name)
+                ->where('vicidial_closer_log.list_id','999')
+                ->where('vicidial_closer_log.length_in_sec','>','15')
+                ->whereBetween('vicidial_closer_log.call_date',[$start_date,$end_date]);
+                })
+                ->join('vicidial_list',function($join2) use($name,$start_date,$end_date) {
+                $join2->on('vicidial_list.user','=','vicidial_closer_log.user')
+                      ->on('vicidial_list.lead_id','=','vicidial_closer_log.lead_id')
+                      ->on('vicidial_list.entry_date','=','vicidial_closer_log.call_date');
+
+                })
+                ->count();
+                $dataValue['total_calls'] = $total_call;
+                array_push($resArr,$dataValue);
+        }
+        return $resArr;
+    }
 
 
     public function salesman_details(Request $request, $name)
