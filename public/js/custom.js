@@ -35,6 +35,34 @@ function markActiveNav(page) {
         $("a[name='" + page + "']").parent().addClass('active');
 }
 
+function tble_lead_info(result_data){
+    if ($.fn.DataTable.isDataTable("#datatable2"))
+    $('#datatable2').DataTable().clear().destroy();
+
+   data = '';
+   if (result_data.length != 0) {
+        result_data.forEach(function(arrData){
+            data += '<tr>' +
+            '<td>' + arrData.app_number + '</td>' +
+            '<td>' + arrData.first_name + ' '+ arrData.last_name + '</td>' +
+            '<td>' + arrData.model + '</td>' +
+            '<td>' + arrData.purchdate + '</td>' +
+            '</tr>';
+             
+        })
+
+    
+        $("#lead_data").html(data);
+    }
+    else {
+        $("#lead_data").html('');
+    }
+
+    datatable_reset();
+}
+
+
+
 function insert_table_data(res_details) {
     //console.log(1);
     if ($.fn.DataTable.isDataTable("#datatable1"))
@@ -61,7 +89,7 @@ function insert_table_data(res_details) {
 
 function datatable_reset() {
     console.log('test');
-    $('#datatable1').DataTable({
+    $('#datatable1,#datatable2').DataTable({
         responsive: true,
         "order": [[1, "desc"]],
         language: {
@@ -133,7 +161,7 @@ function place_lead_count(data_arr,date) {
                                 lead_cnt = data_arr[key_date];
                             }
                         });
-                        $(this).append("<div class='fc-lead'>Lead: <strong>" + lead_cnt + "</strong></div>");
+                        $(this).append("<div class='fc-lead fc-data'>Lead: <strong>" + lead_cnt + "</strong></div>");
                     }
                     else
                         $(this).append("<div class='fc-lead'>Lead: <strong> 0 </strong></div>");
@@ -142,7 +170,7 @@ function place_lead_count(data_arr,date) {
                     lead_cnt = data_arr[window.today];
                     if (lead_cnt == undefined)
                         lead_cnt = 0
-                    $(this).append("<div class='fc-lead'>Lead: <strong>" + lead_cnt +"</strong></div>");
+                    $(this).append("<div class='fc-lead fc-data'>Lead: <strong>" + lead_cnt +"</strong></div>");
                     return false;
                 }
             }
@@ -154,7 +182,7 @@ function place_lead_count(data_arr,date) {
                             lead_cnt = data_arr[key_date];
                         }
                     });
-                    $(this).append("<div class='fc-lead'>Lead: <strong>" + lead_cnt + "</strong></div>");
+                    $(this).append("<div class='fc-lead fc-data'>Lead: <strong>" + lead_cnt + "</strong></div>");
                 }
                 else
                     $(this).append("<div class='fc-lead'>Lead: <strong> 0 </strong></div>");
@@ -180,6 +208,7 @@ function get_calendar_date() {
     return date_arr;
 
 }
+
 
 
 $(function(){
@@ -218,3 +247,5 @@ $(function () {
     });
 
 });
+
+

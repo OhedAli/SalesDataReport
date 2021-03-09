@@ -155,7 +155,7 @@ class DashboardController extends Controller
 
     public function salesman_details(Request $request, $name)
     {
-        $sm_name = str_replace("_"," ",$name);
+        $sm_name = str_replace("-"," ",$name);
         $result = array();
         $result['sm_name'] = $sm_name;
         date_default_timezone_set("America/Chicago");
@@ -208,6 +208,19 @@ class DashboardController extends Controller
             if($request->isMethod('get'))
             {
                 return view('salesman-details',compact('result'));
+            }
+
+            elseif($request->isMethod('post') && $request->post('leadDate') != ""){
+
+                // echo $request->post('leadDate');
+               $result['lead_info_details'] = Saleslogs::select('app_number', 'model', 'first_name', 'last_name', 'purchdate')
+                                                           ->where('purchdate', $request->post('leadDate'))
+                                                           ->where('salesman',$sm_name)
+                                                           ->get();
+
+             return $result['lead_info_details'];                                      
+                
+                
             }
 
             elseif($request->isMethod('post'))

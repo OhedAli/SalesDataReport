@@ -16,6 +16,8 @@
     animation-name: fade;
     animation-duration: 1.5s;
 }
+
+.fc-data {cursor:pointer;}
 @-webkit-keyframes fade {
     from {
         opacity: .1

@@ -77,6 +77,30 @@
           <div id="fullCalendar"></div>
         </div><!-- card -->
 
+        <br>
+
+        <div class="section-wrapper lead_data_info">
+            <label class="section-title">Lead Info for: <span class="fill_dt"></span></label>
+            <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
+
+            <div class="table-responsive table-wrapper dash_table">
+            <table id="datatable2" class="table mg-b-0 table display responsive nowrap">
+                <thead>
+                <tr>
+                    <th>APP NUMBER</th>
+                    <th>NAME</th>
+                    <th>MODEL</th>
+                    <th>Purchase At</th>
+                    
+                </tr>
+                </thead>
+                <tbody id="lead_data">
+                    
+                </tbody>
+            </table>
+            </div><!-- table-responsive -->
+        </div>
+
       </div><!-- container -->
     </div><!-- slim-mainpanel -->
 
@@ -101,7 +125,7 @@
 
         var cal_date = get_calendar_date();
 
-        let name = ("{{$result['sm_name']}}").replace(' ','_');
+        let name = ("{{$result['sm_name']}}").replace(' ','-');
         var src_url = "{{ route('salesman-details',':name') }}";
         src_url = src_url.replace(':name',name);
         $.ajax({
@@ -122,5 +146,37 @@
 
         });
     });
+
+  $(document).on('click', '.fc-lead', function(){
+  //console.log("1")
+  let name = ("{{$result['sm_name']}}").replace(' ','-');
+  var src_url = "{{ route('salesman-details',':name') }}";
+  src_url = src_url.replace(':name',name);
+  
+  let calDate = $(this).parent().data("date");
+  let dtt =  new Date(calDate);
+  console.log(calDate);
+  let Mon = ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+  let month = dtt.getMonth(); 
+  $(".fill_dt").text(dtt.getDate() + ' ' + Mon[month] + ' ' + dtt.getFullYear());
+  $.ajax({
+      url : src_url,
+      method: 'post',
+      data : {
+           leadDate: calDate,
+           _token : "{{ csrf_token() }}"
+          
+      },
+      success: function(result){
+            console.log(result);
+            tble_lead_info(result);
+          
+      },
+      error: function(err){
+          console.log(err);
+      }
+
+  });
+});
       
-    </script>
+</script>
