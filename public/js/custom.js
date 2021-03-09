@@ -64,14 +64,14 @@ function insert_table_data(res_details) {
 function leader_board_update(res_details){
    
     let result = JSON.parse($("<div/>").html(res_details).text());
-   // console.log(result);
+    console.log(result);
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
             
             if (datavalue.sales_count != '')
                 $('.leaderboardcount'+datakey).html(datavalue.sales_count);
                 $('.leader_name'+datakey).html(datavalue.salesman);
-                console.log(datakey);
+                //console.log(datakey);
 
         });
 

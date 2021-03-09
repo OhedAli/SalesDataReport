@@ -5,10 +5,9 @@
         <div class="row">
           <div class="col-lg-12">
             <h3 class="tx-inverse tp-h mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
-            <h3 class="h3-txt">Leader Board</h3>
-
+            
             <div class="m-lead">
-            <h5 class="m-lead-hd">Leader Board</h5>
+            <h5 class="m-lead-hd">Leader Board: <span class="name_topper">Today</span> topper</h5>
             <div  class="l-board">
             
             @foreach($result['today_top'] as $key=>$value)
@@ -149,15 +148,17 @@
             if($(this).attr('id') == 'monthly'){
                 data = "{{ $result['monthly_details'] }}";
                 leaderboard = "{{$result['montly_top']}}";
+                $('.name_topper').html('Monthly');
             }
             else if($(this).attr('id') == 'weekly'){
                 data = "{{ $result['weekly_details'] }}";
                 leaderboard = "{{$result['weekly_top']}}";
+                $('.name_topper').html('Weekly');
               }
               else{
                 data = "{{ $result['today_details'] }}";
                 leaderboard = "{{$result['today_top']}}";
-                
+                $('.name_topper').html('Today');
               }
               leader_board_update(leaderboard);
             insert_table_data(data);
