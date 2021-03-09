@@ -18,19 +18,24 @@ class DashboardController extends Controller
 
         if(date('D') != 'Mon'){
             $lastweek = date('Y-m-d', strtotime('last Monday'));
-            $Secondlastweek = date('Y-m-d', strtotime('-7 days', strtotime($lastweek)));
+            $Secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
+            $Secondlastweek_start = date('Y-m-d', strtotime('-7 days', strtotime($Secondlastweek_end)));
         }
         else{
             $lastweek = date('Y-m-d');
-            $Secondlastweek = date('Y-m-d', strtotime('last Monday'));
+            $Secondlastweek_start = date('Y-m-d', strtotime('last Monday'));
+            $Secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
         }
-           
+        
         $lastmonth = date('Y-m-01');
-        $Secondlastmonth = date('Y-m-d', strtotime('-29 days', strtotime($lastmonth)));
+        $days_no_prev_mnth = date('t',mktime(0,0,0, date('n') -1 ));
+        $Secondlastmonth_start = date('Y-m-d', strtotime('-'.$days_no_prev_mnth.' days', strtotime($lastmonth)));
+        $Secondlastmonth_end = date('Y-m-d', strtotime('-1 days', strtotime($lastmonth)));
 
-        $todayDate_start = date('Y-m-d'); 
+        $todayDate_start = date('Y-m-d');
         $yesterdayDate_start = date('Y-m-d', strtotime('-1 days')); 
         $todayDate_end = date('Y-m-d');
+
 
         $result['todaycount'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])->count();
         $result['today_details'] = Saleslogs::select('salesman', 
@@ -69,7 +74,7 @@ class DashboardController extends Controller
                                 ->get()
                                 ->toArray();
 
-        $result['Secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastweek,$lastweek])->count();
+        $result['Secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])->count();
         $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['Secondweeklycount']);
         
         $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->count();
@@ -92,7 +97,7 @@ class DashboardController extends Controller
 
         //dd($result['montly_top']);
 
-        $result['Secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastmonth,$lastmonth])->count();
+        $result['Secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastmonth_start,$Secondlastmonth_end])->count();
         $result['monthlydata'] = $this->FlagSighCheck($result['monthlycount'], $result['Secondmonthlycount']);
         
         if($request->isMethod('get'))
@@ -191,31 +196,36 @@ class DashboardController extends Controller
         $result['sm_name'] = $sm_name;
         date_default_timezone_set("America/Chicago");
 
-            if(date('D') != 'Mon'){
-                $lastweek = date('Y-m-d', strtotime('last Monday'));
-                $Secondlastweek = date('Y-m-d', strtotime('-7 days', strtotime($lastweek)));
-            }
-            else{
-                $lastweek = date('Y-m-d');
-                $Secondlastweek = date('Y-m-d', strtotime('last Monday'));
-            }
+        if(date('D') != 'Mon'){
+            $lastweek = date('Y-m-d', strtotime('last Monday'));
+            $Secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
+            $Secondlastweek_start = date('Y-m-d', strtotime('-7 days', strtotime($Secondlastweek_end)));
+        }
+        else{
+            $lastweek = date('Y-m-d');
+            $Secondlastweek_start = date('Y-m-d', strtotime('last Monday'));
+            $Secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
+        }
            
-            $lastmonth = date('Y-m-01');
-            $Secondlastmonth = date('Y-m-d', strtotime('-29 days', strtotime($lastmonth)));
-            $todayDate_start = date('Y-m-d'); 
-            $yesterdayDate_start = date('Y-m-d', strtotime('-1 days')); 
-            $todayDate_end = date('Y-m-d');
+        $lastmonth = date('Y-m-01');
+        $days_no_prev_mnth = date('t',mktime(0,0,0, date('n') -1 ));
+        $Secondlastmonth_start = date('Y-m-d', strtotime('-'.$days_no_prev_mnth.' days', strtotime($lastmonth)));
+        $Secondlastmonth_end = date('Y-m-d', strtotime('-1 days', strtotime($lastmonth)));
+        
+        $todayDate_start = date('Y-m-d'); 
+        $yesterdayDate_start = date('Y-m-d', strtotime('-1 days')); 
+        $todayDate_end = date('Y-m-d');
 
             $result['todaycount'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])->where('salesman',$sm_name)->count();
             $result['yesterdaycount'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $todayDate_start])->where('salesman',$sm_name)->count();
             $result['dailydata'] = $this->FlagSighCheck($result['todaycount'], $result['yesterdaycount']);
         
             $result['weeklycount'] = Saleslogs::whereBetween('purchdate',[$lastweek,$todayDate_end])->where('salesman',$sm_name)->count();
-            $result['Secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastweek,$lastweek])->where('salesman',$sm_name)->count();
+            $result['Secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])->where('salesman',$sm_name)->count();
             $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['Secondweeklycount']);
         
             $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->where('salesman',$sm_name)->count();
-            $result['Secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastmonth,$lastmonth])->where('salesman',$sm_name)->count();
+            $result['Secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastmonth_start,$Secondlastmonth_end])->where('salesman',$sm_name)->count();
             $result['monthlydata'] = $this->FlagSighCheck($result['monthlycount'], $result['Secondmonthlycount']);
 
             $result['monthly_sm_details'] =  Saleslogs::select('salesman','purchdate',Saleslogs::raw('count(salesman) as sales_count '))

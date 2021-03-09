@@ -194,3 +194,27 @@ $(function(){
     });
     $(".calen").show();
 });
+
+$(function () {
+
+    $.extend($.fn.dataTableExt.oSort, {
+        "stringMonthYear-pre": function (s) {
+            var monthArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var dateComponents = s.split(" ");
+            var yr = dateComponents[2];
+            var month = monthArr.indexOf(dateComponents[1]);
+            var day = dateComponents[0];
+
+
+
+            return new Date(yr, month, day);
+        },
+        "stringMonthYear-asc": function (a, b) {
+            return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+        },
+        "stringMonthYear-desc": function (a, b) {
+            return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+        }
+    });
+
+});
