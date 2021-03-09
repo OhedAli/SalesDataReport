@@ -6,7 +6,9 @@
           <div class="col-lg-12">
             <h3 class="tx-inverse tp-h mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
             <h3 class="h3-txt">Leader Board</h3>
-            <p class="tx-center"><span>Today</span> Report</p>
+
+            <div class="m-lead">
+            <h5 class="m-lead-hd">Leader Board</h5>
             <div  class="l-board">
             
             @foreach($result['today_top'] as $key=>$value)
@@ -19,6 +21,7 @@
                 </div>
               </div>
               @endforeach
+            </div>
             </div>
 
             <div class="adv_srch">
