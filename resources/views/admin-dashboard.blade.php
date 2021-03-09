@@ -7,35 +7,28 @@
             <h3 class="tx-inverse tp-h mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
             <h3 class="h3-txt">Leader Board</h3>
 
-           <div class="user-box">
-              @if(!empty($result['montly_top']))
-              <div class="card-contact">
-                <div class="tx-center">
-                  <a href=""><img src="{{asset('images/profile.png')}}" class="card-img" alt=""></a>
-                  <h5 class="mg-t-10 mg-b-5"><a href="{{route('salesman-details',str_replace(' ','_',$result['montly_top'][0]['salesman']))}}" class="contact-name">{{ $result['montly_top'][0]['salesman'] }}</a></h5>
-                  <p>Salesman of the Month</p>
-                </div><!-- tx-center -->
-
-                <p class="contact-item">
-                  <span>Lead:</span>
-                  <span>{{ $result['montly_top'][0]['sales_count'] }}</span>
-                </p><!-- contact-item -->
+            <div  class="l-board">
+              <div class="mem-1">
+              <div class="tx-center">
+                  <a href=""><img src="https://vsctools.dev/autoprotect/SalesDataReport/public/images/profile.png" class="card-img" alt=""></a>
+                  <h5 class="mg-t-10 mg-b-5"><a href="" class="contact-name">Nicole Thuerwaechter</a></h5>
+                  <p>20 Sales</p>
+                </div>
               </div>
-              @endif
-              @if(!empty($result['weekly_top']))
-              <div class="card-contact">
-                <div class="tx-center">
-                  <a href=""><img src="{{asset('images/profile.png')}}" class="card-img" alt=""></a>
-                  <h5 class="mg-t-10 mg-b-5"><a href="{{route('salesman-details',str_replace(' ','_',$result['weekly_top'][0]['salesman']))}}" class="contact-name">{{ $result['weekly_top'][0]['salesman'] }}</a></h5>
-                  <p>Salesman of the Week</p>
-                </div><!-- tx-center -->
-
-                <p class="contact-item">
-                  <span>Lead:</span>
-                  <span>{{ $result['weekly_top'][0]['sales_count'] }}</span>
-                </p><!-- contact-item -->
+              <div class="mem-1">
+              <div class="tx-center">
+                  <a href=""><img src="https://vsctools.dev/autoprotect/SalesDataReport/public/images/profile.png" class="card-img" alt=""></a>
+                  <h5 class="mg-t-10 mg-b-5"><a href="" class="contact-name">Nicole Thuerwaechter</a></h5>
+                  <p>30 Sales</p>
+                </div>
               </div>
-              @endif
+              <div class="mem-1">
+              <div class="tx-center">
+                  <a href=""><img src="https://vsctools.dev/autoprotect/SalesDataReport/public/images/profile.png" class="card-img" alt=""></a>
+                  <h5 class="mg-t-10 mg-b-5"><a href="" class="contact-name">Nicole Thuerwaechter</a></h5>
+                  <p>25 Sales</p>
+                </div>
+              </div>
             </div>
 
             <p class="mg-b-20">Please see the reports given below :</p>
@@ -60,6 +53,12 @@
                           </div>      
                         <div class="btn">
                            <input type="submit" value="SUBMIT" class="btn-frm" name="">
+                        </div>
+                        <div class="s-time">
+                        <select name="" id="sl-date">
+                          <option value="volvo">1</option>
+                          <option value="saab">2</option>
+                        </select>
                         </div>
                       </div>
                     </form>
@@ -110,7 +109,8 @@
                 </div><!-- card -->
               </div><!-- col-6 -->
             </div><!-- row -->
-          </div><!-- col-6 -->
+          </div>
+          <!-- col-6 -->
          
         </div><!-- row -->
 
