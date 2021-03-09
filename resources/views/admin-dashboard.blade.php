@@ -6,34 +6,20 @@
           <div class="col-lg-12">
             <h3 class="tx-inverse tp-h mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
             <h3 class="h3-txt">Leader Board</h3>
-
+            <p class="tx-center"><span>Today</span> Report</p>
             <div  class="l-board">
-              <div class="mem-1">
-              <div class="tx-center">
-                  <a href=""><img src="https://vsctools.dev/autoprotect/SalesDataReport/public/images/profile.png" class="card-img" alt=""></a>
-                  <h5 class="mg-t-10 mg-b-5"><a href="" class="contact-name">Nicole Thuerwaechter</a></h5>
-                  <p>20 Sales</p>
-                </div>
-              </div>
-              <div class="mem-1">
-              <div class="tx-center">
-                  <a href=""><img src="https://vsctools.dev/autoprotect/SalesDataReport/public/images/profile.png" class="card-img" alt=""></a>
-                  <h5 class="mg-t-10 mg-b-5"><a href="" class="contact-name">Nicole Thuerwaechter</a></h5>
-                  <p>30 Sales</p>
-                </div>
-              </div>
-              <div class="mem-1">
-              <div class="tx-center">
-                  <a href=""><img src="https://vsctools.dev/autoprotect/SalesDataReport/public/images/profile.png" class="card-img" alt=""></a>
-                  <h5 class="mg-t-10 mg-b-5"><a href="" class="contact-name">Nicole Thuerwaechter</a></h5>
-                  <p>25 Sales</p>
-                </div>
-              </div>
-            </div>
-
-            <p class="mg-b-20">Please see the reports given below :</p>
-
             
+            @foreach($result['today_top'] as $key=>$value)
+            
+              <div class="mem-1">
+                <div class="tx-center">
+                  <a href=""><img src="{{asset('images/profile.png')}}" class="card-img" alt=""></a>
+                  <h5 class="mg-t-10 mg-b-5"><a href="javascript:void(0);" class="contact-name sm_name leader_name{{$key}}">{{$value['salesman']}}</a></h5>
+                  <p><span class="leaderboardcount{{$key}}">{{$value['sales_count']}}</span> Sales</p>
+                </div>
+              </div>
+              @endforeach
+            </div>
 
             <div class="adv_srch">
                 <div class="frm-box">
@@ -55,10 +41,16 @@
                            <input type="submit" value="SUBMIT" class="btn-frm" name="">
                         </div>
                         <div class="s-time">
-                        <select name="" id="sl-date">
-                          <option value="volvo">1</option>
-                          <option value="saab">2</option>
-                        </select>
+                        <label for="">/ Select Day:</label>
+                         <select class="test" class="sl-date" id="changedays"> 
+                            <option value="">Select</option>
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="weekly">Week-to-date</option>
+                            <option value="last_week">Last Week</option>
+                            <option value="monthly">Month-To-Date</option>
+                            <option value="last_month">Last Month</option>
+                          </select>
                         </div>
                       </div>
                     </form>
@@ -66,17 +58,6 @@
                     <P class="dtxt" style="display: none;">Showing Data from <span class='drng'>'{{ $result['start_date'] }}'</span> to <span class='drng'>'{{ $result['end_date'] }}'</span></p>
 
                    </div>
-                <div>
-                <select class="test" id="changedays"> 
-                <option value="">Select</option>
-                <option value="today">Today</option>
-                <option value="yesterday">Yesterday</option>
-                <option value="weekly">Week-to-date</option>
-                <option value="last_week">Last Week</option>
-                <option value="monthly">Month-To-Date</option>
-                <option value="last_month">Last Month</option>
-                </select>
-                </div>
             </div>
 
 
@@ -116,6 +97,7 @@
 
         <div class="section-wrapper sales_info">
             <label class="section-title">Sales Info</label>
+            <p>Total Lead: <span class="font-weight-bold" id="datacountlead"></span> </p>
             <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
 
             <div class="table-responsive table-wrapper dash_table">
@@ -146,6 +128,7 @@
     <script>
       $(document).ready(function(){
         var data;
+        var leaderboard;
         if("{{ $result['adv_range_flag'] }}" == false){
             data = "{{ $result['today_details'] }}";
         }
@@ -160,29 +143,50 @@
             $('.dtxt').hide();
             $('.span').children('div').removeClass('active');
             $(this).children('div').addClass('active');
-            if($(this).attr('id') == 'monthly')
+            if($(this).attr('id') == 'monthly'){
                 data = "{{ $result['monthly_details'] }}";
-            else if($(this).attr('id') == 'weekly')
+                leaderboard = "{{$result['montly_top']}}";
+            }
+            else if($(this).attr('id') == 'weekly'){
                 data = "{{ $result['weekly_details'] }}";
-            else
+                leaderboard = "{{$result['weekly_top']}}";
+              }
+              else{
                 data = "{{ $result['today_details'] }}";
-
+                leaderboard = "{{$result['today_top']}}";
+                
+              }
+              leader_board_update(leaderboard);
             insert_table_data(data);
+            
         });
+
         $('#changedays').change(function(){
           console.log(this.value);
-          if(this.value == 'monthly')
+          if(this.value == 'monthly'){
               data = "{{ $result['monthly_details'] }}";
-          else if(this.value == 'last_month')
+              $('#datacountlead').html({{ $result['monthlycount'] }});
+          }
+          else if(this.value == 'last_month'){
               data = "{{ $result['Secondmonthly_details'] }}";
-          else if(this.value == 'weekly')
+              $('#datacountlead').html({{ $result['Secondmonthlycount'] }});
+          }
+          else if(this.value == 'weekly'){
               data = "{{ $result['weekly_details'] }}";
-          else if(this.value == 'last_week')
+              $('#datacountlead').html({{ $result['weeklycount'] }});
+            }
+          else if(this.value == 'last_week'){
              data = "{{ $result['Secondweekly_details'] }}";
-          else if(this.value == 'yesterday')
+             $('#datacountlead').html({{ $result['Secondweeklycount'] }});
+            }
+          else if(this.value == 'yesterday'){
               data = "{{ $result['yesterday_details'] }}";
-          else
+              $('#datacountlead').html({{ $result['yesterdaycount'] }});
+            }
+          else{
               data = "{{ $result['today_details'] }}";
+              $('#datacountlead').html({{ $result['todaycount'] }});
+          }
           insert_table_data(data);
         })
         

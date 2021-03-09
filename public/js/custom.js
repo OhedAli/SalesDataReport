@@ -36,11 +36,12 @@ function markActiveNav(page) {
 }
 
 function insert_table_data(res_details) {
-    //console.log(1);
+    
     if ($.fn.DataTable.isDataTable("#datatable1"))
         $('#datatable1').DataTable().clear().destroy();
 
     let result = JSON.parse($("<div/>").html(res_details).text());
+    
     html_data = '';
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
@@ -57,6 +58,26 @@ function insert_table_data(res_details) {
     }
 
     datatable_reset();
+    
+}
+
+function leader_board_update(res_details){
+   
+    let result = JSON.parse($("<div/>").html(res_details).text());
+   // console.log(result);
+    if (result.length != 0) {
+        $.each(result, function (datakey, datavalue) {
+            
+            if (datavalue.sales_count != '')
+                $('.leaderboardcount'+datakey).html(datavalue.sales_count);
+                $('.leader_name'+datakey).html(datavalue.salesman);
+                console.log(datakey);
+
+        });
+
+        $("#sales_info_data").html(html_data);
+    }
+
 }
 
 function datatable_reset() {
@@ -96,7 +117,6 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
         '</tr>';
     return data;
 }
-
 
 function deal_calendar(res, prev) {
     var data_arr = [];
