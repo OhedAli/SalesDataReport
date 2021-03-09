@@ -7,6 +7,8 @@
             <h3 class="tx-inverse tp-h mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
             <h3 class="h3-txt">Leader Board</h3>
 
+            <div class="m-lead">
+            <h5 class="m-lead-hd">Leader Board</h5>
             <div  class="l-board">
               <div class="mem-1">
               <div class="tx-center">
@@ -29,6 +31,7 @@
                   <p>25 Sales</p>
                 </div>
               </div>
+            </div>
             </div>
 
             <p class="mg-b-20">Please see the reports given below :</p>
@@ -55,7 +58,8 @@
                            <input type="submit" value="SUBMIT" class="btn-frm" name="">
                         </div>
                         <div class="s-time">
-                        <select name="" id="sl-date">
+                          <label>Selct Days:</label>
+                        <select name="" class="sl-date">
                           <option value="volvo">1</option>
                           <option value="saab">2</option>
                         </select>
