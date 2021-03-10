@@ -7,14 +7,19 @@
             <h3 class="tx-inverse tp-h mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
             
             <div class="m-lead">
-            <h5 class="m-lead-hd">Leader Board: <span class="name_topper">Today</span> topper</h5>
+            <h5 class="m-lead-hd">Leader Board: <span class="name_topper">Today</span> Toppers</h5>
             <div  class="l-board">
             
             @foreach($result['today_top'] as $key=>$value)
             
               <div class="mem-1">
                 <div class="tx-center">
-                  <a href=""><img src="{{asset('images/profile.png')}}" class="card-img" alt=""></a>
+                  <a href="javascript:void(0);" class="img-a"><img src="{{asset('images/profile.png')}}" class="card-img" alt="">
+                    <div class="hexa ">
+                      <img src="{{asset('images/hexa'.($key+1). '.png')}}" class="hexa1-bg" alt="">
+                        <p>{{ $key + 1 }}</p>
+                      </div> 
+                  </a>
                   <h5 class="mg-t-10 mg-b-5"><a href="javascript:void(0);" class="contact-name sm_name leader_name{{$key}}">{{$value['salesman']}}</a></h5>
                   <p><span class="leaderboardcount{{$key}}">{{$value['sales_count']}}</span> Sales</p>
                 </div>

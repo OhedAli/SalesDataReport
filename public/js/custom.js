@@ -117,6 +117,7 @@ function leader_board_update(res_details){
     let result = JSON.parse($("<div/>").html(res_details).text());
     //console.log(result);
     let path = window.location.href;
+    //let path = window.location.origin;
     path = path.substr(0,path.indexOf('public')) + 'public';
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
@@ -126,9 +127,11 @@ function leader_board_update(res_details){
                 if($(".l-board").children().length < 3 ){
                     
                     let data_html = '<div class="mem-1"><div class="tx-center">'+
-                                    '<a href="javascript:void(0);"><img src="'+ path +'/images/profile.png" class="card-img" alt=""></a>'+
+                                    '<a href="javascript:void(0);" class="img-a"><img src="'+ path +'/images/profile.png" class="card-img" alt="">'+
+                                    '<div class="hexa"><img src="'+ path + '/images/hexa'+ (datakey + 1) +'.png" class="hexa1-bg" alt="">'+
+                                    '<p>'+ (datakey + 1) +'</p></div></a>'+
                                     '<h5 class="mg-t-10 mg-b-5">'+
-                                    '<a href="javascript:void(0);" class="contact-name sm_name leader_name'+ datakey + '">'+ datavalue.salesman + '</a>'+
+                                    '<a href="javascript:void(0);" class="contact-name sm_name leader_name_'+ datakey + '">'+ datavalue.salesman + '</a>'+
                                     '<p><span class="leaderboardcount'+ datakey +'">'+ datavalue.sales_count + '</span> Sales</p>'+
                                     '</div></div>';
 
