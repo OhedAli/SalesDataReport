@@ -8,14 +8,14 @@ if (ac_dd < 10) {
 dd = '0' + ac_dd;
 }
 else{
-dd = ac_dd;
+    dd = ac_dd;
 }
 
 if (ac_mm < 10) {
-mm = '0' + ac_mm;
+    mm = '0' + ac_mm;
 }
 else{
-mm = ac_mm;
+    mm = ac_mm;
 }
 
 
@@ -87,11 +87,12 @@ function tble_lead_info(result_data, adv_search_flag){
 
 
 function insert_table_data(res_details) {
-    //console.log(1);
+    
     if ($.fn.DataTable.isDataTable("#datatable1"))
         $('#datatable1').DataTable().clear().destroy();
 
     let result = JSON.parse($("<div/>").html(res_details).text());
+    
     html_data = '';
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
@@ -108,11 +109,52 @@ function insert_table_data(res_details) {
     }
 
     datatable_reset();
+    
+}
+
+function leader_board_update(res_details){
+   
+    let result = JSON.parse($("<div/>").html(res_details).text());
+    //console.log(result);
+    let path = window.location.href;
+    path = path.substr(0,path.indexOf('public')) + 'public';
+    if (result.length != 0) {
+        $.each(result, function (datakey, datavalue) {
+            
+            if (datavalue.sales_count != ''){
+
+                if($(".l-board").children().length < 3 ){
+                    
+                    let data_html = '<div class="mem-1"><div class="tx-center">'+
+                                    '<a href="javascript:void(0);"><img src="'+ path +'/images/profile.png" class="card-img" alt=""></a>'+
+                                    '<h5 class="mg-t-10 mg-b-5">'+
+                                    '<a href="javascript:void(0);" class="contact-name sm_name leader_name'+ datakey + '">'+ datavalue.salesman + '</a>'+
+                                    '<p><span class="leaderboardcount'+ datakey +'">'+ datavalue.sales_count + '</span> Sales</p>'+
+                                    '</div></div>';
+
+                    $(".l-board").append(data_html);
+                }
+                else{
+                    $('.leaderboardcount'+datakey).html(datavalue.sales_count);
+                    $('.leader_name'+datakey).html(datavalue.salesman);
+                    //console.log(datakey);
+                }
+                
+            }
+                
+
+        });
+
+    }
+
+    else{
+        $(".l-board").html('');
+    }
+
 }
 
 function datatable_reset() {
-    console.log('test');
-
+    
     $('#datatable1').DataTable({
         responsive: true,
         "order": [[1, "desc"]],
@@ -139,10 +181,10 @@ function datatable_reset() {
 
 function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, finterm_add, retail_add) {
     
-    var downpayment = cuscost_add / downpay_add;
+    var downpayment = (downpay_add / cuscost_add) * 100;
     var finterm = finterm_add / sales_count;
     var discount = retail_add - cuscost_add;
-    var discount = discount / sales_count;
+    discount = discount / sales_count;
 
     data = '';
 
@@ -157,7 +199,6 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
         '</tr>';
     return data;
 }
-
 
 function deal_calendar(res, prev) {
     var data_arr = [];

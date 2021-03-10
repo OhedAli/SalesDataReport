@@ -5,42 +5,23 @@
         <div class="row">
           <div class="col-lg-12">
             <h3 class="tx-inverse tp-h mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
-            <h3 class="h3-txt">Leader Board</h3>
-
-           <div class="user-box">
-              @if(!empty($result['montly_top']))
-              <div class="card-contact">
-                <div class="tx-center">
-                  <a href=""><img src="{{asset('images/profile.png')}}" class="card-img" alt=""></a>
-                  <h5 class="mg-t-10 mg-b-5"><a href="{{route('salesman-details',str_replace(' ','_',$result['montly_top'][0]['salesman']))}}" class="contact-name">{{ $result['montly_top'][0]['salesman'] }}</a></h5>
-                  <p>Salesman of the Month</p>
-                </div><!-- tx-center -->
-
-                <p class="contact-item">
-                  <span>Lead:</span>
-                  <span>{{ $result['montly_top'][0]['sales_count'] }}</span>
-                </p><!-- contact-item -->
-              </div>
-              @endif
-              @if(!empty($result['weekly_top']))
-              <div class="card-contact">
-                <div class="tx-center">
-                  <a href=""><img src="{{asset('images/profile.png')}}" class="card-img" alt=""></a>
-                  <h5 class="mg-t-10 mg-b-5"><a href="{{route('salesman-details',str_replace(' ','_',$result['weekly_top'][0]['salesman']))}}" class="contact-name">{{ $result['weekly_top'][0]['salesman'] }}</a></h5>
-                  <p>Salesman of the Week</p>
-                </div><!-- tx-center -->
-
-                <p class="contact-item">
-                  <span>Lead:</span>
-                  <span>{{ $result['weekly_top'][0]['sales_count'] }}</span>
-                </p><!-- contact-item -->
-              </div>
-              @endif
-            </div>
-
-            <p class="mg-b-20">Please see the reports given below :</p>
-
             
+            <div class="m-lead">
+            <h5 class="m-lead-hd">Leader Board: <span class="name_topper">Today</span> topper</h5>
+            <div  class="l-board">
+            
+            @foreach($result['today_top'] as $key=>$value)
+            
+              <div class="mem-1">
+                <div class="tx-center">
+                  <a href=""><img src="{{asset('images/profile.png')}}" class="card-img" alt=""></a>
+                  <h5 class="mg-t-10 mg-b-5"><a href="javascript:void(0);" class="contact-name sm_name leader_name{{$key}}">{{$value['salesman']}}</a></h5>
+                  <p><span class="leaderboardcount{{$key}}">{{$value['sales_count']}}</span> Sales</p>
+                </div>
+              </div>
+              @endforeach
+            </div>
+            </div>
 
             <div class="adv_srch">
                 <div class="frm-box">
@@ -61,13 +42,24 @@
                         <div class="btn">
                            <input type="submit" value="SUBMIT" class="btn-frm" name="">
                         </div>
+                        <div class="s-time">
+                        <label for="">/ Select Day:</label>
+                         <select class="test" class="sl-date" id="changedays"> 
+                            <option value="">Select</option>
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="weekly">Week-to-date</option>
+                            <option value="last_week">Last Week</option>
+                            <option value="monthly">Month-To-Date</option>
+                            <option value="last_month">Last Month</option>
+                          </select>
+                        </div>
                       </div>
                     </form>
 
                     <P class="dtxt" style="display: none;">Showing Data from <span class='drng'>'{{ $result['start_date'] }}'</span> to <span class='drng'>'{{ $result['end_date'] }}'</span></p>
 
                    </div>
-
             </div>
 
 
@@ -100,12 +92,14 @@
                 </div><!-- card -->
               </div><!-- col-6 -->
             </div><!-- row -->
-          </div><!-- col-6 -->
+          </div>
+          <!-- col-6 -->
          
         </div><!-- row -->
 
         <div class="section-wrapper sales_info">
             <label class="section-title">Sales Info</label>
+            <p>Total Lead: <span class="font-weight-bold" id="datacountlead">{{ $result['todaycount'] }}</span> </p>
             <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
 
             <div class="table-responsive table-wrapper dash_table">
@@ -136,6 +130,7 @@
     <script>
       $(document).ready(function(){
         var data;
+        var leaderboard;
         if("{{ $result['adv_range_flag'] }}" == false){
             data = "{{ $result['today_details'] }}";
         }
@@ -150,15 +145,57 @@
             $('.dtxt').hide();
             $('.span').children('div').removeClass('active');
             $(this).children('div').addClass('active');
-            if($(this).attr('id') == 'monthly')
+            if($(this).attr('id') == 'monthly'){
                 data = "{{ $result['monthly_details'] }}";
-            else if($(this).attr('id') == 'weekly')
+                leaderboard = "{{$result['montly_top']}}";
+                $('.name_topper').html('Monthly');
+                $('#datacountlead').html("{{ $result['monthlycount'] }}");
+            }
+            else if($(this).attr('id') == 'weekly'){
                 data = "{{ $result['weekly_details'] }}";
-            else
+                leaderboard = "{{$result['weekly_top']}}";
+                $('.name_topper').html('Weekly');
+                $('#datacountlead').html("{{ $result['weeklycount'] }}");
+              }
+              else{
                 data = "{{ $result['today_details'] }}";
-
+                leaderboard = "{{$result['today_top']}}";
+                $('.name_topper').html('Today');
+                $('#datacountlead').html("{{ $result['todaycount'] }}");
+              }
+            leader_board_update(leaderboard);
             insert_table_data(data);
+            
         });
+
+        $('#changedays').change(function(){
+          //console.log(this.value);
+          if(this.value == 'monthly'){
+              data = "{{ $result['monthly_details'] }}";
+              $('#datacountlead').html("{{ $result['monthlycount'] }}");
+          }
+          else if(this.value == 'last_month'){
+              data = "{{ $result['Secondmonthly_details'] }}";
+              $('#datacountlead').html("{{ $result['Secondmonthlycount'] }}");
+          }
+          else if(this.value == 'weekly'){
+              data = "{{ $result['weekly_details'] }}";
+              $('#datacountlead').html("{{ $result['weeklycount'] }}");
+            }
+          else if(this.value == 'last_week'){
+             data = "{{ $result['Secondweekly_details'] }}";
+             $('#datacountlead').html("{{ $result['Secondweeklycount'] }}");
+            }
+          else if(this.value == 'yesterday'){
+              data = "{{ $result['yesterday_details'] }}";
+              $('#datacountlead').html("{{ $result['yesterdaycount'] }}");
+            }
+          else{
+              data = "{{ $result['today_details'] }}";
+              $('#datacountlead').html("{{ $result['todaycount'] }}");
+          }
+          insert_table_data(data);
+        })
         
       });
 

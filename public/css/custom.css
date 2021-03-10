@@ -195,17 +195,17 @@ input {
 }
 @keyframes pulse {
     0% {transform:scale(1);
-        box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);
-        -webkit-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);
-        -moz-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);}
+        box-shadow: 0px 0px 8px 2px rgba(95,78,182,0.0);
+        -webkit-box-shadow: 0px 0px 8px 2px rgba(95,78,182,0.0);
+        -moz-box-shadow: 0px 0px 8px 2px rgba(95,78,182,0.0);}
     50% {transform:scale(1.05);
-        box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.75);
-        -webkit-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.75);
-        -moz-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.75);}
+        box-shadow: 0px 0px 8px 2px rgba(95,78,182,0.75);
+        -webkit-box-shadow: 0px 0px 8px 2px rgba(95,78,182,0.75);
+        -moz-box-shadow: 0px 0px 8px 2px rgba(95,78,182,0.75);}
     100% {transform:scale(1);
-        box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);
-        -webkit-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);
-        -moz-box-shadow: 0px 0px 15px 2px rgba(95,78,182,0.0);}
+        box-shadow: 0px 0px 8px 2px rgba(95,78,182,0.0);
+        -webkit-box-shadow: 0px 0px 8px 2px rgba(95,78,182,0.0);
+        -moz-box-shadow: 0px 0px 8px 2px rgba(95,78,182,0.0);}
   }
 .user-box .card-contact{
     width:50%;
@@ -238,11 +238,107 @@ input {
 .calen {
     margin-top: 15px !important;
 }
+.sl-date{
+    height: 38px;
+    width: 180px;
+    padding: 0px 15px;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    margin-left: 5px;
+}
+.mem-1 .card-img {
+    width: 120px;
+    border-radius: 100%;
+    padding: 5px;
+    border: 2px solid #1b84e7;
+    background-color: #fff;
+    transition: all 0.2s ease-in-out;
+}
+.mem-1 .contact-name {
+    color: #343a40;
+}
+.mem-1 {
+    padding:24px;
+}
+.tx-center p{
+    font-size: 20px;
+    color: #0d0f71;
+    font-weight: 500;
+}
+.l-board{
+    display: flex;
+    display: -webkit-flex;
+    justify-content: center;
+    -webkit-justify-content: center;
+    align-items: flex-end;
+    -webkit-align-items: flex-end;
+   
+    
+}
+.m-lead{
+    background: #e6e7e8;
+    max-width: 700px;
+    padding: 30px 15px;
+    margin: 30px auto;
+    animation: pulse 2s infinite;
+    border: 1px solid #8dc0f9;
+}
+.m-lead-hd{
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+    padding-bottom: 8px;
+}
+.m-lead-hd:after{
+    position: absolute;
+    content: "";
+    width: 50px;
+    height: 2px;
+    background-color: #1b7be3;
+    left: 50%;
+    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    bottom: 0px;
+}
+.l-board .mem-1:nth-child(2) .card-img, .l-board .mem-1:nth-child(3) .card-img{
+   
+        width: 90px;
+        border-color: #e0e0e0;
+    
+}
+.l-board .mem-1:nth-child(2){
+    position: relative;
+    top: 0px;
+    order: 1;
+}
+.l-board .mem-1:nth-child(1){
+    position: relative;
+   
+    top: -30px;
+    order: 2;
+
+}
+.l-board .mem-1:nth-child(3){
+    position: relative;
+    top: 50px;
+    order: 3;
+}
+.s-time{
+    margin-left: 15px;;
+}
+.s-time label {
+    color: #23064a;
+    font-weight: 600;
+
+}
 
 @media screen and (min-width:768px) and (max-width: 991px) {
     input {
         width: 134px;
         padding: 0px 10px;
+    }
+    .mem-1 {
+        padding: 15px;
     }
    
 }
@@ -288,6 +384,34 @@ input {
     } 
     .tp-h{
         text-align: center;
+    }
+
+    .l-board {
+        display: flex;
+        display: -webkit-flex;
+        justify-content: center;
+        -webkit-justify-content: center;
+        align-items: center;
+        -webkit-align-items: center;
+        flex-direction: column;
+        -webkit-flex-direction: column;
+    }
+    .l-board .mem-1:nth-child(2){
+        position: relative;
+        top: 0px;
+        order: 2;
+    }
+    .l-board .mem-1:nth-child(1){
+        position: relative;
+       
+        top: 0px;
+        order: 1;
+    
+    }
+    .l-board .mem-1:nth-child(3){
+        position: relative;
+        top: 0px;
+        order: 3;
     }
 
 }
