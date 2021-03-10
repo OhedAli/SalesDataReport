@@ -44,7 +44,7 @@
                         </div>
                         <div class="s-time">
                         <label for="">/ Select Day:</label>
-                         <select class="test" class="sl-date" id="changedays"> 
+                         <select class="test sl-date" id="changedays"> 
                             <option value="">Select</option>
                             <option value="today">Today</option>
                             <option value="yesterday">Yesterday</option>
