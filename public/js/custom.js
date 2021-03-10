@@ -5,12 +5,20 @@ var ac_mm = today.getMonth() + 1;
 
 var yyyy = today.getFullYear();
 if (ac_dd < 10) {
-    dd = '0' + ac_dd;
+dd = '0' + ac_dd;
+}
+else{
+dd = ac_dd;
 }
 
 if (ac_mm < 10) {
-    mm = '0' + ac_mm;
+mm = '0' + ac_mm;
 }
+else{
+mm = ac_mm;
+}
+
+
 today = yyyy + '-' + mm + '-' + dd;
 
 ! function (s) {
@@ -35,17 +43,32 @@ function markActiveNav(page) {
         $("a[name='" + page + "']").parent().addClass('active');
 }
 
-function tble_lead_info(result_data){
-    if ($.fn.DataTable.isDataTable("#datatable2"))
-    $('#datatable2').DataTable().clear().destroy();
+function tble_lead_info(result_data, adv_search_flag){
 
+    if ($.fn.DataTable.isDataTable("#datatable2"))
+        $('#datatable2').DataTable().clear().destroy();
+
+    
+    if(adv_search_flag == true){
+     resultObj = JSON.parse($("<div/>").html(result_data).text());
+    } 
+    else {
+      resultObj = result_data;
+    }
+    //console.log(resultObj);
    data = '';
-   if (result_data.length != 0) {
-        result_data.forEach(function(arrData){
+   if (resultObj.length != 0) {
+        resultObj.forEach(function(arrData){
+            let discount = (arrData.retail - arrData.cuscost);
+            if(discount < 0)
+                discount = 0;
+
             data += '<tr>' +
             '<td>' + arrData.app_number + '</td>' +
             '<td>' + arrData.first_name + ' '+ arrData.last_name + '</td>' +
-            '<td>' + arrData.model + '</td>' +
+            '<td>' + arrData.downpay + '</td>' +
+            '<td>' + arrData.finterm  + '</td>' +
+            '<td>' + discount.toFixed(2) + '</td>' +
             '<td>' + arrData.purchdate + '</td>' +
             '</tr>';
              
@@ -89,7 +112,8 @@ function insert_table_data(res_details) {
 
 function datatable_reset() {
     console.log('test');
-    $('#datatable1,#datatable2').DataTable({
+
+    $('#datatable1').DataTable({
         responsive: true,
         "order": [[1, "desc"]],
         language: {
@@ -98,6 +122,15 @@ function datatable_reset() {
             lengthMenu: '_MENU_ items/page',
         }
     });
+
+    $('#datatable2').DataTable({
+        responsive: true,
+        language: {
+          searchPlaceholder: 'Search...',
+          sSearch: '',
+          lengthMenu: '_MENU_ items/page',
+        }
+      });
 
     $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
 

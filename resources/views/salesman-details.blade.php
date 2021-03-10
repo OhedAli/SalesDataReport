@@ -80,7 +80,7 @@
         <br>
 
         <div class="section-wrapper lead_data_info">
-            <label class="section-title">Lead Info for: <span class="fill_dt"></span></label>
+            <label class="section-title">Sales Info for: <span class="fill_dt"></span></label>
             <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
 
             <div class="table-responsive table-wrapper dash_table">
@@ -89,7 +89,9 @@
                 <tr>
                     <th>APP NUMBER</th>
                     <th>NAME</th>
-                    <th>MODEL</th>
+                    <th>DOWN PAYMENT</th>
+                    <th>FINANCE TERM</th>
+                    <th>DISCOUNT</th>
                     <th>Purchase At</th>
                     
                 </tr>
@@ -107,15 +109,36 @@
     @include('common/footer')
 
     <script>
+     
+      var name = ("{{$result['sm_name']}}").replace(' ','-');
+      var src_url = "{{ route('salesman-details',':name') }}";
+      src_url = src_url.replace(':name',name);
+      
+
       $(document).ready(function(){
         var data;
         if("{{ $result['adv_range_flag'] }}" == true){
-            $('.dtxt').show();
+            //$('.dtxt').show();
+            $('.no-gutters').hide();
+            tble_lead_info("{{ $result['lead_info_details'] }}", adv_search_flag=true);
             $('.span').children('div').removeClass('active');
+
+            $(".fill_dt").text("{{$result['start_date']}}" + '-' + "{{$result['end_date']}}");
         }
+        else{
+          let today_date = $('.fc-today').data('date');
+          let current_day = $(".fc-today").children('span').text();
+          let monthYear = $(".fc-center").children('h2').text();
+          $(".fill_dt").text(current_day + ' ' + monthYear);
+
+          sales_info_salesman(today_date);
+
+         }
         
         data = "{{ $result['monthly_sm_details'] }}";
         deal_calendar(data,prev=0);
+
+
         
       });
 
@@ -125,11 +148,8 @@
 
         var cal_date = get_calendar_date();
 
-        let name = ("{{$result['sm_name']}}").replace(' ','-');
-        var src_url = "{{ route('salesman-details',':name') }}";
-        src_url = src_url.replace(':name',name);
         $.ajax({
-            url : src_url,
+            url : window.src_url,
             method: 'post',
             data : {
                 month : cal_date['month'],
@@ -149,18 +169,19 @@
 
   $(document).on('click', '.fc-lead', function(){
   //console.log("1")
-  let name = ("{{$result['sm_name']}}").replace(' ','-');
-  var src_url = "{{ route('salesman-details',':name') }}";
-  src_url = src_url.replace(':name',name);
-  
   let calDate = $(this).parent().data("date");
-  let dtt =  new Date(calDate);
-  console.log(calDate);
-  let Mon = ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
-  let month = dtt.getMonth(); 
-  $(".fill_dt").text(dtt.getDate() + ' ' + Mon[month] + ' ' + dtt.getFullYear());
+  let day = $(this).siblings('.fc-day-number').text(); 
+  let monthYear = $(".fc-center").children('h2').text();
+  $(".fill_dt").text(day + ' ' + monthYear );
+
+  sales_info_salesman(calDate);
+ 
+});
+
+function sales_info_salesman(calDate){
+  
   $.ajax({
-      url : src_url,
+      url : window.src_url,
       method: 'post',
       data : {
            leadDate: calDate,
@@ -168,8 +189,8 @@
           
       },
       success: function(result){
-            console.log(result);
-            tble_lead_info(result);
+            //console.log(result);
+            tble_lead_info(result,adv_search_flag=false);
           
       },
       error: function(err){
@@ -177,6 +198,6 @@
       }
 
   });
-});
+}
       
 </script>

@@ -203,24 +203,11 @@ class DashboardController extends Controller
             $result['start_date'] = '';
             $result['end_date'] = '';
             $result['prev_sales_details'] = '';
-            
+            $result['lead_info_details'] = '';
             
             if($request->isMethod('get'))
             {
                 return view('salesman-details',compact('result'));
-            }
-
-            elseif($request->isMethod('post') && $request->post('leadDate') != ""){
-
-                // echo $request->post('leadDate');
-               $result['lead_info_details'] = Saleslogs::select('app_number', 'model', 'first_name', 'last_name', 'purchdate')
-                                                           ->where('purchdate', $request->post('leadDate'))
-                                                           ->where('salesman',$sm_name)
-                                                           ->get();
-
-             return $result['lead_info_details'];                                      
-                
-                
             }
 
             elseif($request->isMethod('post'))
@@ -240,15 +227,31 @@ class DashboardController extends Controller
                                                     ->get();
                     return $result['prev_sales_details'];
                 }
+
+                elseif($request->post('leadDate') != ""){
+
+                      // echo $request->post('leadDate');
+                    $result['lead_info_details'] = Saleslogs::select('*')
+                    ->where('purchdate', $request->post('leadDate'))
+                    ->where('salesman',$sm_name)
+                    ->get();
+
+                    return $result['lead_info_details'];
+
+                }
                     
                 else{
                     $result['adv_range_flag'] = true;
                     $start_range = $request->post('start_date');
                     $end_range = $request->post('end_date');
 
-                    $result['start_date'] = date("dS F, Y", strtotime($request->post('start_date')));
-                    $result['end_date'] = date("dS F, Y", strtotime($request->post('end_date')));
+                    $result['start_date'] = date("d F, Y", strtotime($request->post('start_date')));
+                    $result['end_date'] = date("d F, Y", strtotime($request->post('end_date')));
                     $result['adv_range_sales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])->where('salesman',$sm_name)->count();
+                    $result['lead_info_details'] = Saleslogs::select('*')
+                    ->whereBetween('purchdate', [$start_range, $end_range])
+                    ->where('salesman',$sm_name)
+                    ->get();
                     return view('salesman-details',compact('result'));
                 }
 
