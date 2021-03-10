@@ -201,7 +201,8 @@
 
       
       $(document).on('click','.sm_name',function(){
-            var name = ($(this).text()).replace(' ','_');
+            
+            var name = ($(this).text()).replace(' ','-');
             var url = "{{ route('salesman-details',':name') }}";
             url = url.replace(':name',name);
             window.location.href = url;

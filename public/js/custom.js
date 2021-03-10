@@ -5,7 +5,7 @@ var ac_mm = today.getMonth() + 1;
 
 var yyyy = today.getFullYear();
 if (ac_dd < 10) {
-    dd = '0' + ac_dd;
+dd = '0' + ac_dd;
 }
 else{
     dd = ac_dd;
@@ -42,6 +42,49 @@ function markActiveNav(page) {
     else
         $("a[name='" + page + "']").parent().addClass('active');
 }
+
+function tble_lead_info(result_data, adv_search_flag){
+
+    if ($.fn.DataTable.isDataTable("#datatable2"))
+        $('#datatable2').DataTable().clear().destroy();
+
+    
+    if(adv_search_flag == true){
+     resultObj = JSON.parse($("<div/>").html(result_data).text());
+    } 
+    else {
+      resultObj = result_data;
+    }
+    //console.log(resultObj);
+   data = '';
+   if (resultObj.length != 0) {
+        resultObj.forEach(function(arrData){
+            let discount = (arrData.retail - arrData.cuscost);
+            if(discount < 0)
+                discount = 0;
+
+            data += '<tr>' +
+            '<td>' + arrData.app_number + '</td>' +
+            '<td>' + arrData.first_name + ' '+ arrData.last_name + '</td>' +
+            '<td>' + arrData.downpay + '</td>' +
+            '<td>' + arrData.finterm  + '</td>' +
+            '<td>' + discount.toFixed(2) + '</td>' +
+            '<td>' + arrData.purchdate + '</td>' +
+            '</tr>';
+             
+        })
+
+    
+        $("#lead_data").html(data);
+    }
+    else {
+        $("#lead_data").html('');
+    }
+
+    datatable_reset();
+}
+
+
 
 function insert_table_data(res_details) {
     
@@ -122,6 +165,15 @@ function datatable_reset() {
         }
     });
 
+    $('#datatable2').DataTable({
+        responsive: true,
+        language: {
+          searchPlaceholder: 'Search...',
+          sSearch: '',
+          lengthMenu: '_MENU_ items/page',
+        }
+      });
+
     $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
 
 
@@ -183,7 +235,7 @@ function place_lead_count(data_arr,date) {
                                 lead_cnt = data_arr[key_date];
                             }
                         });
-                        $(this).append("<div class='fc-lead'>Lead: <strong>" + lead_cnt + "</strong></div>");
+                        $(this).append("<div class='fc-lead fc-data'>Lead: <strong>" + lead_cnt + "</strong></div>");
                     }
                     else
                         $(this).append("<div class='fc-lead'>Lead: <strong> 0 </strong></div>");
@@ -192,7 +244,7 @@ function place_lead_count(data_arr,date) {
                     lead_cnt = data_arr[window.today];
                     if (lead_cnt == undefined)
                         lead_cnt = 0
-                    $(this).append("<div class='fc-lead'>Lead: <strong>" + lead_cnt +"</strong></div>");
+                    $(this).append("<div class='fc-lead fc-data'>Lead: <strong>" + lead_cnt +"</strong></div>");
                     return false;
                 }
             }
@@ -204,7 +256,7 @@ function place_lead_count(data_arr,date) {
                             lead_cnt = data_arr[key_date];
                         }
                     });
-                    $(this).append("<div class='fc-lead'>Lead: <strong>" + lead_cnt + "</strong></div>");
+                    $(this).append("<div class='fc-lead fc-data'>Lead: <strong>" + lead_cnt + "</strong></div>");
                 }
                 else
                     $(this).append("<div class='fc-lead'>Lead: <strong> 0 </strong></div>");
@@ -230,6 +282,7 @@ function get_calendar_date() {
     return date_arr;
 
 }
+
 
 
 $(function(){
@@ -268,3 +321,5 @@ $(function () {
     });
 
 });
+
+
