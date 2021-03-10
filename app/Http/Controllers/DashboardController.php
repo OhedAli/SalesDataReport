@@ -77,7 +77,7 @@ class DashboardController extends Controller
                                     ->groupBy('salesman')
                                     ->get();
 
-        //$result['weekly_details'] = $this->call_search_ytel($result['weekly_details']->toArray());
+        // $result['weekly_details'] = $this->call_search_ytel($result['weekly_details']->toArray());
 
         // echo '<pre>';
         // print_r($result['weekly_details']);
@@ -205,12 +205,6 @@ class DashboardController extends Controller
                 ->where('vicidial_closer_log.list_id','999')
                 ->where('vicidial_closer_log.length_in_sec','>','15')
                 ->whereBetween('vicidial_closer_log.call_date',[$start_date,$end_date]);
-                })
-                ->join('vicidial_list',function($join2) use($name,$start_date,$end_date) {
-                $join2->on('vicidial_list.user','=','vicidial_closer_log.user')
-                      ->on('vicidial_list.lead_id','=','vicidial_closer_log.lead_id')
-                      ->on('vicidial_list.entry_date','=','vicidial_closer_log.call_date');
-
                 })
                 ->count();
                 $dataValue['total_calls'] = $total_call;

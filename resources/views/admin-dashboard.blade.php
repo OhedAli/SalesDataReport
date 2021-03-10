@@ -99,7 +99,7 @@
 
         <div class="section-wrapper sales_info">
             <label class="section-title">Sales Info</label>
-            <p>Total Lead: <span class="font-weight-bold" id="datacountlead"></span> </p>
+            <p>Total Lead: <span class="font-weight-bold" id="datacountlead">{{ $result['todaycount'] }}</span> </p>
             <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
 
             <div class="table-responsive table-wrapper dash_table">
@@ -149,47 +149,50 @@
                 data = "{{ $result['monthly_details'] }}";
                 leaderboard = "{{$result['montly_top']}}";
                 $('.name_topper').html('Monthly');
+                $('#datacountlead').html("{{ $result['monthlycount'] }}");
             }
             else if($(this).attr('id') == 'weekly'){
                 data = "{{ $result['weekly_details'] }}";
                 leaderboard = "{{$result['weekly_top']}}";
                 $('.name_topper').html('Weekly');
+                $('#datacountlead').html("{{ $result['weeklycount'] }}");
               }
               else{
                 data = "{{ $result['today_details'] }}";
                 leaderboard = "{{$result['today_top']}}";
                 $('.name_topper').html('Today');
+                $('#datacountlead').html("{{ $result['todaycount'] }}");
               }
-              leader_board_update(leaderboard);
+            leader_board_update(leaderboard);
             insert_table_data(data);
             
         });
 
         $('#changedays').change(function(){
-          console.log(this.value);
+          //console.log(this.value);
           if(this.value == 'monthly'){
               data = "{{ $result['monthly_details'] }}";
-              $('#datacountlead').html({{ $result['monthlycount'] }});
+              $('#datacountlead').html("{{ $result['monthlycount'] }}");
           }
           else if(this.value == 'last_month'){
               data = "{{ $result['Secondmonthly_details'] }}";
-              $('#datacountlead').html({{ $result['Secondmonthlycount'] }});
+              $('#datacountlead').html("{{ $result['Secondmonthlycount'] }}");
           }
           else if(this.value == 'weekly'){
               data = "{{ $result['weekly_details'] }}";
-              $('#datacountlead').html({{ $result['weeklycount'] }});
+              $('#datacountlead').html("{{ $result['weeklycount'] }}");
             }
           else if(this.value == 'last_week'){
              data = "{{ $result['Secondweekly_details'] }}";
-             $('#datacountlead').html({{ $result['Secondweeklycount'] }});
+             $('#datacountlead').html("{{ $result['Secondweeklycount'] }}");
             }
           else if(this.value == 'yesterday'){
               data = "{{ $result['yesterday_details'] }}";
-              $('#datacountlead').html({{ $result['yesterdaycount'] }});
+              $('#datacountlead').html("{{ $result['yesterdaycount'] }}");
             }
           else{
               data = "{{ $result['today_details'] }}";
-              $('#datacountlead').html({{ $result['todaycount'] }});
+              $('#datacountlead').html("{{ $result['todaycount'] }}");
           }
           insert_table_data(data);
         })

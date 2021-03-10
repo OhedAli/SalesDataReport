@@ -7,10 +7,18 @@ var yyyy = today.getFullYear();
 if (ac_dd < 10) {
     dd = '0' + ac_dd;
 }
+else{
+    dd = ac_dd;
+}
 
 if (ac_mm < 10) {
     mm = '0' + ac_mm;
 }
+else{
+    mm = ac_mm;
+}
+
+
 today = yyyy + '-' + mm + '-' + dd;
 
 ! function (s) {
@@ -64,24 +72,46 @@ function insert_table_data(res_details) {
 function leader_board_update(res_details){
    
     let result = JSON.parse($("<div/>").html(res_details).text());
-    console.log(result);
+    //console.log(result);
+    let path = window.location.href;
+    path = path.substr(0,path.indexOf('public')) + 'public';
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
             
-            if (datavalue.sales_count != '')
-                $('.leaderboardcount'+datakey).html(datavalue.sales_count);
-                $('.leader_name'+datakey).html(datavalue.salesman);
-                //console.log(datakey);
+            if (datavalue.sales_count != ''){
+
+                if($(".l-board").children().length < 3 ){
+                    
+                    let data_html = '<div class="mem-1"><div class="tx-center">'+
+                                    '<a href="javascript:void(0);"><img src="'+ path +'/images/profile.png" class="card-img" alt=""></a>'+
+                                    '<h5 class="mg-t-10 mg-b-5">'+
+                                    '<a href="javascript:void(0);" class="contact-name sm_name leader_name'+ datakey + '">'+ datavalue.salesman + '</a>'+
+                                    '<p><span class="leaderboardcount'+ datakey +'">'+ datavalue.sales_count + '</span> Sales</p>'+
+                                    '</div></div>';
+
+                    $(".l-board").append(data_html);
+                }
+                else{
+                    $('.leaderboardcount'+datakey).html(datavalue.sales_count);
+                    $('.leader_name'+datakey).html(datavalue.salesman);
+                    //console.log(datakey);
+                }
+                
+            }
+                
 
         });
 
-        $("#sales_info_data").html(html_data);
+    }
+
+    else{
+        $(".l-board").html('');
     }
 
 }
 
 function datatable_reset() {
-    console.log('test');
+    
     $('#datatable1').DataTable({
         responsive: true,
         "order": [[1, "desc"]],
@@ -99,7 +129,7 @@ function datatable_reset() {
 
 function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, finterm_add, retail_add) {
     
-    var downpayment = cuscost_add / downpay_add;
+    var downpayment = (downpay_add / cuscost_add) * 100;
     var finterm = finterm_add / sales_count;
     var discount = retail_add - cuscost_add;
     discount = discount / sales_count;
