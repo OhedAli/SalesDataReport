@@ -16,4 +16,9 @@ class Saleslogs extends Model
     public function plan(){
         return $this->belongsTo(Plan::class);
     }
+
+    public function slaesagent()
+    {
+        return $this->hasOne(Salesagent::class, 'user_alter_name', 'salesman');
+    }
 }
