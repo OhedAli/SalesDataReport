@@ -116,9 +116,9 @@ function leader_board_update(res_details){
    
     let result = JSON.parse($("<div/>").html(res_details).text());
     //console.log(result);
-    let path = window.location.href;
-    //let path = window.location.origin;
-    path = path.substr(0,path.indexOf('public')) + 'public';
+    //let path = window.location.href;
+    let path = window.location.origin;
+    //path = path.substr(0,path.indexOf('public')) + 'public';
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
             

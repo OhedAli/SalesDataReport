@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Saleslogs;
-
+use App\Models\Saleslogs\Ytel;
 
 class DashboardController extends Controller
 {
@@ -56,14 +56,14 @@ class DashboardController extends Controller
         //dd($result['today_top']);
         $result['yesterdaycount'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])->count();
         $result['yesterday_details'] = Saleslogs::select('salesman', 
-                                Saleslogs::raw('SUM(downpay) as downpay_add'),
-                                Saleslogs::raw('SUM(cuscost) as cuscost_add'),
-                                Saleslogs::raw('SUM(finterm) as finterm_add'), 
-                                Saleslogs::raw('SUM(retail) as retail_add'),
-                                Saleslogs::raw('count(salesman) as sales_count '))
-                                ->whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])
-                                ->groupBy('salesman')
-                                ->get();
+                                        Saleslogs::raw('SUM(downpay) as downpay_add'),
+                                        Saleslogs::raw('SUM(cuscost) as cuscost_add'),
+                                        Saleslogs::raw('SUM(finterm) as finterm_add'), 
+                                        Saleslogs::raw('SUM(retail) as retail_add'),
+                                        Saleslogs::raw('count(salesman) as sales_count '))
+                                        ->whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])
+                                        ->groupBy('salesman')
+                                        ->get();
         
         $result['dailydata'] = $this->FlagSighCheck($result['todaycount'], $result['yesterdaycount']);
         
@@ -73,11 +73,12 @@ class DashboardController extends Controller
                                     Saleslogs::raw('SUM(finterm) as finterm_add'), 
                                     Saleslogs::raw('SUM(retail) as retail_add'), 
                                     Saleslogs::raw('count(salesman) as sales_count '))
+                                    ->with('slaesagent')
                                     ->whereBetween('purchdate',[$lastweek,$todayDate_end])
                                     ->groupBy('salesman')
                                     ->get();
 
-        // $result['weekly_details'] = $this->call_search_ytel($result['weekly_details']->toArray());
+        //$result['weekly_details'] = $this->call_search_ytel($result['weekly_details']->toArray(),$lastweek,$todayDate_end);
 
         // echo '<pre>';
         // print_r($result['weekly_details']);
@@ -190,25 +191,27 @@ class DashboardController extends Controller
         }
 
 
-    public function call_search_ytel($dataArr)
+    public function call_search_ytel($dataArr, $start_date, $end_date)
     {
     
         $resArr = array();
+        $start_range = $start_date.' 00:00:00';
+        $end_range = $end_date.' 23:59:59';
+
+        echo '<pre>';
         foreach ($dataArr as $datakey => $dataValue) {
-        $name = $dataValue['salesman'];
-        $start_date = '2021-03-08 00:00:00';
-        $end_date = date('Y-m-d H:i:s');
-        $total_call = DB::connection('mysql3')->table('vicidial_closer_log')
-                ->join('vicidial_users',function($join1) use($name,$start_date,$end_date) {
-                $join1->on('vicidial_users.user','=','vicidial_closer_log.user')
-                ->where('vicidial_users.full_name', $name)
-                ->where('vicidial_closer_log.list_id','999')
-                ->where('vicidial_closer_log.length_in_sec','>','15')
-                ->whereBetween('vicidial_closer_log.call_date',[$start_date,$end_date]);
-                })
-                ->count();
-                $dataValue['total_calls'] = $total_call;
-                array_push($resArr,$dataValue);
+
+            $total_calls = Ytel::select('*')
+                          ->where('user','=',$dataValue['slaesagent']['user'])
+                          ->where('list_id','999')
+                          ->where('length_in_sec','>','15')
+                          ->whereBetween('call_date',[$start_range,$end_range])
+                          ->get()->toArray();
+
+            $dataValue['total_calls'] = $total_calls;
+            array_push($resArr,$dataValue);
+            //print_r($dataValue['slaesagent']['user']);
+            //die();
         }
         return $resArr;
     }
