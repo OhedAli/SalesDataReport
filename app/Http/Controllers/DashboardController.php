@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Saleslogs;
-use App\Models\Saleslogs\Ytel;
+use App\Models\Ytel;
 
 class DashboardController extends Controller
 {
@@ -44,9 +44,15 @@ class DashboardController extends Controller
                                 Saleslogs::raw('SUM(finterm) as finterm_add'), 
                                 Saleslogs::raw('SUM(retail) as retail_add'),
                                 Saleslogs::raw('count(salesman) as sales_count '))
+                                ->with('slaesagent')
                                 ->whereBetween('purchdate',[$todayDate_start, $todayDate_end])
                                 ->groupBy('salesman')
                                 ->get();
+
+        if($result['todaycount'] > 0){
+            $result['today_details'] = json_encode($this->call_search_ytel($result['today_details']->toArray(),$todayDate_start,$todayDate_end));
+        }
+
         $result['today_top'] = Saleslogs::select('salesman', Saleslogs::raw('count(salesman) as sales_count '))
                                 ->whereBetween('purchdate',[$todayDate_start,$todayDate_end])
                                 ->groupBy('salesman')
@@ -61,9 +67,15 @@ class DashboardController extends Controller
                                         Saleslogs::raw('SUM(finterm) as finterm_add'), 
                                         Saleslogs::raw('SUM(retail) as retail_add'),
                                         Saleslogs::raw('count(salesman) as sales_count '))
+                                        ->with('slaesagent')
                                         ->whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])
                                         ->groupBy('salesman')
                                         ->get();
+
+        //dd($result['yesterday_details']->toArray());
+        if($result['yesterdaycount'] > 0){
+            $result['yesterday_details'] = json_encode($this->call_search_ytel($result['yesterday_details']->toArray(),$yesterdayDate_start,$yesterdayDate_start));
+        }
         
         $result['dailydata'] = $this->FlagSighCheck($result['todaycount'], $result['yesterdaycount']);
         
@@ -78,7 +90,11 @@ class DashboardController extends Controller
                                     ->groupBy('salesman')
                                     ->get();
 
-        //$result['weekly_details'] = $this->call_search_ytel($result['weekly_details']->toArray(),$lastweek,$todayDate_end);
+        if($result['weeklycount'] > 0){
+            $result['weekly_details'] = json_encode($this->call_search_ytel($result['weekly_details']->toArray(),$lastweek,$todayDate_end));
+        }
+
+
 
         // echo '<pre>';
         // print_r($result['weekly_details']);
@@ -97,9 +113,15 @@ class DashboardController extends Controller
                                     Saleslogs::raw('SUM(finterm) as finterm_add'), 
                                     Saleslogs::raw('SUM(retail) as retail_add'), 
                                     Saleslogs::raw('count(salesman) as sales_count '))
+                                    ->with('slaesagent')
                                     ->whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])
                                     ->groupBy('salesman')
                                     ->get();
+
+        if($result['Secondweeklycount'] > 0){
+            $result['Secondweekly_details'] = json_encode($this->call_search_ytel($result['Secondweekly_details']->toArray(),$Secondlastweek_start,$Secondlastweek_end));
+        }
+
         $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['Secondweeklycount']);
         
         $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->count();
@@ -108,9 +130,13 @@ class DashboardController extends Controller
                                       Saleslogs::raw('SUM(finterm) as finterm_add'), 
                                       Saleslogs::raw('SUM(retail) as retail_add'),
                                       Saleslogs::raw('count(salesman) as sales_count '))
+                                      ->with('slaesagent')
                                       ->whereBetween('purchdate',[$lastmonth,$todayDate_end])
                                       ->groupBy('salesman')
                                       ->get();
+
+        if($result['monthlycount'] > 0)
+            $result['monthly_details'] = json_encode($this->call_search_ytel($result['monthly_details']->toArray(),$lastmonth,$todayDate_end));
 
         $result['montly_top'] = Saleslogs::select('salesman', Saleslogs::raw('count(salesman) as sales_count '))
                                 ->whereBetween('purchdate',[$lastmonth,$todayDate_end])
@@ -127,9 +153,14 @@ class DashboardController extends Controller
                                       Saleslogs::raw('SUM(finterm) as finterm_add'), 
                                       Saleslogs::raw('SUM(retail) as retail_add'),
                                       Saleslogs::raw('count(salesman) as sales_count '))
+                                      ->with('slaesagent')
                                       ->whereBetween('purchdate',[$Secondlastmonth_start,$Secondlastmonth_end])
                                       ->groupBy('salesman')
                                       ->get();
+
+        if($result['Secondmonthlycount'] > 0)
+            $result['Secondmonthly_details'] = json_encode($this->call_search_ytel($result['Secondmonthly_details']->toArray(),$Secondlastmonth_start,$Secondlastmonth_end));
+
         $result['monthlydata'] = $this->FlagSighCheck($result['monthlycount'], $result['Secondmonthlycount']);
         
         if($request->isMethod('get'))
@@ -197,22 +228,32 @@ class DashboardController extends Controller
         $resArr = array();
         $start_range = $start_date.' 00:00:00';
         $end_range = $end_date.' 23:59:59';
-
-        echo '<pre>';
+        // echo $start_range . "<br>";
+        // echo $end_range . "<br>";
+        // echo '<pre>';
+        
         foreach ($dataArr as $datakey => $dataValue) {
+            if(!empty($dataValue['slaesagent'])){
 
-            $total_calls = Ytel::select('*')
+                // echo $dataValue['slaesagent']['user'];
+                $result = Ytel::select('user',Ytel::raw('count(user) as total_calls'))
                           ->where('user','=',$dataValue['slaesagent']['user'])
                           ->where('list_id','999')
                           ->where('length_in_sec','>','15')
                           ->whereBetween('call_date',[$start_range,$end_range])
+                          ->groupBy('user')
                           ->get()->toArray();
 
-            $dataValue['total_calls'] = $total_calls;
+                // print_r($result);
+                if(!empty($result))
+                    $dataValue['total_calls'] = $result[0]['total_calls'];
+
+            }
+
             array_push($resArr,$dataValue);
-            //print_r($dataValue['slaesagent']['user']);
-            //die();
+            
         }
+        //die();
         return $resArr;
     }
 

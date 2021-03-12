@@ -98,7 +98,7 @@ function insert_table_data(res_details) {
         $.each(result, function (datakey, datavalue) {
             
             if (datavalue.salesman != '')
-                html_data += table_data_insertion(datavalue.salesman, datavalue.sales_count, datavalue.downpay_add, datavalue.cuscost_add, datavalue.finterm_add, datavalue.retail_add);
+                html_data += table_data_insertion(datavalue.salesman, datavalue.sales_count, datavalue.downpay_add, datavalue.cuscost_add, datavalue.finterm_add, datavalue.retail_add,datavalue.total_calls);
 
         });
 
@@ -116,9 +116,9 @@ function leader_board_update(res_details){
    
     let result = JSON.parse($("<div/>").html(res_details).text());
     //console.log(result);
-    //let path = window.location.href;
-    let path = window.location.origin;
-    //path = path.substr(0,path.indexOf('public')) + 'public';
+    let path = window.location.href;
+    //let path = window.location.origin;
+    path = path.substr(0,path.indexOf('public')) + 'public';
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
             
@@ -182,12 +182,14 @@ function datatable_reset() {
 
 }
 
-function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, finterm_add, retail_add) {
+function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, finterm_add, retail_add,total_calls) {
     
     var downpayment = (downpay_add / cuscost_add) * 100;
     var finterm = finterm_add / sales_count;
     var discount = retail_add - cuscost_add;
     discount = discount / sales_count;
+    var calls = (total_calls !== undefined ? total_calls : 'Not Avialable');
+    var conv_rate = (total_calls !== undefined ? (((sales_count/total_calls) * 100).toFixed(2)) + '%' : 'Not Avialable');
 
     data = '';
 
@@ -197,8 +199,8 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
         '<td>' + downpayment.toFixed(2) + '%</td>' +
         '<td>' + finterm.toFixed(2) + '</td>' +
         '<td>' + discount.toFixed(2) + '</td>' +
-        '<td>' + '' + '</td>' +
-        '<td>' + '' + '</td>' +
+        '<td>' + calls + '</td>' +
+        '<td>' + conv_rate + '</td>' +
         '</tr>';
     return data;
 }
