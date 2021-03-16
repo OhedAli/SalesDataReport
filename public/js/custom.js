@@ -116,6 +116,7 @@ function leader_board_update(res_details){
    
     let result = JSON.parse($("<div/>").html(res_details).text());
     //console.log(result);
+    $(".l-board").html('');
     let path = window.location.href;
     //let path = window.location.origin;
     path = path.substr(0,path.indexOf('public')) + 'public';
@@ -123,25 +124,17 @@ function leader_board_update(res_details){
         $.each(result, function (datakey, datavalue) {
             
             if (datavalue.sales_count != ''){
-
-                if($(".l-board").children().length < 3 ){
                     
-                    let data_html = '<div class="mem-1"><div class="tx-center">'+
-                                    '<a href="javascript:void(0);" class="img-a"><img src="'+ path +'/images/profile.png" class="card-img" alt="">'+
-                                    '<div class="hexa"><img src="'+ path + '/images/hexa'+ (datakey + 1) +'.png" class="hexa1-bg" alt="">'+
-                                    '<p>'+ (datakey + 1) +'</p></div></a>'+
-                                    '<h5 class="mg-t-10 mg-b-5">'+
-                                    '<a href="javascript:void(0);" class="contact-name sm_name leader_name_'+ datakey + '">'+ datavalue.salesman + '</a>'+
-                                    '<p><span class="leaderboardcount'+ datakey +'">'+ datavalue.sales_count + '</span> Sales</p>'+
-                                    '</div></div>';
+                let data_html = '<div class="mem-1"><div class="tx-center">'+
+                                '<a href="javascript:void(0);" class="img-a"><img src="'+ path +'/images/profile.png" class="card-img" alt="">'+
+                                '<div class="hexa"><img src="'+ path + '/images/hexa'+ (datakey + 1) +'.png" class="hexa1-bg" alt="">'+
+                                '<p>'+ (datakey + 1) +'</p></div></a>'+
+                                '<h5 class="mg-t-10 mg-b-5">'+
+                                '<a href="javascript:void(0);" class="contact-name sm_name leader_name_'+ datakey + '">'+ datavalue.salesman + '</a>'+
+                                '<p><span class="leaderboardcount'+ datakey +'">'+ datavalue.sales_count + '</span> Sales</p>'+
+                                '</div></div>';
 
-                    $(".l-board").append(data_html);
-                }
-                else{
-                    $('.leaderboardcount'+datakey).html(datavalue.sales_count);
-                    $('.leader_name'+datakey).html(datavalue.salesman);
-                    //console.log(datakey);
-                }
+                $(".l-board").append(data_html);
                 
             }
                 
@@ -240,16 +233,16 @@ function place_lead_count(data_arr,date) {
                                 lead_cnt = data_arr[key_date];
                             }
                         });
-                        $(this).append("<div class='fc-lead fc-data'>Lead: <strong>" + lead_cnt + "</strong></div>");
+                        $(this).append("<div class='fc-lead fc-data'><a style='cursor:pointer'>Lead: <strong>" + lead_cnt + "</strong></a></div>");
                     }
                     else
-                        $(this).append("<div class='fc-lead'>Lead: <strong> 0 </strong></div>");
+                        $(this).append("<div class='fc-lead'><a style='cursor:pointer'>Lead: <strong> 0 </strong></a></div>");
                 }
                 else {
                     lead_cnt = data_arr[window.today];
                     if (lead_cnt == undefined)
                         lead_cnt = 0
-                    $(this).append("<div class='fc-lead fc-data'>Lead: <strong>" + lead_cnt +"</strong></div>");
+                    $(this).append("<div class='fc-lead fc-data'><a style='cursor:pointer'>Lead: <strong>" + lead_cnt +"</strong></a></div>");
                     return false;
                 }
             }

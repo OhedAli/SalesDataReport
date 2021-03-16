@@ -27,7 +27,7 @@
             <a class="nav-link" href="#">
 
               <i class="icon ion-ios-filing-outline"></i>
-              <span>Contact</span>
+              <span>Calls</span>
             </a>
             
           </li>

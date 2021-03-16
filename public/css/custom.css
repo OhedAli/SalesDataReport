@@ -438,6 +438,76 @@ input {
 }
 
 
+
+
+
+
+.top-card{
+
+    display: flex !important;
+    display: -webkit-flex !important;
+    flex-direction: row !important;
+    -webkit-flex-direction: row !important;
+    padding: 0px !important;
+    
+}
+
+.top-part{
+    width: 45%;
+}
+.crd-tab{
+    width: 55%;
+    border-left:1px solid #c3c3e0;
+    
+}
+.d-flex{
+    display: -webkit-flex;
+    display: flex;
+}
+.ctab-bx{
+    flex: 1;
+    text-align: left;
+    font-size: 12px;
+    width: 50%;
+    background: #fff;
+    padding: 7px 0px 10px 5px;
+    min-height: 78px;
+    box-sizing: border-box;
+    color: #868ba1;
+}
+.bl-1{
+    border-left: 1px solid #efeeee;
+}
+.bt-1{
+   border-top: 1px solid #efeeee; 
+}
+p.text-black{
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+
+.ctab-bx p{
+    margin-bottom: 0px;
+    
+}
+.top-part{
+    padding: 25px 10px 25px 10px;
+}
+
+
+
+
+@media screen and (min-width:992px) and (max-width: 1199px) {
+    .ctab-bx {
+        min-height: 85px;
+    }
+    .card {
+        min-height: 175px;
+    }   
+}
+
 @media screen and (min-width:768px) and (max-width: 991px) {
     input {
         width: 134px;
@@ -446,6 +516,15 @@ input {
 
     .mem-1 {
         padding: 15px;
+    }
+    .ctab-bx {
+        min-height: 102px;
+    }
+    .card {
+        min-height: 175px;
+    }
+    .ctab-bx {
+        font-size: 9px;;
     }
 }
 
@@ -530,9 +609,32 @@ input {
         order: 3;
     }
 }
+@media screen and (min-width:576px) and (max-width: 767px) {
 
+
+    .ctab-bx {
+        min-height: 112px;
+    }
+    .card {
+        min-height: 220px;
+    }
+    .card {
+        margin: 0px 0px !important;
+    }
+    .card-earning-summary h1{
+        font-size: 30px;
+    }
+
+
+
+
+
+}
 @media screen and (max-width:450px) {
     dateinput-picker {
         width: 220px !important;
+    }
+    .ctab-bx {
+        min-height: 85px;
     }
 }
