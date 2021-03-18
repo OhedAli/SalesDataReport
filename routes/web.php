@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleslogsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 
 
 /*
@@ -40,10 +41,10 @@ Route::get('/profile',[ProfileController::class, 'index'])->name('profile');
 
 });
 
-
-//Route::get('/profile-page', function(){
-//return view('profile-page');
-//})->middleware(['auth'])->name('view.profile');
+Route::middleware(['auth'])->group(function () {
+    Route::resource('/user', UserController::class);
+   
+});
 
 
 require __DIR__.'/auth.php';
