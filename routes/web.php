@@ -4,11 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleslogsController;
 use App\Http\Controllers\ProfileController;
-<<<<<<< HEAD
 use App\Http\Controllers\TvDashboardController;
-=======
 use App\Http\Controllers\UserController;
->>>>>>> a21f69f5a40535aa19326af8202a6eb2d9acfcf5
+
 
 
 /*
@@ -44,11 +42,7 @@ Route::get('sales/{id}',[SaleslogsController::class, 'showdetails'])->name('sale
 
 Route::get('/profile',[ProfileController::class, 'index'])->name('profile');
 Route::resource('/user', UserController::class);
-<<<<<<< HEAD
 
-
-=======
->>>>>>> a21f69f5a40535aa19326af8202a6eb2d9acfcf5
 });
 
 
