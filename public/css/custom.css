@@ -496,8 +496,91 @@ p.text-black{
     padding: 25px 10px 25px 10px;
 }
 
+.fc-add_event-button{
+    padding: 0px 24px !important;
+    position: relative !important;
+}
 
+.fc-add_event-button:before{
 
+    content: "\f106";
+    font-family: FontAwesome;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    font-size: 20px;
+}
+
+.fc-add_event-button.minimize:before{
+
+    content: "\f107";
+    font-family: FontAwesome;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    font-size: 20px;
+}
+.dt-head{
+    display: flex;
+}
+
+.sales-values{
+    padding-right: 50px;
+}
+
+.reload button{
+    background-color: #1b84e7;
+    background-image: none;
+    color: #fff;
+    border-radius: 4px;
+    border: 0px;
+    cursor: pointer;
+    max-width: 85px;
+    height: 35px;
+}
+
+.opts{
+    margin-top: -40px;
+    display: flex;
+}
+
+.opts span{
+    background-image: none;
+    color: #000;
+    border: 0px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 7px 15px;
+    border: 1px solid #c1cae2;
+}
+
+.opts span:nth-child(1){
+     
+}
+
+.opts span:nth-child(2){
+    border-left: 0px;
+}
+
+.opts span.active-opt{
+ -webkit-box-shadow: 0 2px 5px 0 rgb(0 0 0 / 20%), 0 2px 10px 0 rgb(0 0 0 / 10%);
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 20%), 0 2px 10px 0 rgb(0 0 0 / 10%);
+    background-color: #f5f5f5;
+}
+
+.back-btn{
+    color: #1b84e7;
+}
+
+.back-btn span{
+    font-size: 20px;
+    cursor: pointer;
+}
 
 @media screen and (min-width:992px) and (max-width: 1199px) {
     .ctab-bx {

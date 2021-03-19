@@ -32,6 +32,15 @@ today = yyyy + '-' + mm + '-' + dd;
     })
 }(jQuery);
 
+
+$('.back-btn span').on('click',function(){
+    $('.back-btn').fadeOut('slow');
+    setTimeout(function(){
+        $('.no-gutters').fadeIn('slow');
+    },500);
+    
+});
+
 function markActiveNav(page) {
     //console.log(page);
     $(".nav-item").removeClass('active');
@@ -43,32 +52,39 @@ function markActiveNav(page) {
         $("a[name='" + page + "']").parent().addClass('active');
 }
 
-function tble_lead_info(result_data, adv_search_flag){
+function tble_lead_info(result_data, search_flag){
 
     if ($.fn.DataTable.isDataTable("#datatable2"))
         $('#datatable2').DataTable().clear().destroy();
 
     
-    if(adv_search_flag == true){
+    if(search_flag == true){
      resultObj = JSON.parse($("<div/>").html(result_data).text());
     } 
     else {
       resultObj = result_data;
     }
     //console.log(resultObj);
-   data = '';
+   var data = '';
+   var type;
    if (resultObj.length != 0) {
         resultObj.forEach(function(arrData){
             let discount = (arrData.retail - arrData.cuscost);
             if(discount < 0)
                 discount = 0;
 
+            if(arrData.label1 != 'WHOLESALE')
+                type = 'SALE';
+            else
+                type = 'WHOLESALE';
+
             data += '<tr>' +
             '<td>' + arrData.app_number + '</td>' +
             '<td>' + arrData.first_name + ' '+ arrData.last_name + '</td>' +
-            '<td>' + arrData.downpay + '</td>' +
+            '<td>$' + Math.round(arrData.downpay) + '</td>' +
             '<td>' + arrData.finterm  + '</td>' +
-            '<td>' + discount.toFixed(2) + '</td>' +
+            '<td>$' + Math.round(discount) + '</td>' +
+            '<td>' + type + '</td>' +
             '<td>' + arrData.purchdate + '</td>' +
             '</tr>';
              
@@ -154,6 +170,7 @@ function datatable_reset() {
     $('#datatable1').DataTable({
         responsive: true,
         "order": [[1, "desc"]],
+        "columnDefs" : [{targets:5, type:"num-html"},{targets:6, type:"num-html"}],
         language: {
             searchPlaceholder: 'Search...',
             sSearch: '',
@@ -180,7 +197,7 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
     var downpayment = (downpay_add / cuscost_add) * 100;
     var finterm = finterm_add / sales_count;
     var discount = retail_add - cuscost_add;
-    discount = discount / sales_count;
+    discount = '$' + Math.round(discount / sales_count);
     var calls = (total_calls !== undefined ? total_calls : 'Not Avialable');
     var conv_rate = (total_calls !== undefined ? (((sales_count/total_calls) * 100).toFixed(2)) + '%' : 'Not Avialable');
 
@@ -191,7 +208,7 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
         '<td>' + sales_count + '</td>' +
         '<td>' + downpayment.toFixed(2) + '%</td>' +
         '<td>' + finterm.toFixed(2) + '</td>' +
-        '<td>' + discount.toFixed(2) + '</td>' +
+        '<td>' + discount + '</td>' +
         '<td>' + calls + '</td>' +
         '<td>' + conv_rate + '</td>' +
         '</tr>';
@@ -286,10 +303,20 @@ function get_calendar_date() {
 $(function(){
 
     $('#fullCalendar').fullCalendar({
+
+        customButtons: {
+            add_event: {
+              text: ' ',
+              click: function() {
+                $('.fc-view-container').toggle('slow');
+                $('.fc-add_event-button').toggleClass('minimize');
+              }
+            }
+        },
         header: {
             left: 'prev',
             center: 'title',
-            right: 'next'
+            right: 'add_event next'
         }
 
     });
@@ -318,6 +345,24 @@ $(function () {
         }
     });
 
+    $.extend($.fn.dataTableExt.oSort, {
+        "num-html-pre": function ( a ) {
+            var x = String(a).replace( /<[\s\S]*?>/g, "" );
+            return parseFloat( x );
+        },
+     
+        "num-html-asc": function ( a, b ) {
+            return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+        },
+     
+        "num-html-desc": function ( a, b ) {
+            return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+        }
+    } );
+
 });
 
+$('.reload').on('click',function(){
+    location.reload();
+});
 
