@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleslogsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 
 
 /*
@@ -37,7 +38,7 @@ Route::get('/wholesales',[SaleslogsController::class, 'WholeSales'])->name('whol
 Route::get('sales/{id}',[SaleslogsController::class, 'showdetails'])->name('sales-view');
 
 Route::get('/profile',[ProfileController::class, 'index'])->name('profile');
-
+Route::resource('/user', UserController::class);
 });
 
 
