@@ -1,5 +1,4 @@
 @include('common/header')
-@include('common/navbar')
 <div class="slim-mainpanel">
       <div class="container pd-t-50">
         <div class="row">
@@ -27,46 +26,6 @@
               @endforeach
             </div>
             </div>
-
-            <div class="adv_srch">
-                <div class="frm-box">
-                       <form action="" method="post">
-                      <!--  Details -->
-                      @csrf
-                      <div class="form-group">
-                      <h6 class="slim-card-title">Your Lead Summary</h6>
-                          <div class="controls f1">
-                             <label for="arrive" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;From:</label>
-                            <input type="date" name="start_date" placeholder="Select date" class="adv_date" data-polyfill="all" required>
-                          </div>      
-                          <div class="controls">
-                             <label for="depart" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;To:</label>
-                            <input type="date" name="end_date" placeholder="Select date" class="adv_date" data-polyfill="all" required>
-        
-                          </div>      
-                        <div class="btn">
-                           <input type="submit" value="SUBMIT" class="btn-frm" name="">
-                        </div>
-                        <div class="s-time">
-                        <label for="">/ Select Day:</label>
-                         <select class="test sl-date" id="changedays"> 
-                            <option value="">Select</option>
-                            <option value="today">Today</option>
-                            <option value="yesterday">Yesterday</option>
-                            <option value="weekly">Week-to-date</option>
-                            <option value="last_week">Last Week</option>
-                            <option value="monthly">Month-To-Date</option>
-                            <option value="last_month">Last Month</option>
-                          </select>
-                        </div>
-                      </div>
-                    </form>
-
-                    <P class="dtxt" style="display: none;">Showing Data from <span class='drng'>'{{ $result['start_date'] }}'</span> to <span class='drng'>'{{ $result['end_date'] }}'</span></p>
-
-                   </div>
-            </div>
-
 
             <div class="row no-gutters">
               <div class="col-sm-4 span" id="daily" style="cursor:pointer;">
@@ -227,26 +186,17 @@
                 </div><!-- card -->
               </div><!-- col-6 -->
             </div><!-- row -->
-
-            <div class="back-btn" style="display: none;">
-              <span><i class="fa fa-chevron-left" aria-hidden="true"></i> back to board </span>
-            </div>
-
           </div>
           <!-- col-6 -->
          
         </div><!-- row -->
 
         <div class="section-wrapper sales_info">
-          <div class="dt-head">
+
             <div class="sales-values">
               <label class="section-title">Sales Info</label>
               <p>Total Lead: <span class="font-weight-bold" id="datacountlead">{{ $result['todaycount'] }}</span> </p>
             </div>
-            <div class="reload">
-              <button>Reload  <i class="fa fa-refresh" aria-hidden="true"></i></button>
-            </div>
-          </div>
             
             <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
 
@@ -279,17 +229,7 @@
       $(document).ready(function(){
         var data;
         var leaderboard;
-        if("{{ $result['adv_range_flag'] }}" == false){
-            data = "{{ $result['today_details'] }}";
-        }
-        else{
-            data = "{{ $result['adv_range_sales_details'] }}";
-            $('.span').children('div').removeClass('active');
-            $('.dtxt').show();
-            $('.no-gutters').fadeOut('slow');
-            $("#datacountlead").html("{{ $result['adv_range_sales_count'] }}");
-        }
-        
+        data = "{{ $result['today_details'] }}";
         insert_table_data(data);
         $('.span').click(function(){
             $('.dtxt').hide();
@@ -317,40 +257,11 @@
             insert_table_data(data);
             
         });
-
-        $('#changedays').change(function(){
-          //console.log(this.value);
-          $('.no-gutters').fadeOut('slow');
-          setTimeout(function(){
-              $('.back-btn').fadeIn('slow');
-          },500);
-          if(this.value == 'monthly'){
-              data = "{{ $result['monthly_details'] }}";
-              $('#datacountlead').html("{{ $result['monthlycount'] }}");
-          }
-          else if(this.value == 'last_month'){
-              data = "{{ $result['Secondmonthly_details'] }}";
-              $('#datacountlead').html("{{ $result['Secondmonthlycount'] }}");
-          }
-          else if(this.value == 'weekly'){
-              data = "{{ $result['weekly_details'] }}";
-              $('#datacountlead').html("{{ $result['weeklycount'] }}");
-            }
-          else if(this.value == 'last_week'){
-             data = "{{ $result['Secondweekly_details'] }}";
-             $('#datacountlead').html("{{ $result['Secondweeklycount'] }}");
-            }
-          else if(this.value == 'yesterday'){
-              data = "{{ $result['yesterday_details'] }}";
-              $('#datacountlead').html("{{ $result['yesterdaycount'] }}");
-            }
-          else{
-              data = "{{ $result['today_details'] }}";
-              $('#datacountlead').html("{{ $result['todaycount'] }}");
-          }
-          insert_table_data(data);
-        })
         
+        setInterval(function(){
+          location.reload();
+        },60000);
+
       });
 
       

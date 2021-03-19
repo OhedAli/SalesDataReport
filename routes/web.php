@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleslogsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TvDashboardController;
 use App\Http\Controllers\UserController;
+
 
 
 /*
@@ -30,6 +32,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
 Route::get('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
 Route::post('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
+Route::get('/tv-dashboard',[TvDashboardController::class, 'index']);
 Route::get('/dashboard/salesman/{sm_name}',[DashboardController::class, 'salesman_details'])->name('salesman-details');
 Route::post('/dashboard/salesman/{sm_name}',[DashboardController::class, 'salesman_details'])->name('salesman-details');
 Route::get('/sales',[SaleslogsController::class, 'index'])->name('saleslogs');
@@ -39,6 +42,7 @@ Route::get('sales/{id}',[SaleslogsController::class, 'showdetails'])->name('sale
 
 Route::get('/profile',[ProfileController::class, 'index'])->name('profile');
 Route::resource('/user', UserController::class);
+
 });
 
 

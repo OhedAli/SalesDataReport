@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
+
 
 
 class UserController extends Controller
@@ -17,6 +19,7 @@ class UserController extends Controller
      */
     public function index()
     {
+
         $users = User::all();
         /*echo '<pre>';
         print_r($users);*/
@@ -31,6 +34,7 @@ class UserController extends Controller
      */
     public function create()
     {
+
         return view('user.create');
     }
 
@@ -42,6 +46,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -58,6 +63,7 @@ class UserController extends Controller
         ]);
         event(new Registered($user));
         return redirect()->route('user.index')->with('success', 'User created successfully!');
+
     }
 
     /**
@@ -69,6 +75,7 @@ class UserController extends Controller
     public function show($id)
     {
 
+
     }
 
     /**
@@ -79,6 +86,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+
         $user = User::find($id);
         return view('user.edit', ['user' => $user]);
     }
@@ -92,6 +100,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         //dd($request->all());
         $request->validate([
             'type' => 'required|string',
@@ -108,6 +117,7 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('user.index')->with('success', 'User updated successfully!');
+
     }
 
     /**
