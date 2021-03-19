@@ -1,5 +1,6 @@
 @include('common/header')
 @include('common/navbar')
+
  
     <div class="slim-mainpanel">
       <div class="container">
