@@ -3,7 +3,7 @@
       <div class="container pd-t-50">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="tx-inverse tp-h mg-b-15">Welcome back, {{Auth::user()->name}}!</h3>
+            <!-- <h3 class="tx-inverse tp-h mg-b-15">Welcome back, {{Auth::user()->name}}!</h3> -->
             
             <div class="m-lead">
             <h5 class="m-lead-hd">Leader Board: <span class="name_topper">Today</span> Toppers</h5>
@@ -191,7 +191,7 @@
          
         </div><!-- row -->
 
-        <div class="section-wrapper sales_info">
+        <div class="section-wrapper sales_info" style="display: none;">
 
             <div class="sales-values">
               <label class="section-title">Sales Info</label>

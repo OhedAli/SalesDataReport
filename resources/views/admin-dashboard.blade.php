@@ -1,5 +1,5 @@
 @include('common/header')
-@include('common/navbar')
+
 <div class="slim-mainpanel">
       <div class="container pd-t-50">
         <div class="row">
@@ -236,7 +236,7 @@
           <!-- col-6 -->
          
         </div><!-- row -->
-
+      
         <div class="section-wrapper sales_info">
           <div class="dt-head">
             <div class="sales-values">
@@ -246,6 +246,11 @@
             <div class="reload">
               <button>Reload  <i class="fa fa-refresh" aria-hidden="true"></i></button>
             </div>
+            @if(Auth::user()->type == 'admin')
+            <div class="cal-tab">
+              <button> <span>Calendar </span></button>
+            </div>
+            @endif
           </div>
             
             <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
@@ -268,6 +273,11 @@
                 </tbody>
             </table>
             </div><!-- table-responsive -->
+            
+            <div class="card pd-25 calen" style="display:none;">
+              <div id="fullCalendar"></div>
+            </div>
+            
         </div>
 
       </div><!-- container -->
@@ -279,6 +289,7 @@
       $(document).ready(function(){
         var data;
         var leaderboard;
+        var calendar_data = "{{ $result['monthly_total_calls_daywise'] }}";
         if("{{ $result['adv_range_flag'] }}" == false){
             data = "{{ $result['today_details'] }}";
         }
@@ -291,6 +302,7 @@
         }
         
         insert_table_data(data);
+        deal_calendar(calendar_data,prev=0,page='dashboard');
         $('.span').click(function(){
             $('.dtxt').hide();
             $('.span').children('div').removeClass('active');
@@ -351,6 +363,10 @@
           insert_table_data(data);
         })
         
+        setTimeout(function(){
+          $('.calen').hide()
+        },1);
+
       });
 
       
@@ -362,6 +378,32 @@
             window.location.href = url;
             
        });
+
+
+      $(document).on('click','.fc-button',function () {
+
+          var src_url = "{{ route('dashboard') }}";
+
+          var cal_date = get_calendar_date();
+
+          $.ajax({
+              url : src_url,
+              method: 'post',
+              data : {
+                  month : cal_date['month'],
+                  year : cal_date['year'],
+                  _token : "{{ csrf_token() }}"
+              },
+              success: function(result){
+                  //console.log(result);
+                  deal_calendar(result,prev=1,page='dashboard');
+              },
+              error: function(err){
+                  console.log(err);
+              }
+
+          });
+      });
         
 
     </script>

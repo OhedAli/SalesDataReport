@@ -91,6 +91,7 @@ class DashboardController extends Controller
 
 
         $result['weekly_total_calls'] = $this->find_total_call($lastweek,$todayDate_end);
+        $result['weekly_total_calls_daywise'] = $this->find_total_call($lastweek,$todayDate_end,$day_by_day=1);
         
         $result['weeklycount'] = Saleslogs::whereBetween('purchdate',[$lastweek,$todayDate_end])->count();
         $result['weekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),
@@ -142,6 +143,8 @@ class DashboardController extends Controller
         $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['Secondweeklycount']);
 
         $result['monthly_total_calls'] = $this->find_total_call($lastmonth,$todayDate_end);
+        $result['monthly_total_calls_daywise'] = $this->find_total_call($lastmonth,$todayDate_end,$day_by_day=1);
+
         
         $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->count();
         $result['monthly_details'] =  Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add'),
@@ -200,27 +203,44 @@ class DashboardController extends Controller
 
         elseif($request->isMethod('post'))
         {
-            $result['adv_range_flag'] = true;
-            $start_range = $request->post('start_date').' 00:00:00';
-            $end_range = $request->post('end_date').' 23:59:59';
-            $result['start_date'] = date("dS F, Y", strtotime($request->post('start_date')));
-            $result['end_date'] = date("dS F, Y", strtotime($request->post('end_date')));
-            $result['adv_range_sales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])->count();
-            $result['adv_range_sales_details'] =  Saleslogs::select('salesman',
-                                                  Saleslogs::raw('SUM(downpay) as downpay_add'),
-                                                  Saleslogs::raw('SUM(cuscost) as cuscost_add'),
-                                                  Saleslogs::raw('SUM(finterm) as finterm_add'), 
-                                                  Saleslogs::raw('SUM(retail) as retail_add'),
-                                                  Saleslogs::raw('count(salesman) as sales_count '))
-                                                  ->with('slaesagent')
-                                                  ->whereBetween('purchdate',[$start_range, $end_range])
-                                                  ->groupBy('salesman')
-                                                  ->get();
 
-            if($result['adv_range_sales_count'] > 0)
-                $result['adv_range_sales_details'] = json_encode($this->call_search_ytel($result['adv_range_sales_details']->toArray(),$start_range,$end_range));
 
-            return view('admin-dashboard',compact('result'));
+            if($request->post('month') !== null){
+
+                $full_date = $request->post('year').'-'.$request->post('month').'-1';
+                $first_date = date('Y-m-1', strtotime($full_date));
+                $last_date = date('Y-m-t', strtotime($full_date));
+
+                $result['prev_sales_details'] = $this->find_total_call($first_date,$last_date,$day_by_day=1);
+                return $result['prev_sales_details'];
+            }
+
+
+            else{
+
+                $result['adv_range_flag'] = true;
+                $start_range = $request->post('start_date').' 00:00:00';
+                $end_range = $request->post('end_date').' 23:59:59';
+                $result['start_date'] = date("dS F, Y", strtotime($request->post('start_date')));
+                $result['end_date'] = date("dS F, Y", strtotime($request->post('end_date')));
+                $result['adv_range_sales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])->count();
+                $result['adv_range_sales_details'] =  Saleslogs::select('salesman',
+                                                      Saleslogs::raw('SUM(downpay) as downpay_add'),
+                                                      Saleslogs::raw('SUM(cuscost) as cuscost_add'),
+                                                      Saleslogs::raw('SUM(finterm) as finterm_add'), 
+                                                      Saleslogs::raw('SUM(retail) as retail_add'),
+                                                      Saleslogs::raw('count(salesman) as sales_count '))
+                                                      ->with('slaesagent')
+                                                      ->whereBetween('purchdate',[$start_range, $end_range])
+                                                      ->groupBy('salesman')
+                                                      ->get();
+
+                if($result['adv_range_sales_count'] > 0)
+                    $result['adv_range_sales_details'] = json_encode($this->call_search_ytel($result['adv_range_sales_details']->toArray(),$start_range,$end_range));
+
+                return view('admin-dashboard',compact('result'));
+            }
+            
         }
 
         else{
@@ -288,23 +308,39 @@ class DashboardController extends Controller
         return $resArr;
     }
 
-    public function find_total_call($start_date, $end_date)
+    public function find_total_call($start_date, $end_date, $day_by_day=0)
     {
 
         $start_range = $start_date.' 00:00:00';
         $end_range = $end_date.' 23:59:59';
         
-        
-        $result = Ytel::where('list_id','999')
+        if($day_by_day == 0){
+
+            $result = Ytel::where('list_id','999')
                   ->where('length_in_sec','>','15')
                   ->where('campaign_id','=','Sales')
                   ->whereBetween('call_date',[$start_range,$end_range])
                   ->count();
 
-        // echo $result;
-        // die();
+            // echo $result;
+            // die();
 
-        return $result;
+            return $result;
+        }
+        else{
+
+            $result = Ytel::select(Ytel::raw('CAST(call_date AS DATE) as call_date'), Ytel::raw('count(call_date) as total_calls'))
+                      ->where('list_id','999')
+                      ->where('length_in_sec','>','15')
+                      ->where('campaign_id','=','Sales')
+                      ->whereBetween('call_date',[$start_range,$end_range])
+                      ->groupBy(Ytel::raw('CAST(call_date AS DATE)'))
+                      ->get();
+
+            // dd($result);
+            return $result;
+        }
+        
     }
 
 
