@@ -35,15 +35,15 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- vendor css -->
-    <link href="{{asset('app/lib/font-awesome/css/font-awesome.css')}}" rel="stylesheet">
-    <link href="{{asset('app/lib/Ionicons/css/ionicons.css')}}" rel="stylesheet">
-    <link href="{{asset('app/lib/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('app/lib/datatables/css/jquery.dataTables.css')}}" rel="stylesheet">
-    <link href="{{asset('app/lib/fullcalendar/css/fullcalendar.css')}}" rel="stylesheet">
+    <link href="{{asset('public/app/lib/font-awesome/css/font-awesome.css')}}" rel="stylesheet">
+    <link href="{{asset('public/app/lib/Ionicons/css/ionicons.css')}}" rel="stylesheet">
+    <link href="{{asset('public/app/lib/select2/css/select2.min.css')}}" rel="stylesheet">
+    <link href="{{asset('public/app/lib/datatables/css/jquery.dataTables.css')}}" rel="stylesheet">
+    <link href="{{asset('public/app/lib/fullcalendar/css/fullcalendar.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('css/custom.css')}}">
     <!-- Slim CSS -->
 
-    <link rel="stylesheet" href="{{asset('app/css/slim.css')}}">
+    <link rel="stylesheet" href="{{asset('public/app/css/slim.css')}}">
 
 
   </head>
