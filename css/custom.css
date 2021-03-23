@@ -253,13 +253,29 @@ input {
     min-width: 100px !important;
 }
 
-.fc-lead {
+.fc-lead,.fc-call,.fc-cvr {
     width: 100%;
-    text-align: center;
+    text-align:center;
     font-size: 15px;
     color: #3290e9;
+    padding-left:0px;
+}
+.fc-content-skeleton table td.fc-day-top{
+
+    vertical-align: middle;
+    height: 105px;
+
+}
+.fc-ltr .fc-basic-view .fc-day-top .fc-day-number {
+    float: none;
     position: absolute;
-    bottom: 0px;
+    top: 0;
+    right: 0;
+    padding: 4px;
+}
+
+.fc-lead{
+    padding-top: 0px;
 }
 
 .fc-day-top {
@@ -602,6 +618,12 @@ p.text-black{
     cursor: pointer;
 }
 
+.dataTables_length .select2-container {
+    width: 48px !important;
+}
+#datatable1{
+    width: 100% !important;
+}
 @media screen and (min-width:992px) and (max-width: 1199px) {
     .ctab-bx {
         min-height: 85px;
@@ -628,6 +650,9 @@ p.text-black{
     }
     .ctab-bx {
         font-size: 9px;;
+    }
+    .fc-lead, .fc-call, .fc-cvr, .fc-content-skeleton table td.fc-day-top {
+        font-size: 12px;
     }
 }
 
@@ -711,6 +736,36 @@ p.text-black{
         top: 0px;
         order: 3;
     }
+
+    .sales-values {
+        padding-right: 8px;
+    }
+    .section-title {
+        font-size: 12px;
+    }
+    .reload button, .cal-tab button {
+        font-size: 12px;
+    }
+    
+
+    #fullCalendar .fc-view.fc-month-view.fc-basic-view{
+            overflow: auto;
+    }
+    #fullCalendar .fc-view.fc-month-view.fc-basic-view table .fc-head tr td.fc-head-container table thead tr th{
+            width: 100px;
+    }
+    .fc-content-skeleton table td.fc-day-top {
+        height: 90px;
+        min-width: 100px;
+        border-color: #ddd !important;
+    }
+    #fullCalendar table{
+        width: auto !important;
+    }
+    .fc-lead, .fc-call, .fc-cvr, .fc-content-skeleton table td.fc-day-top {
+            font-size: 12px;
+        }
+
 }
 @media screen and (min-width:576px) and (max-width: 767px) {
 

@@ -2,7 +2,6 @@
     <div class="slim-footer">
       <div class="container">
         <p>Copyright <?php echo date('Y'); ?> &copy; All Rights Reserved.</p>
-        <p>Designed by: <a href="https://codeclouds.com" target="_blank" >CodeClouds</a></p>
       </div><!-- container -->
     </div><!-- slim-footer -->
 

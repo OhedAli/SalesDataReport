@@ -258,7 +258,7 @@
       
 
       $(document).ready(function(){
-        var data;
+
         if("{{ $result['adv_range_flag'] }}" == true){
             //$('.dtxt').show();
             $('.span').children('div').removeClass('active');
@@ -278,8 +278,8 @@
 
          }
         
-        data = "{{ $result['monthly_sm_details'] }}";
-        deal_calendar(data,prev=0);
+        var cal_data = "{{ $result['calendar_data'] }}";
+        deal_calendar(cal_data);
 
         $('.span').on('click',function(){
           var sl_data;
@@ -320,7 +320,7 @@
             },
             success: function(result){
                 //console.log(result);
-                deal_calendar(result,prev=1);
+                deal_calendar(result);
             },
             error: function(err){
                 console.log(err);
