@@ -215,32 +215,34 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
     return data;
 }
 
-function deal_calendar(res, prev,page='salesman') {
-    var data_arr = [];
+function deal_calendar(res, prev) {
+    var data_call = [];
+    var data_lead = [];
     var result;
-    if (prev == 0)
-        result = JSON.parse($("<div/>").html(res).text());
-    else
-        result = res;
+    
+    result = JSON.parse($("<div/>").html(res).text());
+
     // console.log(result);
     $.each(result, function (dkey, dvalue) {
-        let temp_arr = [];
-        if(page == 'salesman')
-            data_arr[dvalue.purchdate] = dvalue.sales_count;
-        else
-            data_arr[dvalue.call_date] = dvalue.total_calls;
+        if(dvalue.hasOwnProperty('call_date')){
+            data_call[dvalue.call_date] = dvalue.total_calls;
+        }
+        else{
+            data_lead[dvalue.purchdate] = dvalue.sales_count;
+        }
+        
     });
 
     var cal_date = get_calendar_date();
-    place_lead_count(data_arr, cal_date, page);
+    place_lead_count(data_call, data_lead, cal_date);
 }
 
-function place_lead_count(data_arr,date,page) {
+function place_lead_count(data_call, data_lead, date) {
     //console.log(data_arr);
-    var keys = Object.keys(data_arr);
+    var keys = Object.keys(data_lead);
     //console.log(keys);
-    var lead_cnt;
-    var box_text = (page == 'salesman' ? 'Lead' : 'Calls');
+    var lead_cnt=0;
+    var html='';
 
         $.each($(".fc-day-top"), function (key, val) {
             let cal_date = $(this).attr("data-date");
@@ -251,19 +253,46 @@ function place_lead_count(data_arr,date,page) {
                     if (keys.indexOf(cal_date) != -1) {
                         $.each(keys, function (k, key_date) {
                             if (cal_date == key_date) {
-                                lead_cnt = data_arr[key_date];
+                                lead_cnt = data_lead[key_date];
+                                if(data_call[key_date] != undefined)
+                                    call_cnt = data_call[key_date];
+                                else
+                                    call_cnt = 'N/A';
                             }
                         });
-                        $(this).append("<div class='fc-lead fc-data'><a style='cursor:pointer'>" + box_text + ": <strong>" + lead_cnt + "</strong></a></div>");
+
+                        html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>" + lead_cnt + "</strong></a></div>" +
+                               "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>" + call_cnt + "</strong></a></div>" +
+                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>" + (call_cnt != 'N/A' ? ((lead_cnt/call_cnt) * 100).toFixed(2) + '%' : 'N/A') + "</strong></a></div>";
+
+                        $(this).append(html);
+                        
                     }
-                    else
-                        $(this).append("<div class='fc-lead'><a style='cursor:pointer'>" + box_text + ": <strong> 0 </strong></a></div>");
+                    else{
+                        html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>0</strong></a></div>" +
+                               "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>0</strong></a></div>" +
+                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>0%</strong></a></div>";
+                        
+                        $(this).append(html);
+                    }
+
                 }
                 else {
-                    lead_cnt = data_arr[window.today];
+                    lead_cnt = data_lead[window.today];
+                    call_cnt = data_call[window.today];
                     if (lead_cnt == undefined)
                         lead_cnt = 0
-                    $(this).append("<div class='fc-lead fc-data'><a style='cursor:pointer'>" + box_text + ": <strong>" + lead_cnt +"</strong></a></div>");
+
+                    if (call_cnt == undefined)
+                        call_cnt = 0
+
+                    html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>" + lead_cnt + "</strong></a></div>" +
+                               "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>" + call_cnt + "</strong></a></div>" +
+                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>" + (call_cnt != 0 ? ((lead_cnt/call_cnt) * 100).toFixed(2) : 0) + "%</strong></a></div>";
+
+
+                    $(this).append(html);
+
                     return false;
                 }
             }
@@ -272,13 +301,25 @@ function place_lead_count(data_arr,date,page) {
                 if (keys.indexOf(cal_date) != -1) {
                     $.each(keys, function (k, key_date) {
                         if (cal_date == key_date) {
-                            lead_cnt = data_arr[key_date];
+                            lead_cnt = data_lead[key_date];
+                            call_cnt = data_call[key_date];
                         }
                     });
-                    $(this).append("<div class='fc-lead fc-data'>Lead: <strong>" + lead_cnt + "</strong></div>");
+
+                    html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>" + lead_cnt + "</strong></a></div>" +
+                           "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>" + call_cnt + "</strong></a></div>" +
+                           "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>" + ((lead_cnt/call_cnt) * 100).toFixed(2) + "%</strong></a></div>";
+
+                    $(this).append(html);
                 }
-                else
-                    $(this).append("<div class='fc-lead'>Lead: <strong> 0 </strong></div>");
+                else{
+
+                    html =  "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>0</strong></a></div>" +
+                            "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>0</strong></a></div>" +
+                            "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>0%</strong></a></div>";
+                        
+                        $(this).append(html);
+                }
             }
 
             else {

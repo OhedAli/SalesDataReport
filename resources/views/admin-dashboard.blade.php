@@ -289,7 +289,7 @@
       $(document).ready(function(){
         var data;
         var leaderboard;
-        var calendar_data = "{{ $result['monthly_total_calls_daywise'] }}";
+        var calendar_data = "{{ $result['calendar_data'] }}";
         if("{{ $result['adv_range_flag'] }}" == false){
             data = "{{ $result['today_details'] }}";
         }
@@ -302,7 +302,7 @@
         }
         
         insert_table_data(data);
-        deal_calendar(calendar_data,prev=0,page='dashboard');
+        deal_calendar(calendar_data);
         $('.span').click(function(){
             $('.dtxt').hide();
             $('.span').children('div').removeClass('active');
@@ -396,7 +396,7 @@
               },
               success: function(result){
                   //console.log(result);
-                  deal_calendar(result,prev=1,page='dashboard');
+                  deal_calendar(result);
               },
               error: function(err){
                   console.log(err);
