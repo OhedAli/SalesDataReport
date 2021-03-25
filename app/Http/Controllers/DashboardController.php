@@ -331,17 +331,16 @@ class DashboardController extends Controller
         }
         
         else{
-
+            
             foreach ($dataArr as $datakey => $dataValue) {
 
                 try{
 
                     if(!empty($dataValue['slaesagent'])){
 
-                        // echo $dataValue['slaesagent']['user'];
                         $result = array();
                         foreach ($dataValue['slaesagent'] as $key => $agentvalue) {
-
+                            // echo $agentvalue['user']."<br>";
                             $res = Ytel::select(Ytel::raw('CAST(call_date AS DATE) as call_date'), Ytel::raw('count(call_date) as total_calls'))
                                       ->where('user','=',$agentvalue['user'])
                                       ->where('list_id','999')
@@ -354,7 +353,7 @@ class DashboardController extends Controller
                             $result = array_merge($result,$res);
                         }
                     }
-
+                    
                     array_push($resArr,$result);
                 }
                 
@@ -539,6 +538,7 @@ class DashboardController extends Controller
                             ->get();
 
             $result['calendar_data'] = json_encode(array_merge(($this->call_search_ytel($monthly_data->toArray(), $lastmonth, $todayDate_end,$day_by_day=1))[0],$result['monthly_sm_details']->toArray()));
+
 
             if($result['monthlycount'] > 0){
                 $result['monthly_details'] = $this->call_search_ytel($monthly_data->toArray(),$lastmonth,$todayDate_end);
