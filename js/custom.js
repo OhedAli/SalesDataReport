@@ -202,8 +202,8 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
     var finterm = finterm_add / sales_count;
     var discount = retail_add - cuscost_add;
     discount = '$' + Math.round(discount / sales_count);
-    var calls = (total_calls !== undefined ? total_calls : 'Not Avialable');
-    var conv_rate = (total_calls !== undefined ? (((sales_count/total_calls) * 100).toFixed(2)) + '%' : 'Not Avialable');
+    var calls = (total_calls !== undefined ? total_calls : 'N/A');
+    var conv_rate = ((total_calls !== undefined  && total_calls != 0) ? (((sales_count/total_calls) * 100).toFixed(2)) + '%' : 'N/A');
 
     data = '';
 
@@ -243,10 +243,12 @@ function deal_calendar(res, prev) {
 
 function place_lead_count(data_call, data_lead, date) {
     //console.log(data_arr);
-    var keys = Object.keys(data_lead);
+    var keys_call = Object.keys(data_call);
+    var keys_lead = Object.keys(data_lead);
     //console.log(keys);
     var lead_cnt=0;
     var html='';
+    var flag = false;
 
         $.each($(".fc-day-top"), function (key, val) {
             let cal_date = $(this).attr("data-date");
@@ -254,10 +256,28 @@ function place_lead_count(data_call, data_lead, date) {
             //console.log(temp_date.getMonth());
             if (temp_date.getMonth() + 1 == date['month'] && date['month'] <= window.ac_mm && date['year'] == window.yyyy) {
                 if (cal_date != window.today) {
-                    if (keys.indexOf(cal_date) != -1) {
+                    if (keys_call.indexOf(cal_date) != -1){
+                        keys = keys_call;
+                        flag = true;
+                    }
+                    else if(keys_lead.indexOf(cal_date) != -1){
+                        keys = keys_lead;
+                        flag = true;
+                    }
+                    else{
+                        flag = false;
+                    }
+
+                    if(flag == true) {
+
                         $.each(keys, function (k, key_date) {
                             if (cal_date == key_date) {
-                                lead_cnt = data_lead[key_date];
+
+                                if(data_lead[key_date] != undefined)
+                                    lead_cnt = data_lead[key_date];
+                                else
+                                    lead_cnt = 0;
+                                
                                 if(data_call[key_date] != undefined)
                                     call_cnt = data_call[key_date];
                                 else
@@ -292,7 +312,7 @@ function place_lead_count(data_call, data_lead, date) {
 
                     html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>" + lead_cnt + "</strong></a></div>" +
                                "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>" + call_cnt + "</strong></a></div>" +
-                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>" + (call_cnt != 0 ? ((lead_cnt/call_cnt) * 100).toFixed(2) : 0) + "%</strong></a></div>";
+                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>" + (call_cnt != 0 ? ((lead_cnt/call_cnt) * 100).toFixed(2) + '%' : 'N/A') + "</strong></a></div>";
 
 
                     $(this).append(html);
@@ -302,11 +322,32 @@ function place_lead_count(data_call, data_lead, date) {
             }
 
             else if (temp_date.getMonth() + 1 == date['month'] && date['year'] < window.yyyy) {
-                if (keys.indexOf(cal_date) != -1) {
+
+                if (keys_call.indexOf(cal_date) != -1){
+                    keys = keys_call;
+                    flag = true;
+                }
+                else if(keys_lead.indexOf(cal_date) != -1){
+                    keys = keys_lead;
+                    flag = true;
+                }
+                else{
+                    flag = false;
+                }
+
+                if(flag == true){
                     $.each(keys, function (k, key_date) {
                         if (cal_date == key_date) {
-                            lead_cnt = data_lead[key_date];
-                            call_cnt = data_call[key_date];
+
+                            if(data_lead[key_date] != undefined)
+                                lead_cnt = data_lead[key_date];
+                            else
+                                lead_cnt = 0;
+                            
+                            if(data_call[key_date] != undefined)
+                                call_cnt = data_call[key_date];
+                            else
+                                call_cnt = 'N/A';
                         }
                     });
 
@@ -316,19 +357,20 @@ function place_lead_count(data_call, data_lead, date) {
 
                     $(this).append(html);
                 }
+
                 else{
 
                     html =  "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>0</strong></a></div>" +
                             "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>0</strong></a></div>" +
                             "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>0%</strong></a></div>";
                         
-                        $(this).append(html);
+                    $(this).append(html);
                 }
             }
 
-            else {
-                // do nothing
-            }
+        else {
+            // do nothing
+        }
 
         });
     

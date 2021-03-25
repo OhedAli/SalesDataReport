@@ -61,11 +61,11 @@
                         <p>Conversion</p>
                         <p class="text-black">
                           @if($result['today_details'][0]['total_calls'] == 0) 
-                            0
+                            N/A
                           @else
-                            {{ number_format(($result['todaycount']/$result['today_details'][0]['total_calls'])*100,2)}}
+                            {{ number_format(($result['todaycount']/$result['today_details'][0]['total_calls'])*100,2)}} %
                           @endif
-                          %
+                          
                         </p>
                       </div>
                     </div>
@@ -115,11 +115,11 @@
                         <p>Conversion</p>
                         <p class="text-black">
                           @if($result['weekly_details'][0]['total_calls'] == 0) 
-                            0
+                            N/A
                           @else
-                            {{ number_format(($result['weeklycount']/$result['weekly_details'][0]['total_calls'])*100,2)}}
+                            {{ number_format(($result['weeklycount']/$result['weekly_details'][0]['total_calls'])*100,2)}} %
                           @endif
-                          %
+                          
                         </p>
                       </div>
                     </div>
@@ -169,11 +169,11 @@
                         <p>Conversion</p>
                         <p class="text-black">
                           @if($result['monthly_details'][0]['total_calls'] == 0) 
-                            0
+                            N/A
                           @else
-                            {{ number_format(($result['monthlycount']/$result['monthly_details'][0]['total_calls'])*100,2)}}
+                            {{ number_format(($result['monthlycount']/$result['monthly_details'][0]['total_calls'])*100,2)}} %
                           @endif
-                          %
+                          
                         </p>
                       </div>
                     </div>
