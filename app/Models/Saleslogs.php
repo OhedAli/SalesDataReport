@@ -19,6 +19,6 @@ class Saleslogs extends Model
 
     public function slaesagent()
     {
-        return $this->hasOne(Salesagent::class, 'user_alter_name', 'salesman');
+        return $this->hasMany(Salesagent::class, 'user_alter_name', 'salesman');
     }
 }

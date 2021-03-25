@@ -70,7 +70,7 @@
                 <a href="{{ route('profile') }}" class="nav-link"><i class="icon ion-person"></i> View Profile</a>
                 @if(Auth::user()->type == 'admin')
                 <a href="{{ route('user.index') }}" class="nav-link"><i class="icon ion-compose"></i> Users</a>
-                <a href="https://vsctools.dev/admin/login.php?email={{ Auth::user()->email }}" target="_blank" class="nav-link"><i class="icon ion-compose"></i> Ytel Roster </a>
+                <a href="https://vsctools.dev/admin/login.php?email={{ Auth::user()->email }}" target="_blank" class="nav-link"><i class="icon ion-link"></i> Ytel Roster </a>
                 @endif
                 <!--<a href="page-activity.html" class="nav-link"><i class="icon ion-ios-bolt"></i> Activity Log</a>
                 <a href="page-settings.html" class="nav-link"><i class="icon ion-ios-gear"></i> Account Settings</a>-->

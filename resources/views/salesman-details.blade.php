@@ -214,36 +214,65 @@
 
         <br>
 
-        <div class="section-wrapper lead_data_info">
-          <div class="section-opts" style="display: none;">
-            <div class="opts">
-              <span class="active-opt opt" value="sales">Sales</span>
-              <span class="opt" value="opportunity"> opportunities</span>
-            </div>
+
+        <div class="section-opts" style="display: block;">
+          <div class="opts">
+            <span class="active-opt opt" value="sales">Sales</span>
+            <span class="opt" value="opportunity"> opportunities</span>
           </div>
+        </div>
+        
+        <div class="section-wrapper lead_data_info">
+          
             <label class="section-title">Sales Info for: <span class="fill_dt"></span></label>
-            <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
 
             <div class="table-responsive table-wrapper dash_table">
-            <table id="datatable2" class="table mg-b-0 table display responsive nowrap">
-                <thead>
-                <tr>
-                    <th>APP NUMBER</th>
-                    <th>NAME</th>
-                    <th>DOWN PAYMENT</th>
-                    <th>FINANCE TERM</th>
-                    <th>DISCOUNT</th>
-                    <th>Type</th>
-                    <th>Purchase At</th>
-                    
-                </tr>
-                </thead>
-                <tbody id="lead_data">
-                    
-                </tbody>
-            </table>
+
+              <table id="datatable2" class="table mg-b-0 table display responsive nowrap">
+                  <thead>
+                  <tr>
+                      <th>APP NUMBER</th>
+                      <th>NAME</th>
+                      <th>DOWN PAYMENT</th>
+                      <th>FINANCE TERM</th>
+                      <th>DISCOUNT</th>
+                      <th>Type</th>
+                      <th>Purchase At</th>
+                      
+                  </tr>
+                  </thead>
+                  <tbody id="lead_data">
+                      
+                  </tbody>
+              </table>
+
             </div><!-- table-responsive -->
+
         </div>
+
+        <div class="section-wrapper opprt_info" style="display: none;">
+          
+              <label class="section-title">Opportunities Info for: <span class="fill_dt"></span></label>
+              <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
+
+              <div class="table-responsive table-wrapper dash_table">
+                <table id="datatable3" class="table mg-b-0 table display responsive nowrap">
+                    <thead>
+                    <tr>
+                        <th>LEAD ID</th>
+                        <th>NAME</th>
+                        <th>PHONE </th>
+                        <th>EMAIL</th>
+                        <th>CALL TIME</th>
+                    </tr>
+                    </thead>
+                    <tbody id="lead_data_oppprt">
+                        
+                    </tbody>
+                </table>
+              </div><!-- table-responsive -->
+
+          </div>
 
       </div><!-- container -->
     </div><!-- slim-mainpanel -->
@@ -256,49 +285,84 @@
       var src_url = "{{ route('salesman-details',':name') }}";
       src_url = src_url.replace(':name',name);
       
+      
 
       $(document).ready(function(){
+
+        datatable_reset();
 
         if("{{ $result['adv_range_flag'] }}" == true){
             //$('.dtxt').show();
             $('.span').children('div').removeClass('active');
             $('.no-gutters').hide();
             tble_lead_info("{{ $result['lead_info_details'] }}", search_flag=true);
+            tble_oppprt_info("{{ $result['adv_range_oppurtunites'] }}",search_flag=true);
             $('.span').children('div').removeClass('active');
             $(".fc-add_event-button").click();
             $(".fill_dt").text("{{$result['start_date']}}" + '-' + "{{$result['end_date']}}");
         }
         else{
-          let today_date = $('.fc-today').data('date');
+          let today = $('.fc-today').data('date');
           let current_day = $(".fc-today").children('span').text();
           let monthYear = $(".fc-center").children('h2').text();
           $(".fill_dt").text(current_day + ' ' + monthYear);
-
-          sales_info_salesman(today_date);
+          sales_info_salesman(today);
 
          }
         
         var cal_data = "{{ $result['calendar_data'] }}";
         deal_calendar(cal_data);
+        
 
         $('.span').on('click',function(){
-          var sl_data;
+          var sl_data,time_span;
           $('.span').children('div').removeClass('active');
             $(this).children('div').addClass('active');
-            if($(this).attr('id') == 'monthly'){
-                sl_data = "{{ $result['monthly_sales_data'] }}";
-                $(".fill_dt").html('THIS MONTH');
+            // datatable_place();
+            time_span = $(this).attr('id');
+            if(time_span == 'monthly'){
+              tble_lead_info("{{ $result['monthly_sales_data'] }}", search_flag=true);
+              tble_oppprt_info("{{ $result['monthly_oppurtunites'] }}", search_flag=true);
+              $(".fill_dt").html('THIS MONTH');
             }
-            else if($(this).attr('id') == 'weekly'){
-                sl_data = "{{ $result['weekly_sales_data'] }}";
-                $(".fill_dt").html('THIS WEEK');
+            else if(time_span == 'weekly'){
+              tble_lead_info("{{ $result['weekly_sales_data'] }}", search_flag=true);
+              tble_oppprt_info("{{ $result['weekly_oppurtunites'] }}", search_flag=true);
+              $(".fill_dt").html('THIS WEEK');
             }
             else{
-                sl_data = "{{ $result['today_sales_data'] }}";
-                $(".fill_dt").html('TODAY');
+              tble_lead_info("{{ $result['today_sales_data'] }}", search_flag=true);
+              tble_oppprt_info("{{ $result['today_oppurtunites'] }}", search_flag=true);
+              $(".fill_dt").html('TODAY');
             }
-            tble_lead_info(sl_data,search_flag=true);
-            $("html,body").animate({scrollTop : $(".lead_data_info").offset().top },2000);
+
+            $("html,body").animate({scrollTop : $(".opts").offset().top },2000);
+        });
+
+
+        $('.opt').click(function(){
+          
+          $('.opt').removeClass('active-opt');
+          $(this).addClass('active-opt');
+
+          if($(this).text() == 'Sales'){
+            $(".opprt_info").fadeOut();
+            
+            setTimeout(function(){
+              $(".lead_data_info").fadeIn();
+            },200);
+            
+          }
+          else{
+            $(".lead_data_info").fadeOut();
+            setTimeout(function(){
+              $(".opprt_info").fadeIn();
+            },200);
+            
+          }
+
+
+          
         });
 
         
@@ -306,7 +370,7 @@
 
       
 
-    $(document).on('click','.fc-button',function () {
+    $(document).on('click','.fc-prev-button,.fc-next-button',function () {
 
         var cal_date = get_calendar_date();
 
@@ -330,32 +394,38 @@
     });
 
   $(document).on('click', '.fc-lead', function(){
-  //console.log("1")
-  let calDate = $(this).parent().data("date");
-  let day = $(this).siblings('.fc-day-number').text(); 
-  let monthYear = $(".fc-center").children('h2').text();
-  $(".fill_dt").text(day + ' ' + monthYear );
+    //console.log("1")
+    current_date = $(this).parent().data("date");
+    let day = $(this).siblings('.fc-day-number').text(); 
+    let monthYear = $(".fc-center").children('h2').text();
+    $(".fill_dt").text(day + ' ' + monthYear );
 
-  sales_info_salesman(calDate);
-  $('.span').children('div').removeClass('active');
-  $("html,body").animate({scrollTop : $(".lead_data_info").offset().top },2000);
- 
-});
+    sales_info_salesman(current_date);
+    $('.span').children('div').removeClass('active');
+    $("html,body").animate({scrollTop : $(".opts").offset().top },2000);
+   
+  });
 
-function sales_info_salesman(calDate){
+
+
+function sales_info_salesman(current_date)
+{
   
   $.ajax({
       url : window.src_url,
       method: 'post',
       data : {
-           leadDate: calDate,
+           leadDate: current_date,
            _token : "{{ csrf_token() }}"
           
       },
       success: function(result){
-            //console.log(result);
-            tble_lead_info(result,search_flag=false);
-          
+
+            cal_date_data = JSON.parse(result);
+            // console.log(cal_date_data.lead_info);
+            tble_lead_info(cal_date_data.lead_info,search_flag=false);
+            tble_oppprt_info(cal_date_data.opprt_info,search_flag=false);
+
       },
       error: function(err){
           console.log(err);
@@ -363,5 +433,5 @@ function sales_info_salesman(calDate){
 
   });
 }
-      
+
 </script>

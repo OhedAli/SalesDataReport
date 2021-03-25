@@ -64,7 +64,7 @@ function tble_lead_info(result_data, search_flag){
     else {
       resultObj = result_data;
     }
-    console.log(resultObj);
+    // console.log(resultObj);
    var data = '';
    var type;
    if (resultObj.length != 0) {
@@ -97,7 +97,7 @@ function tble_lead_info(result_data, search_flag){
         $("#lead_data").html('');
     }
 
-    datatable_reset();
+    datatable_reset(table_id=2);
 }
 
 
@@ -124,7 +124,7 @@ function insert_table_data(res_details) {
         $("#sales_info_data").html('');
     }
 
-    datatable_reset();
+    datatable_reset(table_id=1);
     
 }
 
@@ -165,27 +165,31 @@ function leader_board_update(res_details){
 
 }
 
-function datatable_reset() {
+function datatable_reset(table_id) {
     
-    $('#datatable1').DataTable({
-        responsive: true,
-        "order": [[1, "desc"]],
-        "columnDefs" : [{targets:5, type:"num-html"},{targets:6, type:"num-html"}],
-        language: {
-            searchPlaceholder: 'Search...',
-            sSearch: '',
-            lengthMenu: '_MENU_ items/page',
-        }
-    });
-
-    $('#datatable2').DataTable({
-        responsive: true,
-        language: {
-          searchPlaceholder: 'Search...',
-          sSearch: '',
-          lengthMenu: '_MENU_ items/page',
-        }
-      });
+    if(table_id == 1){
+    	$('#datatable1').DataTable({
+	        responsive: true,
+	        "order": [[1, "desc"]],
+	        "columnDefs" : [{targets:5, type:"num-html"},{targets:6, type:"num-html"}],
+	        language: {
+	            searchPlaceholder: 'Search...',
+	            sSearch: '',
+	            lengthMenu: '_MENU_ items/page',
+	        }
+    	});
+    }
+    else{
+    	$('#datatable'+table_id).DataTable({
+	        responsive: true,
+	        language: {
+	          searchPlaceholder: 'Search...',
+	          sSearch: '',
+	          lengthMenu: '_MENU_ items/page',
+	        }
+	    });
+    }
+    
 
     $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
 
@@ -219,7 +223,7 @@ function deal_calendar(res, prev) {
     var data_call = [];
     var data_lead = [];
     var result;
-    
+    // console.log(1);
     result = JSON.parse($("<div/>").html(res).text());
 
     // console.log(result);
@@ -428,3 +432,67 @@ $('.cal-tab button').on('click',function(){
     }
     $(this).toggleClass('caledar-btn');
 });
+
+
+function tble_oppprt_info(res_data, search_flag)
+{
+
+    if ($.fn.DataTable.isDataTable("#datatable3"))
+        $('#datatable3').DataTable().clear().destroy();
+
+    
+    if(search_flag == true){
+     resultObj = JSON.parse($("<div/>").html(res_data).text());
+    } 
+    else {
+      resultObj = res_data;
+    }
+    // console.log(resultObj);
+    var data = '';
+    let min,sec;
+    if (resultObj.length != 0) {
+        resultObj.forEach(function(arrData){
+
+        	if(arrData.first_name == null)
+        		arrData.first_name = '';
+
+        	if(arrData.last_name == null)
+        		arrData.last_name = '';
+
+        	if(arrData.email == null)
+        		arrData.email = '';
+
+        	hour = Math.trunc(arrData.length_in_sec / 3600) ;
+        	min = Math.trunc((arrData.length_in_sec % 3600) / 60);
+        	sec = arrData.length_in_sec % 60 ;
+
+        	if(hour < 10)
+        		hour = '0' + hour;
+
+        	if(min < 10)
+        		min = '0' + min;
+
+        	if(sec < 10)
+        		sec = '0' + sec;
+
+
+
+            data += '<tr>' +
+            '<td>' + arrData.lead_id + '</td>' +
+            '<td>' + arrData.first_name + ' '+ arrData.last_name + '</td>' +
+            '<td>' + arrData.phone_number + '</td>' +
+            '<td>' + arrData.email  + '</td>' +
+            '<td>' + hour + ':' + min + ':' + sec + '</td>' +
+            '</tr>';
+             
+        });
+
+    
+        $("#lead_data_oppprt").html(data);
+    }
+    else {
+        $("#lead_data_oppprt").html('');
+    }
+
+    datatable_reset(table_id=3);
+}
