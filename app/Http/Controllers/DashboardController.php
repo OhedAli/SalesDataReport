@@ -102,7 +102,8 @@ class DashboardController extends Controller
                                     ->with('slaesagent')
                                     ->whereBetween('purchdate',[$lastweek,$todayDate_end])
                                     ->groupBy('salesman')
-                                    ->get();
+                                    ->get();                             
+                            
 
         if($result['weeklycount'] > 0){
             $result['weekly_details'] = json_encode($this->call_search_ytel($result['weekly_details']->toArray(),$lastweek,$todayDate_end));
@@ -114,9 +115,6 @@ class DashboardController extends Controller
                                         ->whereBetween('purchdate',[$lastweek, $todayDate_end])
                                         ->get()->toArray();
 
-        // echo '<pre>';
-        // print_r($result['weekly_details']);
-        // die();
 
         $result['weekly_top'] = Saleslogs::select('salesman', Saleslogs::raw('count(salesman) as sales_count '))
                                 ->whereBetween('purchdate',[$lastweek,$todayDate_end])
@@ -159,8 +157,14 @@ class DashboardController extends Controller
                                       ->groupBy('salesman')
                                       ->get();
 
+        // echo '<pre>';
+        // print_r($result['monthly_details']->toArray());
+        // die();                              
+
         if($result['monthlycount'] > 0)
             $result['monthly_details'] = json_encode($this->call_search_ytel($result['monthly_details']->toArray(),$lastmonth,$todayDate_end));
+
+
 
         $result['monthly_base_details'] = Saleslogs::select(Saleslogs::raw('SUM(cuscost) as cuscost'),
                                           Saleslogs::raw('SUM(finterm) as finterm'), 
@@ -293,19 +297,24 @@ class DashboardController extends Controller
 
                     if(!empty($dataValue['slaesagent'])){
 
-                    // echo $dataValue['slaesagent']['user'];
-                    $result = Ytel::select('user',Ytel::raw('count(user) as total_calls'))
-                              ->where('user','=',$dataValue['slaesagent']['user'])
-                              ->where('list_id','999')
-                              ->where('length_in_sec','>','15')
-                              ->where('campaign_id','=','Sales')
-                              ->whereBetween('call_date',[$start_range,$end_range])
-                              ->groupBy('user')
-                              ->get()->toArray();
+                        // echo $dataValue['slaesagent']['user'];
+                        $dataValue['total_calls'] = 0; 
+                        foreach ($dataValue['slaesagent'] as $key => $agentvalue) {
 
-                    // print_r($result);
-                    if(!empty($result))
-                        $dataValue['total_calls'] = $result[0]['total_calls'];
+                            
+                            $result = Ytel::select('user',Ytel::raw('count(user) as total_calls'))
+                                      ->where('user','=',$agentvalue['user'])
+                                      ->where('list_id','999')
+                                      ->where('length_in_sec','>','15')
+                                      ->where('campaign_id','=','Sales')
+                                      ->whereBetween('call_date',[$start_range,$end_range])
+                                      ->groupBy('user')
+                                      ->get()->toArray();
+
+                            // print_r($result);
+                            if(!empty($result))
+                                $dataValue['total_calls'] = $dataValue['total_calls'] + $result[0]['total_calls'];
+                        }
 
                     }
 
@@ -323,8 +332,6 @@ class DashboardController extends Controller
         
         else{
 
-            $result = '';
-
             foreach ($dataArr as $datakey => $dataValue) {
 
                 try{
@@ -332,15 +339,20 @@ class DashboardController extends Controller
                     if(!empty($dataValue['slaesagent'])){
 
                         // echo $dataValue['slaesagent']['user'];
-                        $result = Ytel::select(Ytel::raw('CAST(call_date AS DATE) as call_date'), Ytel::raw('count(call_date) as total_calls'))
-                                  ->where('user','=',$dataValue['slaesagent']['user'])
-                                  ->where('list_id','999')
-                                  ->where('length_in_sec','>','15')
-                                  ->where('campaign_id','=','Sales')
-                                  ->whereBetween('call_date',[$start_range,$end_range])
-                                  ->groupBy(Ytel::raw('CAST(call_date AS DATE)'))
-                                  ->get()->toArray();
+                        $result = array();
+                        foreach ($dataValue['slaesagent'] as $key => $agentvalue) {
 
+                            $res = Ytel::select(Ytel::raw('CAST(call_date AS DATE) as call_date'), Ytel::raw('count(call_date) as total_calls'))
+                                      ->where('user','=',$agentvalue['user'])
+                                      ->where('list_id','999')
+                                      ->where('length_in_sec','>','15')
+                                      ->where('campaign_id','=','Sales')
+                                      ->whereBetween('call_date',[$start_range,$end_range])
+                                      ->groupBy(Ytel::raw('CAST(call_date AS DATE)'))
+                                      ->get()->toArray();
+
+                            $result = array_merge($result,$res);
+                        }
                     }
 
                     array_push($resArr,$result);
@@ -440,6 +452,13 @@ class DashboardController extends Controller
         $yesterdayDate_start = date('Y-m-d', strtotime('-1 days')); 
         $todayDate_end = date('Y-m-d');
 
+        $user_data = Saleslogs::select('salesman')
+                     ->with('slaesagent')
+                     ->where('salesman', '=', $sm_name)
+                     ->distinct()
+                     ->get()
+                     ->toArray();
+
             $result['todaycount'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])->where('salesman',$sm_name)->count();
 
             $result['today_details'] =  Saleslogs::select('salesman',
@@ -464,6 +483,8 @@ class DashboardController extends Controller
                                           ->whereBetween('purchdate', [$todayDate_start, $todayDate_end])
                                           ->where('salesman',$sm_name)
                                           ->get();
+
+            $result['today_oppurtunites'] = json_encode($this->find_not_sale($user_data, $todayDate_start, $todayDate_end),true);
 
             $result['yesterdaycount'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])->where('salesman',$sm_name)->count();
             $result['dailydata'] = $this->FlagSighCheck($result['todaycount'], $result['yesterdaycount']);
@@ -492,6 +513,8 @@ class DashboardController extends Controller
                                           ->whereBetween('purchdate', [$lastweek, $todayDate_end])
                                           ->where('salesman',$sm_name)
                                           ->get();
+
+            $result['weekly_oppurtunites'] = json_encode($this->find_not_sale($user_data, $lastweek, $todayDate_end),true);
 
             $result['Secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])->where('salesman',$sm_name)->count();
             $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['Secondweeklycount']);
@@ -532,9 +555,13 @@ class DashboardController extends Controller
                                           ->where('salesman',$sm_name)
                                           ->get();
 
+
+            $result['monthly_oppurtunites'] = json_encode($this->find_not_sale($user_data, $lastmonth, $todayDate_end),true);
+
             // echo '<pre>';
-            // print_r($result['today_details']);
+            // print_r($result['monthly_oppurtunites']->toArray());
             // die();
+
 
             $result['Secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastmonth_start,$Secondlastmonth_end])->where('salesman',$sm_name)->count();
             $result['monthlydata'] = $this->FlagSighCheck($result['monthlycount'], $result['Secondmonthlycount']);
@@ -546,6 +573,7 @@ class DashboardController extends Controller
             $result['end_date'] = '';
             $result['prev_sales_details'] = '';
             $result['lead_info_details'] = '';
+            $result['adv_range_oppurtunites'] = '';
             
             if($request->isMethod('get'))
             {
@@ -576,13 +604,23 @@ class DashboardController extends Controller
                 elseif($request->post('leadDate') != ""){
 
                       // echo $request->post('leadDate');
-                    $result['lead_info_details'] = Saleslogs::select('*')
-                    ->where('purchdate', $request->post('leadDate'))
+                    $result['cal_date_data'] = array();
+
+                    $caldate = $request->post('leadDate');
+                    // $table_type = $request->post('tableType');
+
+                    
+                    $result['cal_date_data']['lead_info'] = Saleslogs::select('*')
+                    ->where('purchdate', $caldate)
                     ->where('salesman',$sm_name)
-                    ->get();
+                    ->get()
+                    ->toArray();
+                    
+                    $result['cal_date_data']['opprt_info'] = $this->find_not_sale($user_data, $caldate, $caldate);
 
-                    return $result['lead_info_details'];
+                    // print_r(json_encode($result['cal_date_data']));
 
+                    return json_encode($result['cal_date_data'],true);
                 }
                     
                 else{
@@ -597,6 +635,9 @@ class DashboardController extends Controller
                     ->whereBetween('purchdate', [$start_range, $end_range])
                     ->where('salesman',$sm_name)
                     ->get();
+
+                    $result['adv_range_oppurtunites'] = json_encode($this->find_not_sale($user_data, $start_range, $end_range),true);
+
                     return view('salesman-details',compact('result'));
                 }
 
@@ -607,6 +648,41 @@ class DashboardController extends Controller
                 //do nothing
             }
         
+    }
+
+    public function find_not_sale($sm_data , $start_date, $end_date)
+    {
+        // echo '<pre>';
+        // print_r($sm_data);
+        $result_opprt = array();
+        $start_range = $start_date.' 00:00:00';
+        $end_range = $end_date.' 23:59:59';
+        
+        
+
+        foreach ($sm_data[0]['slaesagent'] as $key => $agentvalue) {
+            $user_id = $agentvalue['user'];
+
+            $res_data = DB::connection('mysql3')->table('vicidial_closer_log')
+                    ->join('vicidial_list',function($join) use($user_id,$start_range,$end_range) {
+                        $join->on('vicidial_list.lead_id','=','vicidial_closer_log.lead_id')
+                        ->where('vicidial_list.security_phrase','!=', 'Sales')
+                        ->where('vicidial_closer_log.list_id','999')
+                        ->where('vicidial_closer_log.length_in_sec','>','420')
+                        ->where('vicidial_closer_log.campaign_id','=','Sales')
+                        // ->where('vicidial_list.user','=','vicidial_closer_log.user')
+                        ->where('vicidial_closer_log.user','=',$user_id)
+                        ->whereBetween('vicidial_closer_log.call_date',[$start_range,$end_range]);
+                    })
+                    ->get()
+                    ->toArray();
+
+            $result_opprt = array_merge($result_opprt,$res_data);
+        }
+
+
+        return $result_opprt;
+
     }
       
 }

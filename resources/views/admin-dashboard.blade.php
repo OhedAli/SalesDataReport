@@ -380,7 +380,7 @@
        });
 
 
-      $(document).on('click','.fc-button',function () {
+      $(document).on('click','.fc-prev-button,.fc-next-button',function () {
 
           var src_url = "{{ route('dashboard') }}";
 
