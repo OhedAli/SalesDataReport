@@ -504,9 +504,9 @@ function tble_oppprt_info(res_data, search_flag)
         	if(arrData.email == null)
         		arrData.email = '';
 
-        	hour = Math.trunc(arrData.length_in_sec / 3600) ;
-        	min = Math.trunc((arrData.length_in_sec % 3600) / 60);
-        	sec = arrData.length_in_sec % 60 ;
+        	hour = Math.trunc(arrData.call_time / 3600) ;
+        	min = Math.trunc((arrData.call_time % 3600) / 60);
+        	sec = arrData.call_time % 60 ;
 
         	if(hour < 10)
         		hour = '0' + hour;
