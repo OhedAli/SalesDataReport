@@ -185,9 +185,6 @@ function datatable_reset(table_id) {
     else{
     	$('#datatable'+table_id).DataTable({
 	        responsive: true,
-            "bJQueryUI": true,
-            "sPaginationType": "full_numbers",
-            "bAutoWidth": false,
 	        language: {
 	          searchPlaceholder: 'Search...',
 	          sSearch: '',

@@ -222,7 +222,7 @@
           </div>
         </div>
         
-        <div class="section-wrapper lead_data_info">
+        <div class="section-wrapper lead_data_info" style="display: none;">
           
             <label class="section-title">Sales Info for: <span class="fill_dt"></span></label>
 
@@ -311,8 +311,8 @@
         
         var cal_data = "{{ $result['calendar_data'] }}";
         deal_calendar(cal_data);
+        $(".lead_data_info").fadeIn();
         
-
         $('.span').on('click',function(){
           var sl_data,time_span;
           $('.section-wrapper').hide();
@@ -346,7 +346,7 @@
 
 
         $('.opt').click(function(){
-          
+          console.log(2);
           $('.opt').removeClass('active-opt');
           $(this).addClass('active-opt');
 
