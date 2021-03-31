@@ -217,8 +217,8 @@
 
         <div class="section-opts" style="display: block;">
           <div class="opts">
-            <span class="active-opt opt" value="sales">Sales</span>
-            <span class="opt" value="opportunity"> opportunities</span>
+            <span class="active-opt opt">Sales</span>
+            <span class="opt">Opportunities</span>
           </div>
         </div>
         
@@ -238,7 +238,7 @@
                       <th>DISCOUNT</th>
                       <th>Type</th>
                       <th>Purchase At</th>
-                      
+                      <th>Recording</th>
                   </tr>
                   </thead>
                   <tbody id="lead_data">
@@ -256,7 +256,7 @@
               <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
 
               <div class="table-responsive table-wrapper dash_table">
-                <table id="datatable3" class="table mg-b-0 table display responsive nowrap">
+                <table id="datatable3" class="table mg-b-0 table display responsive nowrap" style="max-width: 100% !important;">
                     <thead>
                     <tr>
                         <th>LEAD ID</th>
@@ -264,6 +264,7 @@
                         <th>PHONE </th>
                         <th>EMAIL</th>
                         <th>CALL TIME</th>
+                        <th>Recording</th>
                     </tr>
                     </thead>
                     <tbody id="lead_data_oppprt">
@@ -302,11 +303,9 @@
             $(".fill_dt").text("{{$result['start_date']}}" + '-' + "{{$result['end_date']}}");
         }
         else{
-          let today = $('.fc-today').data('date');
-          let current_day = $(".fc-today").children('span').text();
-          let monthYear = $(".fc-center").children('h2').text();
-          $(".fill_dt").text(current_day + ' ' + monthYear);
-          sales_info_salesman(today);
+          $(".fill_dt").text('Today');
+          tble_lead_info("{{ $result['today_sales_data'] }}", search_flag=true);
+          tble_oppprt_info("{{ $result['today_oppurtunites'] }}", search_flag=true);
 
          }
         
@@ -316,6 +315,7 @@
 
         $('.span').on('click',function(){
           var sl_data,time_span;
+          $('.section-wrapper').hide();
           $('.span').children('div').removeClass('active');
             $(this).children('div').addClass('active');
             // datatable_place();
@@ -336,7 +336,12 @@
               $(".fill_dt").html('TODAY');
             }
 
+            setTimeout(function(){
+              click_tab();
+            },100);
+            
             $("html,body").animate({scrollTop : $(".opts").offset().top },2000);
+            
         });
 
 
@@ -393,29 +398,29 @@
         });
     });
 
-  $(document).on('click', '.fc-lead', function(){
-    //console.log("1")
-    current_date = $(this).parent().data("date");
-    let day = $(this).siblings('.fc-day-number').text(); 
+  $(document).on('click', '.fc-day-top', function(){
+    //console.log("1");
+    $('.section-wrapper').hide();
+    click_date = $(this).data("date");
+    let day = $(this).children('.fc-day-number').text(); 
     let monthYear = $(".fc-center").children('h2').text();
     $(".fill_dt").text(day + ' ' + monthYear );
 
-    sales_info_salesman(current_date);
+    sales_info_salesman(click_date);
     $('.span').children('div').removeClass('active');
-    $("html,body").animate({scrollTop : $(".opts").offset().top },2000);
-   
+
   });
 
 
 
-function sales_info_salesman(current_date)
+function sales_info_salesman(click_date)
 {
   
   $.ajax({
       url : window.src_url,
       method: 'post',
       data : {
-           leadDate: current_date,
+           leadDate: click_date,
            _token : "{{ csrf_token() }}"
           
       },
@@ -425,12 +430,24 @@ function sales_info_salesman(current_date)
             // console.log(cal_date_data.lead_info);
             tble_lead_info(cal_date_data.lead_info,search_flag=false);
             tble_oppprt_info(cal_date_data.opprt_info,search_flag=false);
+            setTimeout(function(){
+              click_tab();
+              $("html,body").animate({scrollTop : $(".opts").offset().top },2000);
+            },100);
 
       },
       error: function(err){
           console.log(err);
       }
 
+  });
+}
+
+function click_tab()
+{
+  $('.opt').each(function(){
+    if($(this).hasClass('active-opt'))
+      $(this).click();
   });
 }
 

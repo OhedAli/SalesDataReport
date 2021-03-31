@@ -86,6 +86,7 @@ function tble_lead_info(result_data, search_flag){
             '<td>$' + Math.round(discount) + '</td>' +
             '<td>' + type + '</td>' +
             '<td>' + arrData.purchdate + '</td>' +
+            '<td>' + (arrData.filename != undefined ? '<a href="' + arrData.location + '" target="_blank">' + arrData.filename + '</a>' : 'N/A') + '</td>' +
             '</tr>';
              
         })
@@ -104,8 +105,10 @@ function tble_lead_info(result_data, search_flag){
 
 function insert_table_data(res_details) {
     
-    if ($.fn.DataTable.isDataTable("#datatable1"))
+    if ($.fn.DataTable.isDataTable("#datatable1")){
         $('#datatable1').DataTable().clear().destroy();
+        $("#sales_info_data").empty();
+    }
 
     let result = JSON.parse($("<div/>").html(res_details).text());
     
@@ -182,6 +185,9 @@ function datatable_reset(table_id) {
     else{
     	$('#datatable'+table_id).DataTable({
 	        responsive: true,
+            "bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+            "bAutoWidth": false,
 	        language: {
 	          searchPlaceholder: 'Search...',
 	          sSearch: '',
@@ -479,8 +485,10 @@ $('.cal-tab button').on('click',function(){
 function tble_oppprt_info(res_data, search_flag)
 {
 
-    if ($.fn.DataTable.isDataTable("#datatable3"))
+    if ($.fn.DataTable.isDataTable("#datatable3")){
         $('#datatable3').DataTable().clear().destroy();
+        $("#lead_data_oppprt").empty();
+    }
 
     
     if(search_flag == true){
@@ -525,6 +533,7 @@ function tble_oppprt_info(res_data, search_flag)
             '<td>' + arrData.phone_number + '</td>' +
             '<td>' + arrData.email  + '</td>' +
             '<td>' + hour + ':' + min + ':' + sec + '</td>' +
+            '<td>' + (arrData.filename != undefined ? '<a href="' + arrData.location + '" target="_blank">' + arrData.filename + '</a>' : 'N/A') + '</td>' +
             '</tr>';
              
         });
