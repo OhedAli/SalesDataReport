@@ -567,6 +567,11 @@ p.text-black{
     padding-right: 50px;
 }
 
+.datatable-scroll {
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
 .reload button, .cal-tab button{
     background-color: #1b84e7;
     background-image: none;
@@ -626,6 +631,19 @@ p.text-black{
 #datatable1, #datatable3, #datatable2{
     width: 100% !important;
 }
+
+.sm_td{
+    max-width: 100%;
+    /*text-overflow: ellipsis;*/
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/*td a{
+    word-break: break-all;
+    white-space: normal;
+}*/
+
 @media screen and (min-width:992px) and (max-width: 1199px) {
     .ctab-bx {
         min-height: 85px;

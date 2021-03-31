@@ -468,28 +468,26 @@ class DashboardController extends Controller
                                         ->whereBetween('purchdate',[$todayDate_start, $todayDate_end])
                                         ->where('salesman',$sm_name)
                                         ->get();
+
+            $today_sales_data = Saleslogs::select('*',Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
+                                  ->whereBetween('purchdate', [$todayDate_start, $todayDate_end])
+                                  ->where('salesman',$sm_name)
+                                  ->get()
+                                  ->toArray();                            
             
             if($result['todaycount'] > 0){
                 $result['today_details'] = $this->call_search_ytel($result['today_details']->toArray(),$todayDate_start,$todayDate_end);
                 if(!array_key_exists('total_calls',$result['today_details'][0]))
                     $result['today_details'][0]['total_calls'] = 0;
+
+                $result['today_sales_data'] = json_encode($this->fetch_recording_path($user_data,$today_sales_data),true);
             }
             else{
                 $result['today_details'][0]['total_calls'] = 0;
-            }
+                $result['today_sales_data'] = json_encode($today_sales_data,true);
+            }                          
 
-            $result['today_sales_data'] = Saleslogs::select('*')
-                                          ->whereBetween('purchdate', [$todayDate_start, $todayDate_end])
-                                          ->where('salesman',$sm_name)
-                                          ->get();
-
-            $today_phone_data = Saleslogs::select(Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
-                                 ->where('salesman',$sm_name)
-                                 ->whereBetween('purchdate', [$todayDate_start, $todayDate_end])
-                                 ->get()
-                                 ->toArray();                              
-
-            $result['today_oppurtunites'] = json_encode($this->find_not_sale($user_data, $today_phone_data, $todayDate_start, $todayDate_end),true);
+            $result['today_oppurtunites'] = json_encode($this->find_not_sale($user_data, $today_sales_data, $todayDate_start, $todayDate_end),true);
 
             $result['yesterdaycount'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])->where('salesman',$sm_name)->count();
             $result['dailydata'] = $this->FlagSighCheck($result['todaycount'], $result['yesterdaycount']);
@@ -505,27 +503,27 @@ class DashboardController extends Controller
                                         ->where('salesman',$sm_name)
                                         ->get();
 
+
+            $weekly_sales_data = Saleslogs::select('*',Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
+                                  ->whereBetween('purchdate', [$lastweek, $todayDate_end])
+                                  ->where('salesman',$sm_name)
+                                  ->get()
+                                  ->toArray();
+                                        
+
             if($result['weeklycount'] > 0){
                 $result['weekly_details'] = $this->call_search_ytel($result['weekly_details']->toArray(),$lastweek,$todayDate_end);
                 if(!array_key_exists('total_calls',$result['weekly_details'][0]))
                     $result['weekly_details'][0]['total_calls'] = 0;
+
+                $result['weekly_sales_data'] = json_encode($this->fetch_recording_path($user_data,$weekly_sales_data),true);
             }
             else{
                 $result['weekly_details'][0]['total_calls'] = 0;
+                $result['weekly_sales_data'] = json_encode($weekly_sales_data,true);
             }
 
-            $result['weekly_sales_data'] = Saleslogs::select('*')
-                                          ->whereBetween('purchdate', [$lastweek, $todayDate_end])
-                                          ->where('salesman',$sm_name)
-                                          ->get();
-
-            $weekly_phone_data = Saleslogs::select(Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
-                          ->where('salesman',$sm_name)
-                          ->whereBetween('purchdate', [$lastweek, $todayDate_end])
-                          ->get()
-                          ->toArray();
-
-            $result['weekly_oppurtunites'] = json_encode($this->find_not_sale($user_data, $weekly_phone_data, $lastweek, $todayDate_end),true);
+            $result['weekly_oppurtunites'] = json_encode($this->find_not_sale($user_data, $weekly_sales_data, $lastweek, $todayDate_end),true);
 
             $result['Secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])->where('salesman',$sm_name)->count();
             $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['Secondweeklycount']);
@@ -551,33 +549,29 @@ class DashboardController extends Controller
 
             $result['calendar_data'] = json_encode(array_merge(($this->call_search_ytel($monthly_data->toArray(), $lastmonth, $todayDate_end,$day_by_day=1))[0],$result['monthly_sm_details']->toArray()));
 
+            $monthly_sales_data = Saleslogs::select('*',Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
+                                  ->whereBetween('purchdate', [$lastmonth, $todayDate_end])
+                                  ->where('salesman',$sm_name)
+                                  ->get()
+                                  ->toArray();
 
             if($result['monthlycount'] > 0){
                 $result['monthly_details'] = $this->call_search_ytel($monthly_data->toArray(),$lastmonth,$todayDate_end);
                 if(!array_key_exists('total_calls',$result['monthly_details'][0]))
                     $result['monthly_details'][0]['total_calls'] = 0;
+
+                $result['monthly_sales_data'] = json_encode($this->fetch_recording_path($user_data,$monthly_sales_data),true);
             }
             else{
-                $result['monthly_details'] = $monthly_data->toArray();
+                // $result['monthly_details'] = $monthly_data->toArray();
                 $result['monthly_details'][0]['total_calls'] = 0;
+                $result['monthly_sales_data'] = json_encode($monthly_sales_data,true);
             }
 
-            $result['monthly_sales_data'] = Saleslogs::select('*')
-                                          ->whereBetween('purchdate', [$lastmonth, $todayDate_end])
-                                          ->where('salesman',$sm_name)
-                                          ->get();
-
-            $monthly_phone_data = Saleslogs::select(Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
-                          ->where('salesman',$sm_name)
-                          ->whereBetween('purchdate', [$lastmonth, $todayDate_end])
-                          ->get()
-                          ->toArray();
-
-
-            $result['monthly_oppurtunites'] = json_encode($this->find_not_sale($user_data, $monthly_phone_data, $lastmonth, $todayDate_end),true);
+            $result['monthly_oppurtunites'] = json_encode($this->find_not_sale($user_data, $monthly_sales_data, $lastmonth, $todayDate_end),true);
 
             // echo '<pre>';
-            // print_r($result['monthly_oppurtunites']->toArray());
+            // print_r(json_decode($result['monthly_sales_data'],true));
             // die();
 
 
@@ -626,21 +620,15 @@ class DashboardController extends Controller
 
                     $caldate = $request->post('leadDate');
                     // $table_type = $request->post('tableType');
-
-                    
-                    $result['cal_date_data']['lead_info'] = Saleslogs::select('*')
-                    ->where('purchdate', $caldate)
-                    ->where('salesman',$sm_name)
-                    ->get()
-                    ->toArray();
-
-                    $cal_phone_data = Saleslogs::select(Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
+                    $cal_sales_data = Saleslogs::select('*',Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
                                       ->where('salesman',$sm_name)
                                       ->whereBetween('purchdate', [$caldate, $caldate])
                                       ->get()
                                       ->toArray();
                     
-                    $result['cal_date_data']['opprt_info'] = $this->find_not_sale($user_data, $cal_phone_data, $caldate, $caldate);
+                    $result['cal_date_data']['lead_info'] = $this->fetch_recording_path($user_data,$cal_sales_data);
+                    
+                    $result['cal_date_data']['opprt_info'] = $this->find_not_sale($user_data, $cal_sales_data, $caldate, $caldate);
 
                     // print_r(json_encode($result['cal_date_data']));
 
@@ -655,18 +643,16 @@ class DashboardController extends Controller
                     $result['start_date'] = date("d F, Y", strtotime($request->post('start_date')));
                     $result['end_date'] = date("d F, Y", strtotime($request->post('end_date')));
                     $result['adv_range_sales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])->where('salesman',$sm_name)->count();
-                    $result['lead_info_details'] = Saleslogs::select('*')
-                    ->whereBetween('purchdate', [$start_range, $end_range])
-                    ->where('salesman',$sm_name)
-                    ->get();
 
-                    $adv_range_phone_data = Saleslogs::select(Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
-                                      ->where('salesman',$sm_name)
-                                      ->whereBetween('purchdate', [$start_range, $end_range])
-                                      ->get()
-                                      ->toArray();
+                    $adv_lead_info_details = Saleslogs::select('*',Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
+                                  ->whereBetween('purchdate', [$start_range, $end_range])
+                                  ->where('salesman',$sm_name)
+                                  ->get()
+                                  ->toArray();
 
-                    $result['adv_range_oppurtunites'] = json_encode($this->find_not_sale($user_data, $adv_range_phone_data, $start_range, $end_range),true);
+                    $result['lead_info_details'] = json_encode($this->fetch_recording_path($user_data,$adv_lead_info_details),true);
+
+                    $result['adv_range_oppurtunites'] = json_encode($this->find_not_sale($user_data, $adv_lead_info_details, $start_range, $end_range),true);
 
                     return view('salesman-details',compact('result'));
                 }
@@ -684,8 +670,8 @@ class DashboardController extends Controller
     {
         // echo '<pre>';
         // print_r($sm_data);
-        $result_opprt = array();
         $phone = array();
+        $user_ids = array();
         $start_range = $start_date.' 00:00:00';
         $end_range = $end_date.' 23:59:59';
 
@@ -694,38 +680,73 @@ class DashboardController extends Controller
         }
 
         foreach ($sm_data[0]['slaesagent'] as $key => $agentvalue) {
-            $user_id = $agentvalue['user'];
-
-            $res_data = DB::connection('mysql3')->table('vicidial_closer_log')
-                        ->select('vicidial_list.*','vicidial_closer_log.length_in_sec as call_time')
-                        ->join('vicidial_list',function($join1) use($user_id,$phone,$start_range,$end_range) {
-                            $join1->on('vicidial_list.lead_id','=','vicidial_closer_log.lead_id')
-                            ->where('vicidial_list.security_phrase','=', 'Sales')
-                            ->whereNotIn('vicidial_list.phone_number', $phone);
-                            // ->where('vicidial_list.user','=','vicidial_closer_log.user')
-                        })
-                        // ->join('recording_log',function($join2) use($user_id){
-                        //     $join2->on('vicidial_closer_log.lead_id','=','recording_log.lead_id')
-                        //     ->where('recording_log.user','=',$user_id)
-                        //     ->where('recording_log.length_in_sec','=','vicidial_closer_log.length_in_sec');
-                        // })
-                        ->where('vicidial_closer_log.list_id','999')
-                        ->where('vicidial_closer_log.length_in_sec','>','420')
-                        ->where('vicidial_closer_log.campaign_id','=','Sales')
-                        ->where('vicidial_closer_log.user','=',$user_id)
-                        ->whereBetween('vicidial_closer_log.call_date',[$start_range,$end_range])
-                        ->get()
-                        ->toArray();
-
-            // echo '<pre>';
-            // print_r($res_data);
-            // die();
-
-            $result_opprt = array_merge($result_opprt,$res_data);
+            array_push($user_ids, $agentvalue['user']);
         }
 
 
+        $result_opprt = DB::connection('mysql3')->table('vicidial_closer_log')
+                    ->select('vicidial_list.*','vicidial_closer_log.length_in_sec as call_time','recording_log.recording_id',
+                            'recording_log.location','recording_log.filename')
+                    ->join('vicidial_list',function($join1) use($phone) {
+                        $join1->on('vicidial_list.lead_id','=','vicidial_closer_log.lead_id')
+                        ->where('vicidial_list.security_phrase','=', 'Sales')
+                        ->whereNotIn('vicidial_list.phone_number', $phone);
+                        // ->where('vicidial_list.user','=','vicidial_closer_log.user')
+                    })
+                    ->join('recording_log',function($join2) use($user_ids){
+                        $join2->on('vicidial_closer_log.closecallid','=','recording_log.vicidial_id')
+                        ->whereIn('recording_log.user',$user_ids);
+                    })
+                    ->where('vicidial_closer_log.list_id','999')
+                    ->where('vicidial_closer_log.length_in_sec','>','420')
+                    ->where('vicidial_closer_log.campaign_id','=','Sales')
+                    ->whereIn('vicidial_closer_log.user',$user_ids)
+                    ->whereBetween('vicidial_closer_log.call_date',[$start_range,$end_range])
+                    ->get()
+                    ->toArray();
+
+        
+
         return $result_opprt;
+
+    }
+
+    public function fetch_recording_path($usr_data, $sales_data)
+    {
+
+        $resArr = array();
+        $user_ids = array();
+
+        foreach ($usr_data[0]['slaesagent'] as $key => $agentvalue) {
+            array_push($user_ids, $agentvalue['user']);
+        }
+        // echo '<pre>';
+        // print_r($user_ids);
+        foreach ($sales_data as $key => $sales_value) {
+
+            $ph_no = $sales_value['phone_no'];
+
+            $res_data = DB::connection('mysql3')->table('vicidial_closer_log')
+                        ->select('vicidial_closer_log.phone_number as ytel_ph_no','recording_log.recording_id','recording_log.location','recording_log.filename')
+                        ->join('recording_log',function($join1) use($user_ids,$ph_no){
+                            $join1->on('vicidial_closer_log.closecallid','=','recording_log.vicidial_id')
+                            ->where('vicidial_closer_log.phone_number','=',$ph_no)
+                            ->whereIn('recording_log.user',$user_ids);
+                        })
+                        ->get()
+                        ->toArray();
+
+            if(!empty($res_data))
+                $sales_value = array_merge($sales_value,json_decode(json_encode($res_data['0']),true));
+
+            
+            // print_r($sales_value);
+            
+            array_push($resArr, $sales_value);
+
+        }
+
+        return $resArr;
 
     }
       
