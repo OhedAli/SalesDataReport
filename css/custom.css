@@ -503,13 +503,17 @@ p.text-black{
     font-size: 16px;
 }
 
+.top-part h3, .top-part .wsl-cnt{
+    color: #000;
+    font-weight: bold;
+}
 
 .ctab-bx p{
     margin-bottom: 0px;
     
 }
 .top-part{
-    padding: 25px 10px 25px 10px;
+    padding: 40px 10px 25px 10px;
 }
 
 
@@ -643,6 +647,22 @@ p.text-black{
     word-break: break-all;
     white-space: normal;
 }*/
+
+.lower td, .lower td a{
+    color: red !important;
+}
+
+.higher td, .higher td a{
+    color: green !important;
+}
+
+.hdls{
+    font-size: 15px !important;
+}
+
+.hwls{
+    font-size: 10px !important;
+}
 
 @media screen and (min-width:992px) and (max-width: 1199px) {
     .ctab-bx {

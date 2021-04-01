@@ -41,6 +41,10 @@ class DashboardController extends Controller
 
 
         $result['todaycount'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])->count();
+        $result['today_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])
+                                            ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
+                                            ->count();
+
         $result['today_details'] = Saleslogs::select('salesman', 
                                 Saleslogs::raw('SUM(downpay) as downpay_add'),
                                 Saleslogs::raw('SUM(cuscost) as cuscost_add'),
@@ -94,6 +98,10 @@ class DashboardController extends Controller
         $result['weekly_total_calls_daywise'] = $this->find_total_call($lastweek,$todayDate_end,$day_by_day=1);
         
         $result['weeklycount'] = Saleslogs::whereBetween('purchdate',[$lastweek,$todayDate_end])->count();
+        $result['weekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastweek, $todayDate_end])
+                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
+                                             ->count();
+
         $result['weekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),
                                     Saleslogs::raw('SUM(cuscost) as cuscost_add'), 
                                     Saleslogs::raw('SUM(finterm) as finterm_add'), 
@@ -117,11 +125,21 @@ class DashboardController extends Controller
 
 
         $result['weekly_top'] = Saleslogs::select('salesman', Saleslogs::raw('count(salesman) as sales_count '))
+                                // ->with('slaesagent')
                                 ->whereBetween('purchdate',[$lastweek,$todayDate_end])
                                 ->groupBy('salesman')
+                                // ->having('sales_count', '>=', Saleslogs::raw('(select count(salesman) from saleslogs group by salesman order by count(salesman) desc limit 2, 1)'))
                                 ->orderBy('sales_count','desc')
                                 ->limit(3)
                                 ->get();
+
+        // if(!empty($result['weekly_top']->toArray()))
+        //     $result['weekly_top'] = json_encode($this->call_search_ytel($result['weekly_top']->toArray(),$lastweek,$todayDate_end),true);
+
+
+        // echo '<pre>';
+        // print_r(json_decode($result['weekly_top']));
+        // die();
 
         $result['Secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])->count();
         $result['Secondweekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),
@@ -147,6 +165,10 @@ class DashboardController extends Controller
         
         
         $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->count();
+        $result['monthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastmonth, $todayDate_end])
+                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
+                                             ->count();
+
         $result['monthly_details'] =  Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add'),
                                       Saleslogs::raw('SUM(cuscost) as cuscost_add'),
                                       Saleslogs::raw('SUM(finterm) as finterm_add'), 
@@ -352,9 +374,10 @@ class DashboardController extends Controller
 
                             $result = array_merge($result,$res);
                         }
+
+                        array_push($resArr,$result);
                     }
-                    
-                    array_push($resArr,$result);
+
                 }
                 
                 catch(Exception $e){
@@ -460,6 +483,11 @@ class DashboardController extends Controller
 
             $result['todaycount'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])->where('salesman',$sm_name)->count();
 
+            $result['today_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])
+                                                ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
+                                                ->where('salesman',$sm_name)
+                                                ->count();
+
             $result['today_details'] =  Saleslogs::select('salesman',
                                         Saleslogs::raw('SUM(cuscost) as cuscost_add'),
                                         Saleslogs::raw('SUM(finterm) as finterm_add'), 
@@ -493,6 +521,11 @@ class DashboardController extends Controller
             $result['dailydata'] = $this->FlagSighCheck($result['todaycount'], $result['yesterdaycount']);
         
             $result['weeklycount'] = Saleslogs::whereBetween('purchdate',[$lastweek,$todayDate_end])->where('salesman',$sm_name)->count();
+
+            $result['weekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastweek, $todayDate_end])
+                                                 ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
+                                                 ->where('salesman',$sm_name)
+                                                 ->count();
 
             $result['weekly_details'] = Saleslogs::select('salesman',
                                         Saleslogs::raw('SUM(cuscost) as cuscost_add'),
@@ -530,6 +563,10 @@ class DashboardController extends Controller
         
             $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->where('salesman',$sm_name)->count();
 
+            $result['monthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastmonth, $todayDate_end])
+                                                  ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
+                                                  ->where('salesman',$sm_name)
+                                                  ->count();
 
             $result['monthly_sm_details'] =  Saleslogs::select('salesman','purchdate',Saleslogs::raw('count(salesman) as sales_count '))
                                              ->whereBetween('purchdate',[$lastmonth, $todayDate_end])
@@ -547,7 +584,12 @@ class DashboardController extends Controller
                             ->where('salesman',$sm_name)
                             ->get();
 
-            $result['calendar_data'] = json_encode(array_merge(($this->call_search_ytel($monthly_data->toArray(), $lastmonth, $todayDate_end,$day_by_day=1))[0],$result['monthly_sm_details']->toArray()));
+            $calen_res_arr =  $this->call_search_ytel($user_data, $lastmonth, $todayDate_end,$day_by_day=1);
+
+            if(!empty($calen_res_arr))
+            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr[0],$result['monthly_sm_details']->toArray()));
+            else
+            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr,$result['monthly_sm_details']->toArray()));
 
             $monthly_sales_data = Saleslogs::select('*',Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
                                   ->whereBetween('purchdate', [$lastmonth, $todayDate_end])
@@ -608,7 +650,12 @@ class DashboardController extends Controller
                                                     ->groupBy('salesman','purchdate')
                                                     ->get();
 
-                    $result['calendar_data'] = json_encode(array_merge(($this->call_search_ytel($monthly_data->toArray(), $first_date, $last_date,$day_by_day=1))[0],$result['prev_sales_details']->toArray()));
+                    $calen_res_arr =  $this->call_search_ytel($user_data, $first_date, $last_date,$day_by_day=1);
+            
+		            if(!empty($calen_res_arr))
+		            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr[0],$result['prev_sales_details']->toArray()));
+		            else
+		            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr,$result['prev_sales_details']->toArray()));
                     
                     return $result['calendar_data'];
                 }

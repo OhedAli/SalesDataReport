@@ -134,6 +134,7 @@ function insert_table_data(res_details) {
 function leader_board_update(res_details){
    
     let result = JSON.parse($("<div/>").html(res_details).text());
+    let top_cnt = 0;
     //console.log(result);
     $(".l-board").html('');
     let path = window.location.href;
@@ -141,19 +142,21 @@ function leader_board_update(res_details){
     path = path.substr(0,path.indexOf('public')) + 'public';
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
-            
+            // console.log(result[datakey].sales_count);
             if (datavalue.sales_count != ''){
                     
                 let data_html = '<div class="mem-1"><div class="tx-center">'+
                                 '<a href="javascript:void(0);" class="img-a"><img src="'+ path +'/images/profile.png" class="card-img" alt="">'+
-                                '<div class="hexa"><img src="'+ path + '/images/hexa'+ (datakey + 1) +'.png" class="hexa1-bg" alt="">'+
-                                '<p>'+ (datakey + 1) +'</p></div></a>'+
+                                '<div class="hexa"><img src="'+ path + '/images/hexa'+ (top_cnt + 1) +'.png" class="hexa1-bg" alt="">'+
+                                '<p>'+ (top_cnt + 1) +'</p></div></a>'+
                                 '<h5 class="mg-t-10 mg-b-5">'+
-                                '<a href="javascript:void(0);" class="contact-name sm_name leader_name_'+ datakey + '">'+ datavalue.salesman + '</a>'+
-                                '<p><span class="leaderboardcount'+ datakey +'">'+ datavalue.sales_count + '</span> Sales</p>'+
+                                '<a href="javascript:void(0);" class="contact-name sm_name leader_name_'+ top_cnt + '">'+ datavalue.salesman + '</a>'+
+                                '<p><span class="leaderboardcount'+ top_cnt +'">'+ datavalue.sales_count + '</span> Sales</p>'+
                                 '</div></div>';
 
                 $(".l-board").append(data_html);
+
+                top_cnt ++;
                 
             }
                 
@@ -205,12 +208,36 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
     var finterm = finterm_add / sales_count;
     var discount = retail_add - cuscost_add;
     discount = '$' + Math.round(discount / sales_count);
-    var calls = (total_calls !== undefined ? total_calls : 'N/A');
-    var conv_rate = ((total_calls !== undefined  && total_calls != 0) ? (((sales_count/total_calls) * 100).toFixed(2)) + '%' : 'N/A');
+    var rec_class_name,calls,conv_rate;
+
+    if(total_calls !== undefined  && total_calls != 0){
+
+        calls = total_calls;
+        conv_rate = ((sales_count/total_calls) * 100).toFixed(2);
+        if(conv_rate < 7)
+            rec_class_name = 'lower';
+        else if(conv_rate > 8)
+            rec_class_name = 'higher';
+        else
+            rec_class_name = 'normal';
+
+        conv_rate = conv_rate + '%';
+    }
+    else if(total_calls == 0){
+        calls = total_calls;
+        conv_rate = 'N/A';
+        rec_class_name = 'normal';
+    }
+    else{
+        calls = 'N/A';
+        conv_rate = 'N/A';
+        rec_class_name = 'normal';
+    }
+
 
     data = '';
 
-    data += '<tr>' +
+    data += '<tr class=' + rec_class_name + '>' +
         '<td><a class="sm_name" href="javascript:void(0);">' + salesman + '</a></td>' +
         '<td>' + sales_count + '</td>' +
         '<td>' + downpayment.toFixed(2) + '%</td>' +
@@ -290,7 +317,7 @@ function place_lead_count(data_call, data_lead, date) {
 
                         html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>" + lead_cnt + "</strong></a></div>" +
                                "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>" + call_cnt + "</strong></a></div>" +
-                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>" + (call_cnt != 'N/A' ? ((lead_cnt/call_cnt) * 100).toFixed(2) + '%' : 'N/A') + "</strong></a></div>";
+                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Closing %: <strong>" + (call_cnt != 'N/A' ? ((lead_cnt/call_cnt) * 100).toFixed(2) + '%' : 'N/A') + "</strong></a></div>";
 
                         $(this).append(html);
                         
@@ -298,7 +325,7 @@ function place_lead_count(data_call, data_lead, date) {
                     else{
                         html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>0</strong></a></div>" +
                                "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>0</strong></a></div>" +
-                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>0%</strong></a></div>";
+                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Closing %: <strong>0%</strong></a></div>";
                         
                         $(this).append(html);
                     }
@@ -315,7 +342,7 @@ function place_lead_count(data_call, data_lead, date) {
 
                     html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>" + lead_cnt + "</strong></a></div>" +
                                "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>" + call_cnt + "</strong></a></div>" +
-                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>" + (call_cnt != 0 ? ((lead_cnt/call_cnt) * 100).toFixed(2) + '%' : 'N/A') + "</strong></a></div>";
+                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Closing %: <strong>" + (call_cnt != 0 ? ((lead_cnt/call_cnt) * 100).toFixed(2) + '%' : 'N/A') + "</strong></a></div>";
 
 
                     $(this).append(html);
@@ -356,7 +383,7 @@ function place_lead_count(data_call, data_lead, date) {
 
                     html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>" + lead_cnt + "</strong></a></div>" +
                            "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>" + call_cnt + "</strong></a></div>" +
-                           "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>" + ((lead_cnt/call_cnt) * 100).toFixed(2) + "%</strong></a></div>";
+                           "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Closing %: <strong>" + ((lead_cnt/call_cnt) * 100).toFixed(2) + "%</strong></a></div>";
 
                     $(this).append(html);
                 }
@@ -365,7 +392,7 @@ function place_lead_count(data_call, data_lead, date) {
 
                     html =  "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>0</strong></a></div>" +
                             "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>0</strong></a></div>" +
-                            "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Cvr: <strong>0%</strong></a></div>";
+                            "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Closing %: <strong>0%</strong></a></div>";
                         
                     $(this).append(html);
                 }

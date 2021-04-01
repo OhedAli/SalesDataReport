@@ -16,7 +16,7 @@
                       <!--  Details -->
                       @csrf
                       <div class="form-group">
-                      <h6 class="slim-card-title mg-b-15">Lead Summary</h6>
+                      <h6 class="slim-card-title mg-b-15">Sales Summary</h6>
                           <div class="controls f1">
                              <label for="arrive" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;From:</label>
                             <input type="date" name="start_date" placeholder="Select date" class="adv_date" data-polyfill="all" required>
@@ -43,11 +43,12 @@
               <div class="col-sm-4 span" id="daily" style="cursor:pointer;">
                 <div class="card card-earning-summary active top-card">
                   <div class="top-part">
-                    <h6>Today's Lead</h6>
-                    <h1>{{$result['todaycount']}}</h1>
-                    {{$result['dailydata'][2]}}
+                    <h6>Today's Sales</h6>
+                    <h3>{{ $result['todaycount'] - $result['today_wholesales_count'] }} <span class="hdls">deals</span></h3> 
+                    <p class="wsl-cnt">{{ $result['today_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                    <!-- {{$result['dailydata'][2]}}
                     <span class="valign-middle"><span class="@if($result['dailydata'][0]=='pos')tx-success @else tx-danger @endif">
-                    <i class="icon @if($result['dailydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['dailydata'][1]}}%</span><br/>from last Day</span>
+                    <i class="icon @if($result['dailydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['dailydata'][1]}}%</span><br/>from last Day</span> -->
                   </div>
                   <div class="crd-tab">
                     <div class="d-flex">
@@ -58,7 +59,7 @@
                         </p>
                       </div>
                       <div class="ctab-bx bl-1">
-                        <p>Conversion</p>
+                        <p>Closing %</p>
                         <p class="text-black">
                           @if($result['today_details'][0]['total_calls'] == 0) 
                             N/A
@@ -97,11 +98,12 @@
               <div class="col-sm-4 weekly span" id="weekly" style="cursor:pointer;">
                 <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t top-card">
                   <div class="top-part">
-                    <h6>This Week's Lead</h6>
-                    <h1>{{$result['weeklycount']}}</h1>
-                    {{$result['weeklydata'][2]}}
+                    <h6>This Week's Sales</h6>
+                    <h3>{{ $result['weeklycount'] - $result['weekly_wholesales_count']}} <span class="hdls">deals</span></h3> 
+                    <p class="wsl-cnt">{{ $result['weekly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                    <!-- {{$result['weeklydata'][2]}}
                     <span class="valign-middle"><span class="@if($result['weeklydata'][0]=='pos')tx-success @else tx-danger @endif">
-                    <i class="icon @if($result['weeklydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i> {{$result['weeklydata'][1]}}%</span><br/>from last week</span>
+                    <i class="icon @if($result['weeklydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i> {{$result['weeklydata'][1]}}%</span><br/>from last week</span> -->
                   </div>
                   <div class="crd-tab">
                     <div class="d-flex">
@@ -112,7 +114,7 @@
                         </p>
                       </div>
                       <div class="ctab-bx bl-1">
-                        <p>Conversion</p>
+                        <p>Closing %</p>
                         <p class="text-black">
                           @if($result['weekly_details'][0]['total_calls'] == 0) 
                             N/A
@@ -151,11 +153,12 @@
               <div class="col-sm-4 span" id="monthly" style="cursor:pointer;">
                 <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t top-card">
                   <div class="top-part">
-                    <h6>This Month's Lead</h6>
-                    <h1>{{$result['monthlycount']}}</h1>
-                    {{$result['monthlydata'][2]}}
+                    <h6>This Month's Sales</h6>
+                    <h3>{{ $result['monthlycount'] - $result['monthly_wholesales_count'] }} <span class="hdls">deals</span></h3> 
+                    <p class="wsl-cnt">{{ $result['monthly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                    <!-- {{$result['monthlydata'][2]}}
                     <span class="valign-middle"><span class="@if($result['monthlydata'][0]=='pos')tx-success @else tx-danger @endif">
-                    <i class="icon @if($result['monthlydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['monthlydata'][1]}}%</span><br/>from last Month</span>
+                    <i class="icon @if($result['monthlydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['monthlydata'][1]}}%</span><br/>from last Month</span> -->
                   </div>
                   <div class="crd-tab">
                     <div class="d-flex">
@@ -166,7 +169,7 @@
                         </p>
                       </div>
                       <div class="ctab-bx bl-1">
-                        <p>Conversion</p>
+                        <p>Closing %</p>
                         <p class="text-black">
                           @if($result['monthly_details'][0]['total_calls'] == 0) 
                             N/A
