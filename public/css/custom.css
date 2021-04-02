@@ -600,6 +600,31 @@ p.text-black{
     font-size: 20px;
     cursor: pointer;
 }
+.edit-btn{
+    padding: .25rem .5rem !important;
+    font-size: .875rem !important;
+    line-height: 1.5 !important;
+    border-radius: .2rem !important;
+        color: #fff !important;
+    background-color: #4e73df !important;
+    border-color: #4e73df !important;
+}
+.delete-btn{
+    padding: .25rem .5rem !important;
+    font-size: .875rem !important;
+    line-height: 1.5 !important;
+    border-radius: .2rem !important;
+        color: #fff !important;
+    background: #e20e0e !important;
+    border-color: #4e73df !important; 
+}
+table#datatable2 th, table#datatable2 td{
+        border: 1px solid #e3e6f0;
+        border-left-width: 0;
+}
+table#datatable2{
+    width: 100% !important;
+}
 
 @media screen and (min-width:992px) and (max-width: 1199px) {
     .ctab-bx {
