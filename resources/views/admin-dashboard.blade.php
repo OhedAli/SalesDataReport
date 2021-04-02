@@ -9,22 +9,23 @@
             <div class="m-lead">
             <h5 class="m-lead-hd"><span class="name_topper">Today</span>'s Leaderboard</h5>
             <div  class="l-board">
-            
-            @foreach($result['today_top'] as $key=>$value)
-            
-              <div class="mem-1">
-                <div class="tx-center">
-                  <a href="javascript:void(0);" class="img-a"><img src="{{asset('images/profile.png')}}" class="card-img" alt="">
-                    <div class="hexa ">
-                      <img src="{{asset('images/hexa'.($key+1). '.png')}}" class="hexa1-bg" alt="">
-                        <p>{{ $key + 1 }}</p>
-                      </div> 
-                  </a>
-                  <h5 class="mg-t-10 mg-b-5"><a href="javascript:void(0);" class="contact-name sm_name leader_name{{$key}}">{{$value['salesman']}}</a></h5>
-                  <p><span class="leaderboardcount{{$key}}">{{$value['sales_count']}}</span> Sales</p>
+            @if(!empty($result['today_top']))
+              @foreach(json_decode($result['today_top'],true) as $key=>$value)
+              
+                <div class="mem-1">
+                  <div class="tx-center">
+                    <a href="javascript:void(0);" class="img-a"><img src="{{asset('images/profile.png')}}" class="card-img" alt="">
+                      <div class="hexa ">
+                        <img src="{{asset('images/hexa'.($key+1). '.png')}}" class="hexa1-bg" alt="">
+                          <p>{{ $key + 1 }}</p>
+                        </div> 
+                    </a>
+                    <h5 class="mg-t-10 mg-b-5"><a href="javascript:void(0);" class="contact-name sm_name leader_name{{$key}}">{{$value['salesman']}}</a></h5>
+                    <p><span class="leaderboardcount{{$key}}">{{$value['sales_count']}}</span> Sales</p>
+                  </div>
                 </div>
-              </div>
-              @endforeach
+                @endforeach
+              @endif
             </div>
             </div>
 

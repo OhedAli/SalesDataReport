@@ -134,7 +134,7 @@ function insert_table_data(res_details) {
 function leader_board_update(res_details){
    
     let result = JSON.parse($("<div/>").html(res_details).text());
-    let top_cnt = 0;
+
     //console.log(result);
     $(".l-board").html('');
     let path = window.location.href;
@@ -142,21 +142,19 @@ function leader_board_update(res_details){
     path = path.substr(0,path.indexOf('public')) + 'public';
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
-            // console.log(result[datakey].sales_count);
+            
             if (datavalue.sales_count != ''){
                     
                 let data_html = '<div class="mem-1"><div class="tx-center">'+
                                 '<a href="javascript:void(0);" class="img-a"><img src="'+ path +'/images/profile.png" class="card-img" alt="">'+
-                                '<div class="hexa"><img src="'+ path + '/images/hexa'+ (top_cnt + 1) +'.png" class="hexa1-bg" alt="">'+
-                                '<p>'+ (top_cnt + 1) +'</p></div></a>'+
+                                '<div class="hexa"><img src="'+ path + '/images/hexa'+ (datakey + 1) +'.png" class="hexa1-bg" alt="">'+
+                                '<p>'+ (datakey + 1) +'</p></div></a>'+
                                 '<h5 class="mg-t-10 mg-b-5">'+
-                                '<a href="javascript:void(0);" class="contact-name sm_name leader_name_'+ top_cnt + '">'+ datavalue.salesman + '</a>'+
-                                '<p><span class="leaderboardcount'+ top_cnt +'">'+ datavalue.sales_count + '</span> Sales</p>'+
+                                '<a href="javascript:void(0);" class="contact-name sm_name leader_name_'+ datakey + '">'+ datavalue.salesman + '</a>'+
+                                '<p><span class="leaderboardcount'+ datakey +'">'+ datavalue.sales_count + '</span> Sales</p>'+
                                 '</div></div>';
 
                 $(".l-board").append(data_html);
-
-                top_cnt ++;
                 
             }
                 
