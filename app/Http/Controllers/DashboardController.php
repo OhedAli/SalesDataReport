@@ -36,13 +36,12 @@ class DashboardController extends Controller
         $yesterdayDate_start = date('Y-m-d', strtotime('-1 days')); 
         $todayDate_end = date('Y-m-d');
 
-
         $result['today_total_calls'] = $this->find_total_call($todayDate_start,$todayDate_end);
 
 
         $result['todaycount'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])->count();
         $result['today_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])
-                                            ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
+                                            ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
                                             ->count();
 
         $result['today_details'] = Saleslogs::select('salesman', 
@@ -56,8 +55,21 @@ class DashboardController extends Controller
                                 ->groupBy('salesman')
                                 ->get();
 
+        $result['today_top'] = '';
+        $topper_sales_count = array();
+        $topper_total_calls = array();
+
         if($result['todaycount'] > 0){
-            $result['today_details'] = json_encode($this->call_search_ytel($result['today_details']->toArray(),$todayDate_start,$todayDate_end));
+            $res_today = $this->call_search_ytel($result['today_details']->toArray(),$todayDate_start,$todayDate_end);
+            $result['today_details'] = json_encode($res_today,true);
+
+            foreach ($res_today as $key => $res_today_top) {
+                $topper_sales_count[$key] = $res_today_top['sales_count'];
+                $topper_total_calls[$key] = $res_today_top['total_calls'];
+            }
+
+            array_multisort($topper_sales_count,SORT_DESC,$topper_total_calls,SORT_ASC,$res_today);
+            $result['today_top'] = json_encode(array_slice($res_today, 0,3),true);
         }
 
         $result['today_base_details'] = Saleslogs::select(Saleslogs::raw('SUM(cuscost) as cuscost'),
@@ -67,13 +79,6 @@ class DashboardController extends Controller
                                         ->get()->toArray();
 
 
-        $result['today_top'] = Saleslogs::select('salesman', Saleslogs::raw('count(salesman) as sales_count '))
-                                ->whereBetween('purchdate',[$todayDate_start,$todayDate_end])
-                                ->groupBy('salesman')
-                                ->orderBy('sales_count','desc')
-                                ->limit(3)
-                                ->get();
-        //dd($result['today_top']);
         $result['yesterdaycount'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])->count();
         $result['yesterday_details'] = Saleslogs::select('salesman', 
                                         Saleslogs::raw('SUM(downpay) as downpay_add'),
@@ -99,7 +104,7 @@ class DashboardController extends Controller
         
         $result['weeklycount'] = Saleslogs::whereBetween('purchdate',[$lastweek,$todayDate_end])->count();
         $result['weekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastweek, $todayDate_end])
-                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
+                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
                                              ->count();
 
         $result['weekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),
@@ -112,10 +117,23 @@ class DashboardController extends Controller
                                     ->groupBy('salesman')
                                     ->get();                             
                             
+        $result['weekly_top'] = '';
+        $topper_sales_count = array();
+        $topper_total_calls = array();
 
         if($result['weeklycount'] > 0){
-            $result['weekly_details'] = json_encode($this->call_search_ytel($result['weekly_details']->toArray(),$lastweek,$todayDate_end));
+            $res_weekly = $this->call_search_ytel($result['weekly_details']->toArray(),$lastweek,$todayDate_end);
+            $result['weekly_details'] = json_encode($res_weekly,true);
+
+            foreach ($res_weekly as $key => $res_weekly_top) {
+                $topper_sales_count[$key] = $res_weekly_top['sales_count'];
+                $topper_total_calls[$key] = $res_weekly_top['total_calls'];
+            }
+
+            array_multisort($topper_sales_count,SORT_DESC,$topper_total_calls,SORT_ASC,$res_weekly);
+            $result['weekly_top'] = json_encode(array_slice($res_weekly, 0,3),true);
         }
+
 
         $result['weekly_base_details'] = Saleslogs::select(Saleslogs::raw('SUM(cuscost) as cuscost'),
                                         Saleslogs::raw('SUM(finterm) as finterm'), 
@@ -123,23 +141,6 @@ class DashboardController extends Controller
                                         ->whereBetween('purchdate',[$lastweek, $todayDate_end])
                                         ->get()->toArray();
 
-
-        $result['weekly_top'] = Saleslogs::select('salesman', Saleslogs::raw('count(salesman) as sales_count '))
-                                // ->with('slaesagent')
-                                ->whereBetween('purchdate',[$lastweek,$todayDate_end])
-                                ->groupBy('salesman')
-                                // ->having('sales_count', '>=', Saleslogs::raw('(select count(salesman) from saleslogs group by salesman order by count(salesman) desc limit 2, 1)'))
-                                ->orderBy('sales_count','desc')
-                                ->limit(3)
-                                ->get();
-
-        // if(!empty($result['weekly_top']->toArray()))
-        //     $result['weekly_top'] = json_encode($this->call_search_ytel($result['weekly_top']->toArray(),$lastweek,$todayDate_end),true);
-
-
-        // echo '<pre>';
-        // print_r(json_decode($result['weekly_top']));
-        // die();
 
         $result['Secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])->count();
         $result['Secondweekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),
@@ -166,7 +167,7 @@ class DashboardController extends Controller
         
         $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->count();
         $result['monthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastmonth, $todayDate_end])
-                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
+                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
                                              ->count();
 
         $result['monthly_details'] =  Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add'),
@@ -178,13 +179,25 @@ class DashboardController extends Controller
                                       ->whereBetween('purchdate',[$lastmonth,$todayDate_end])
                                       ->groupBy('salesman')
                                       ->get();
+                              
 
-        // echo '<pre>';
-        // print_r($result['monthly_details']->toArray());
-        // die();                              
+        $result['monthly_top'] = '';
+        $topper_sales_count = array();
+        $topper_total_calls = array();
 
-        if($result['monthlycount'] > 0)
-            $result['monthly_details'] = json_encode($this->call_search_ytel($result['monthly_details']->toArray(),$lastmonth,$todayDate_end));
+        if($result['monthlycount'] > 0){
+
+            $res_monthly = $this->call_search_ytel($result['monthly_details']->toArray(),$lastmonth,$todayDate_end);
+            $result['monthly_details'] = json_encode($res_monthly,true);
+
+            foreach ($res_monthly as $key => $res_monthly_top) {
+                $topper_sales_count[$key] = $res_monthly_top['sales_count'];
+                $topper_total_calls[$key] = $res_monthly_top['total_calls'];
+            }
+
+            array_multisort($topper_sales_count,SORT_DESC,$topper_total_calls,SORT_ASC,$res_monthly);
+            $result['monthly_top'] = json_encode(array_slice($res_monthly, 0,3),true);
+        }
 
 
 
@@ -194,14 +207,9 @@ class DashboardController extends Controller
                                           ->whereBetween('purchdate',[$lastmonth, $todayDate_end])
                                           ->get()->toArray();
 
-        $result['monthly_top'] = Saleslogs::select('salesman', Saleslogs::raw('count(salesman) as sales_count '))
-                                ->whereBetween('purchdate',[$lastmonth,$todayDate_end])
-                                ->groupBy('salesman')
-                                ->orderBy('sales_count','desc') 
-                                ->limit(3)
-                                ->get();
-        //echo '<pre>';
-        //print_r($result['montly_top']);
+        // echo '<pre>';
+        // print_r(json_decode($result['today_top'],true));
+        // die();
 
         $result['Secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastmonth_start,$Secondlastmonth_end])->count();
         $result['Secondmonthly_details'] =  Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add'),
@@ -445,6 +453,7 @@ class DashboardController extends Controller
         // dd($lead_res);
         return $lead_res;
     }
+
 
 
     public function salesman_details(Request $request, $name)
