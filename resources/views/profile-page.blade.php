@@ -18,7 +18,7 @@
             <div class="card card-profile">
               <div class="card-body">
                 <div class="media">
-                  <img src="{{asset('/images/user.png') }}" alt="">
+                  <img src="{{asset('public/images/uploads/avatars/'.Auth::user()->avatar) }}" alt="">
                   <div class="media-body">
                     <h3 class="card-profile-name">{{ Auth::user()->name}}</h3>
                     <p>San Francisco, California</p>

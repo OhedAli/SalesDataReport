@@ -664,6 +664,18 @@ p.text-black{
     font-size: 10px !important;
 }
 
+.all-users{
+    padding-right: 15px;
+}
+
+.all-users img{
+    width: 30px;
+    height: 30px;
+    padding: 3px;
+    border: 1px solid #1b84e7;
+    border-radius: 100%;
+}
+
 @media screen and (min-width:992px) and (max-width: 1199px) {
     .ctab-bx {
         min-height: 85px;

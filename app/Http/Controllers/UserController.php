@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
-
+use Image;
 
 
 class UserController extends Controller
@@ -47,6 +47,14 @@ class UserController extends Controller
     public function store(Request $request)
     {
 
+        $filename = 'profile.png';
+        if($request->hasFile('avatar'))
+        {
+            $avatar = $request->file('avatar');
+            $filename = strtolower(substr($request->name,0,strpos($request->name, ' '))) . '.' . $avatar->getClientOriginalExtension();
+            Image::make($avatar)->resize(300, 300)->save( public_path('/images/uploads/avatars/' . $filename ) );
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -60,6 +68,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'type' => $request->type,
+            'avatar' => $filename
         ]);
         event(new Registered($user));
         return redirect()->route('user.index')->with('success', 'User created successfully!');
@@ -102,15 +111,26 @@ class UserController extends Controller
     {
 
         //dd($request->all());
+
         $request->validate([
             'type' => 'required|string',
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255'
         ]);
+
         $user = User::find($id);
         $user->name = $request->name;
         $user->type = $request->type;
         $user->email = $request->email;
+
+        if($request->hasFile('avatar'))
+        {
+            $avatar = $request->file('avatar');
+            $filename = strtolower(substr($request->name,0,strpos($request->name, ' '))) . '.' . $avatar->getClientOriginalExtension();
+            Image::make($avatar)->resize(300, 300)->save( public_path('/images/uploads/avatars/' . $filename ) );
+            $user->avatar = $filename;
+        }
+
         if(!empty($request->password)){
         $user->password = Hash::make($request->password);
         }

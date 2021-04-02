@@ -18,7 +18,7 @@
             <table id="datatable2" class="table display responsive nowrap">
               <thead>
                 <tr>
-                  <th class="wd-15p">Full name</th>
+                  <th class="wd-15p">Users</th>
                   <th class="wd-15p">User Type</th>
                   <th class="wd-20p">Email</th>
                   <th class="wd-15p">Create Date</th>
@@ -29,7 +29,7 @@
               <tbody>
               @foreach($users as $key=>$user)
                 <tr>
-                  <td>{{$user->name}}</td>
+                  <td><span class="all-users"><img src="{{ asset('/public/images/uploads/avatars/'.$user->avatar)}}"></span>{{$user->name}}</td>
                   <td>{{$user->type}}</td>
                   <td>{{$user->email}}</td>
                   <td>{{$user->created_at}}</td>

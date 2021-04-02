@@ -9,38 +9,48 @@
         <!-- Default Card Example -->
         <div class="card mb-4">
             <div class="card-body">
-                <form method="POST" action="{{route('user.update', [$user->id])}}">
+                <form method="POST" action="{{route('user.update', [$user->id])}}" enctype="multipart/form-data">
                 <input type="hidden" value="{{$user->id}}" name="id">
                     @csrf
                     @method('PUT')
-                    <div class="form-group">
+                   
+                  <div class="row my-3">
+                    <div class="col">
+                    <div class="form-group1">
                         <label for="name">Name</label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Enter name" value="{{$user->name}}">
                         @error('name')
                         <small class="text-danger">{{$message}}</small>
                         @enderror
                     </div>
-                    <div class="form-group">
+                    </div>
+                    <div class="col input-group1">
+                        <label for="use type">User Type</label>
+                            <select class="custom-select @error('type') is-invalid @enderror" id="type" name="type">
+                                <option value="">Select user type</option>
+                                <option @if($user->type == 'admin') selected @endif value="admin">Admin</option>
+                                <option @if($user->type == 'salesman') selected @endif value="salesman">Sales Man</option>
+                            </select>
+                             @error('type')
+                        <small class="text-danger">{{$message}}</small>
+                        @enderror
+                        </div>
+                       
+                    </div>
+
+
+                     <div class="row my-3">
+                    <div class="col input-group1">
                         <label for="email">Email address</label>
                         <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="email" placeholder="Enter email" value="{{$user->email}}">
                         @error('email')
                         <small class="text-danger">{{$message}}</small>
                         @enderror
                     </div>
+                </div>
+                    
                     
                     <div class="row my-3">
-                        <div class="col input-group mt-2">
-                            <select class="custom-select @error('type') is-invalid @enderror" id="type" name="type">
-                                <option value="">Select user type</option>
-                                <option @if($user->type == 'admin') selected @endif value="admin">Admin</option>
-                                <option @if($user->type == 'salesman') selected @endif value="salesman">Sales Man</option>
-                            </select>
-                        </div>
-                        @error('type')
-                        <small class="text-danger">{{$message}}</small>
-                        @enderror
-                    </div>
-                    <div class="row my-3" style="display: block;">
                         <div class="col">
                             <label for="password">Password</label>
                             <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="password" placeholder="Enter password">
@@ -56,14 +66,26 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="row my-3" style="display: block;">
-                        <div class="input-group m-3">
+
+                    <div class="row my-3">
+                       <div class="col">
                             <div class="input-group-prepend">
                                 <button class="btn btn-outline-primary" id="generate" type="button">Generate</button>
                                 <button class="btn btn-outline-info" id="showncopy" type="button">Show & Copy</button>
                             </div>
-                            <input type="password" id="random-text" class="form-control" placeholder="Generate Random Password" aria-label="" aria-describedby="basic-addon1">
+                           
                         </div>
+                    </div>
+                    <div class="row my-3">
+                        <div class="col-6">
+                             <input type="password" id="random-text" class="form-control" placeholder="Generate Random Password" aria-label="" aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="profile_img">Profile Image</label>
+                        <input style="border:none; width: auto;" type="file" name="avatar" id="profile_img" accept="image/*">
                     </div>
                     <button type="submit" class="btn btn-outline-primary">Update</button>
                 </form>

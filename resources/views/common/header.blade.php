@@ -61,7 +61,7 @@
           
           <div class="dropdown dropdown-c">
             <a href="#" class="logged-user" data-toggle="dropdown">
-              <img src="{{asset('images/icon_profile.png')}}" alt="">
+              <img src="{{asset('public/images/uploads/avatars/'.Auth::user()->avatar)}}" alt="">
               <span>{{ Auth::user()->name }}</span>
               <i class="fa fa-angle-down"></i>
             </a>
