@@ -63,177 +63,191 @@
                       </div>
                     </form>
 
-                    <P class="dtxt" style="display: none;">Showing Data from <span class='drng'>'{{ $result['start_date'] }}'</span> to <span class='drng'>'{{ $result['end_date'] }}'</span></p>
+                    <P class="dtxt" style="display: none;">Showing Data from <span class='drng'>'{{ @$result['start_date'] }}'</span> to <span class='drng'>'{{ @$result['end_date'] }}'</span></p>
 
                    </div>
             </div>
 
 
-            <div class="row no-gutters">
-              <div class="col-sm-4 span" id="daily" style="cursor:pointer;">
-                <div class="card card-earning-summary active top-card">
-                  <div class="top-part">
-                    <h6>Today's Sales</h6>
-                    <h3>{{ $result['todaycount'] - $result['today_wholesales_count'] }} <span class="hdls">deals</span></h3> 
-                    <p class="wsl-cnt">{{ $result['today_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
-                    <!-- {{$result['dailydata'][2]}}
-                    <span class="valign-middle"><span class="@if($result['dailydata'][0]=='pos')tx-success @else tx-danger @endif">
-                    <i class="icon @if($result['dailydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['dailydata'][1]}}%</span><br/>from last Day</span> -->
-                  </div>
-                  <div class="crd-tab">
-                    <div class="d-flex">
-                      <div class="ctab-bx">
-                        <p>Calls</p>
-                        <p class="text-black">{{ $result['today_total_calls'] }}</p>
+            <div class="no-gutters">
+              <div class="top-smry">
+                <div class="row no-gutters">
+                  <div class="col-sm-4 span" id="daily" style="cursor:pointer;">
+                    <div class="card card-earning-summary active top-card">
+                      <div class="top-part">
+                        <h6>Today's Sales</h6>
+                        <h3>{{ $result['todaycount'] - $result['today_wholesales_count'] }} <span class="hdls">deals</span></h3> 
+                        <p class="wsl-cnt">{{ $result['today_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                        <!-- {{$result['dailydata'][2]}}
+                        <span class="valign-middle"><span class="@if($result['dailydata'][0]=='pos')tx-success @else tx-danger @endif">
+                        <i class="icon @if($result['dailydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['dailydata'][1]}}%</span><br/>from last Day</span> -->
                       </div>
-                      <div class="ctab-bx bl-1">
-                        <p>Closing %</p>
-                        <p class="text-black">
-                          @if($result['today_total_calls'] == 0) 
-                            0
-                          @else
-                            {{ number_format(($result['todaycount']/$result['today_total_calls'])*100,2)}}
-                          @endif
-                          %
-                        </p>
+                      <div class="crd-tab">
+                        <div class="d-flex">
+                          <div class="ctab-bx">
+                            <p>Calls</p>
+                            <p class="text-black">{{ $result['today_total_calls'] }}</p>
+                          </div>
+                          <div class="ctab-bx bl-1">
+                            <p>Closing %</p>
+                            <p class="text-black">
+                              @if($result['today_total_calls'] == 0) 
+                                0
+                              @else
+                                {{ number_format(($result['todaycount']/$result['today_total_calls'])*100,2)}}
+                              @endif
+                              %
+                            </p>
+                          </div>
+                        </div>
+                        <div class="d-flex bt-1">
+                          <div class="ctab-bx">
+                            <p>Finance term</p>
+                            <p class="text-black">
+                              @if($result['todaycount'] == 0) 
+                                0.00
+                              @else
+                                {{ number_format($result['today_base_details'][0]['finterm']/$result['todaycount'],2) }}
+                              @endif
+                            </p>
+                          </div>
+                          <div class="ctab-bx bl-1">
+                            <p>Discount</p>
+                            <p class="text-black">
+                              @if($result['todaycount'] == 0) 
+                                0.00
+                              @else
+                              ${{ round(($result['today_base_details'][0]['retail']-$result['today_base_details'][0]['cuscost'])/$result['todaycount']) }}
+                              @endif
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="d-flex bt-1">
-                      <div class="ctab-bx">
-                        <p>Finance term</p>
-                        <p class="text-black">
-                          @if($result['todaycount'] == 0) 
-                            0.00
-                          @else
-                            {{ number_format($result['today_base_details'][0]['finterm']/$result['todaycount'],2) }}
-                          @endif
-                        </p>
+                    </div><!-- card -->
+                  </div><!-- col-6 -->
+                  <div class="col-sm-4 weekly span" id="weekly" style="cursor:pointer;">
+                    <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t top-card">
+                      <div class="top-part">
+                        <h6>This Week's Sales</h6>
+                        <h3>{{ $result['weeklycount'] - $result['weekly_wholesales_count']}} <span class="hdls">deals</span></h3> 
+                        <p class="wsl-cnt">{{ $result['weekly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                        <!-- {{$result['weeklydata'][2]}}
+                        <span class="valign-middle"><span class="@if($result['weeklydata'][0]=='pos')tx-success @else tx-danger @endif">
+                        <i class="icon @if($result['weeklydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i> {{$result['weeklydata'][1]}}%</span><br/>from last week</span> -->
                       </div>
-                      <div class="ctab-bx bl-1">
-                        <p>Discount</p>
-                        <p class="text-black">
-                          @if($result['todaycount'] == 0) 
-                            0.00
-                          @else
-                          ${{ round(($result['today_base_details'][0]['retail']-$result['today_base_details'][0]['cuscost'])/$result['todaycount']) }}
-                          @endif
-                        </p>
+                      <div class="crd-tab">
+                        <div class="d-flex">
+                          <div class="ctab-bx">
+                            <p>Calls</p>
+                            <p class="text-black">{{ $result['weekly_total_calls'] }}</p>
+                          </div>
+                          <div class="ctab-bx bl-1">
+                            <p>Closing %</p>
+                            <p class="text-black">
+                              @if($result['weekly_total_calls'] == 0) 
+                                0
+                              @else
+                                {{ number_format(($result['weeklycount']/$result['weekly_total_calls'])*100,2)}}
+                              @endif
+                              %
+                            </p>
+                          </div>
+                        </div>
+                        <div class="d-flex bt-1">
+                          <div class="ctab-bx">
+                            <p>Finance term</p>
+                            <p class="text-black">
+                              @if($result['weeklycount'] == 0) 
+                                0.00
+                              @else
+                                {{ number_format($result['weekly_base_details'][0]['finterm']/$result['weeklycount'],2) }}
+                              @endif
+                            </p>
+                          </div>
+                          <div class="ctab-bx bl-1">
+                            <p>Discount</p>
+                            <p class="text-black">
+                              @if($result['weeklycount'] == 0) 
+                                0.00
+                              @else
+                              ${{ round(($result['weekly_base_details'][0]['retail']-$result['weekly_base_details'][0]['cuscost'])/$result['weeklycount']) }}
+                              @endif
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </div><!-- card -->
-              </div><!-- col-6 -->
-              <div class="col-sm-4 weekly span" id="weekly" style="cursor:pointer;">
-                <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t top-card">
-                  <div class="top-part">
-                    <h6>This Week's Sales</h6>
-                    <h3>{{ $result['weeklycount'] - $result['weekly_wholesales_count']}} <span class="hdls">deals</span></h3> 
-                    <p class="wsl-cnt">{{ $result['weekly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
-                    <!-- {{$result['weeklydata'][2]}}
-                    <span class="valign-middle"><span class="@if($result['weeklydata'][0]=='pos')tx-success @else tx-danger @endif">
-                    <i class="icon @if($result['weeklydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i> {{$result['weeklydata'][1]}}%</span><br/>from last week</span> -->
-                  </div>
-                  <div class="crd-tab">
-                    <div class="d-flex">
-                      <div class="ctab-bx">
-                        <p>Calls</p>
-                        <p class="text-black">{{ $result['weekly_total_calls'] }}</p>
-                      </div>
-                      <div class="ctab-bx bl-1">
-                        <p>Closing %</p>
-                        <p class="text-black">
-                          @if($result['weekly_total_calls'] == 0) 
-                            0
-                          @else
-                            {{ number_format(($result['weeklycount']/$result['weekly_total_calls'])*100,2)}}
-                          @endif
-                          %
-                        </p>
-                      </div>
-                    </div>
-                    <div class="d-flex bt-1">
-                      <div class="ctab-bx">
-                        <p>Finance term</p>
-                        <p class="text-black">
-                          @if($result['weeklycount'] == 0) 
-                            0.00
-                          @else
-                            {{ number_format($result['weekly_base_details'][0]['finterm']/$result['weeklycount'],2) }}
-                          @endif
-                        </p>
-                      </div>
-                      <div class="ctab-bx bl-1">
-                        <p>Discount</p>
-                        <p class="text-black">
-                          @if($result['weeklycount'] == 0) 
-                            0.00
-                          @else
-                          ${{ round(($result['weekly_base_details'][0]['retail']-$result['weekly_base_details'][0]['cuscost'])/$result['weeklycount']) }}
-                          @endif
-                        </p>
-                      </div>
-                    </div>
-                  </div>
 
-                </div><!-- card -->
-              </div><!-- col-6 -->
-              <div class="col-sm-4 span" id="monthly" style="cursor:pointer;">
-                <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t top-card">
-                  <div class="top-part">
-                    <h6>This Month's Sales</h6>
-                    <h3>{{ $result['monthlycount'] - $result['monthly_wholesales_count'] }} <span class="hdls">deals</span></h3> 
-                    <p class="wsl-cnt">{{ $result['monthly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
-                    <!-- {{$result['monthlydata'][2]}}
-                    <span class="valign-middle"><span class="@if($result['monthlydata'][0]=='pos')tx-success @else tx-danger @endif">
-                    <i class="icon @if($result['monthlydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['monthlydata'][1]}}%</span><br/>from last Month</span> -->
-                  </div>
-                  <div class="crd-tab">
-                    <div class="d-flex">
-                      <div class="ctab-bx">
-                        <p>Calls</p>
-                        <p class="text-black">{{ $result['monthly_total_calls'] }}</p>
+                    </div><!-- card -->
+                  </div><!-- col-6 -->
+                  <div class="col-sm-4 span" id="monthly" style="cursor:pointer;">
+                    <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t top-card">
+                      <div class="top-part">
+                        <h6>This Month's Sales</h6>
+                        <h3>{{ $result['monthlycount'] - $result['monthly_wholesales_count'] }} <span class="hdls">deals</span></h3> 
+                        <p class="wsl-cnt">{{ $result['monthly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                        <!-- {{$result['monthlydata'][2]}}
+                        <span class="valign-middle"><span class="@if($result['monthlydata'][0]=='pos')tx-success @else tx-danger @endif">
+                        <i class="icon @if($result['monthlydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['monthlydata'][1]}}%</span><br/>from last Month</span> -->
                       </div>
-                      <div class="ctab-bx bl-1">
-                        <p>Closing %</p>
-                        <p class="text-black">
-                          @if($result['monthly_total_calls'] == 0) 
-                            0
-                          @else
-                            {{ number_format(($result['monthlycount']/$result['monthly_total_calls'])*100,2)}}
-                          @endif
-                          %
-                        </p>
+                      <div class="crd-tab">
+                        <div class="d-flex">
+                          <div class="ctab-bx">
+                            <p>Calls</p>
+                            <p class="text-black">{{ $result['monthly_total_calls'] }}</p>
+                          </div>
+                          <div class="ctab-bx bl-1">
+                            <p>Closing %</p>
+                            <p class="text-black">
+                              @if($result['monthly_total_calls'] == 0) 
+                                0
+                              @else
+                                {{ number_format(($result['monthlycount']/$result['monthly_total_calls'])*100,2)}}
+                              @endif
+                              %
+                            </p>
+                          </div>
+                        </div>
+                        <div class="d-flex bt-1">
+                          <div class="ctab-bx">
+                            <p>Finance term</p>
+                            <p class="text-black">
+                              @if($result['monthlycount'] == 0) 
+                                0.00
+                              @else
+                                {{ number_format($result['monthly_base_details'][0]['finterm']/$result['monthlycount'],2) }}
+                              @endif
+                            </p>
+                          </div>
+                          <div class="ctab-bx bl-1">
+                            <p>Discount</p>
+                            <p class="text-black">
+                              @if($result['monthlycount'] == 0) 
+                                0.00
+                              @else
+                              ${{ round(($result['monthly_base_details'][0]['retail']-$result['monthly_base_details'][0]['cuscost'])/$result['monthlycount']) }}
+                              @endif
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="d-flex bt-1">
-                      <div class="ctab-bx">
-                        <p>Finance term</p>
-                        <p class="text-black">
-                          @if($result['monthlycount'] == 0) 
-                            0.00
-                          @else
-                            {{ number_format($result['monthly_base_details'][0]['finterm']/$result['monthlycount'],2) }}
-                          @endif
-                        </p>
-                      </div>
-                      <div class="ctab-bx bl-1">
-                        <p>Discount</p>
-                        <p class="text-black">
-                          @if($result['monthlycount'] == 0) 
-                            0.00
-                          @else
-                          ${{ round(($result['monthly_base_details'][0]['retail']-$result['monthly_base_details'][0]['cuscost'])/$result['monthlycount']) }}
-                          @endif
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div><!-- card -->
-              </div><!-- col-6 -->
-            </div><!-- row -->
+                    </div><!-- card -->
+                  </div><!-- col-6 -->
+                </div>
+              </div>
+              <div class="row no-gutters">
+                <div class="col-sm-4 adv_time_span mx-auto mt-3" id="adv_time_span" style="cursor:pointer;display: none;">
+                    <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t top-card">
+                      
+                    </div><!-- card -->
+                </div><!-- col-6 -->
+              </div>
+            </div>
+              
+
+            <!-- row -->
 
             <div class="back-btn" style="display: none;">
-              <span><i class="fa fa-chevron-left" aria-hidden="true"></i> back to board </span>
+              <span><i class="fa fa-chevron-left" aria-hidden="true"></i> back to basic board </span>
             </div>
 
           </div>
@@ -298,11 +312,22 @@
             data = "{{ $result['today_details'] }}";
         }
         else{
-            data = "{{ $result['adv_range_sales_details'] }}";
+            data = "{{ @$result['adv_range_sales_details'] }}";
             $('.span').children('div').removeClass('active');
             $('.dtxt').show();
-            $('.no-gutters').fadeOut('slow');
-            $("#datacountlead").html("{{ $result['adv_range_sales_count'] }}");
+            $('.top-smry').fadeOut('slow');
+            let adv_data = [];
+            adv_data['custom_sales_details'] = "{{ @$result['adv_range_base_details'] }}";
+            adv_data['custom_sales_count'] = "{{ @$result['adv_range_sales_count'] }}";
+            adv_data['custom_ws_count'] = "{{ @$result['adv_range_wholesales_count'] }}";
+            adv_data['custom_total_calls'] = "{{ @$result['adv_range_total_calls'] }}";
+            adv_data['custom_text'] = "Result for {{ @$result['start_date'] }} to {{ @$result['end_date'] }} ";
+            $("#datacountlead").html("{{ @$result['adv_range_sales_count'] }}");
+            set_custom_sales_board(adv_data);
+            setTimeout(function(){
+                $('.adv_time_span').fadeIn('slow');
+                $('.back-btn').fadeIn('slow');
+            },500);
         }
         
         insert_table_data(data);
@@ -336,35 +361,73 @@
 
         $('#changedays').change(function(){
           //console.log(this.value);
-          $('.no-gutters').fadeOut('slow');
-          setTimeout(function(){
-              $('.back-btn').fadeIn('slow');
-          },500);
+          var data,custom_data = [] ;
           if(this.value == 'monthly'){
               data = "{{ $result['monthly_details'] }}";
+              custom_data['custom_sales_details'] = "{{ $result['monthly_base_details'] }}";
+              custom_data['custom_sales_count'] = "{{ $result['monthlycount'] }}";
+              custom_data['custom_ws_count'] = "{{ $result['monthly_wholesales_count'] }}";
+              custom_data['custom_total_calls'] = "{{ $result['monthly_total_calls'] }}";
+              custom_data['custom_text'] = "Month";
               $('#datacountlead').html("{{ $result['monthlycount'] }}");
           }
           else if(this.value == 'last_month'){
-              data = "{{ $result['Secondmonthly_details'] }}";
-              $('#datacountlead').html("{{ $result['Secondmonthlycount'] }}");
+              data = "{{ $result['secondmonthly_details'] }}";
+              custom_data['custom_sales_details'] = "{{ $result['secondmonthly_base_details'] }}";
+              custom_data['custom_sales_count'] = "{{ $result['secondmonthlycount'] }}";
+              custom_data['custom_ws_count'] = "{{ $result['secondmonthly_wholesales_count'] }}";
+              custom_data['custom_total_calls'] = "{{ $result['secondmonthly_total_calls'] }}";
+              custom_data['custom_text'] = "Last Month";
+              $('#datacountlead').html("{{ $result['secondmonthlycount'] }}");
           }
           else if(this.value == 'weekly'){
               data = "{{ $result['weekly_details'] }}";
+              custom_data['custom_sales_details'] = "{{ $result['weekly_base_details'] }}";
+              custom_data['custom_sales_count'] = "{{ $result['weeklycount'] }}";
+              custom_data['custom_ws_count'] = "{{ $result['weekly_wholesales_count'] }}";
+              custom_data['custom_total_calls'] = "{{ $result['weekly_total_calls'] }}";
+              custom_data['custom_text'] = "Week";
               $('#datacountlead').html("{{ $result['weeklycount'] }}");
             }
           else if(this.value == 'last_week'){
-             data = "{{ $result['Secondweekly_details'] }}";
-             $('#datacountlead').html("{{ $result['Secondweeklycount'] }}");
+             data = "{{ $result['secondweekly_details'] }}";
+             custom_data['custom_sales_details'] = "{{ $result['secondweekly_base_details'] }}";
+             custom_data['custom_sales_count'] = "{{ $result['secondweeklycount'] }}";
+             custom_data['custom_ws_count'] = "{{ $result['secondweekly_wholesales_count'] }}";
+             custom_data['custom_total_calls'] = "{{ $result['secondweekly_total_calls'] }}";
+             custom_data['custom_text'] = "Last Week";
+             $('#datacountlead').html("{{ $result['secondweeklycount'] }}");
             }
           else if(this.value == 'yesterday'){
               data = "{{ $result['yesterday_details'] }}";
+              custom_data['custom_sales_details'] = "{{ $result['yesterday_base_details'] }}";
+              custom_data['custom_sales_count'] = "{{ $result['yesterdaycount'] }}";
+              custom_data['custom_ws_count'] = "{{ $result['yesterday_wholesales_count'] }}";
+              custom_data['custom_total_calls'] = "{{ $result['yesterday_total_calls'] }}";
+              custom_data['custom_text'] = "Yesterday";
               $('#datacountlead').html("{{ $result['yesterdaycount'] }}");
             }
           else{
               data = "{{ $result['today_details'] }}";
+              custom_data['custom_sales_details'] = "{{ $result['today_base_details'] }}";
+              custom_data['custom_sales_count'] = "{{ $result['todaycount'] }}";
+              custom_data['custom_ws_count'] = "{{ $result['today_wholesales_count'] }}";
+              custom_data['custom_total_calls'] = "{{ $result['today_total_calls'] }}";
+              custom_data['custom_text'] = "Today";
               $('#datacountlead').html("{{ $result['todaycount'] }}");
           }
+
+          set_custom_sales_board(custom_data);
+
+
+
+          $('.top-smry').fadeOut('slow');
+          setTimeout(function(){
+              $('.adv_time_span').fadeIn('slow');
+              $('.back-btn').fadeIn('slow');
+          },500);
           insert_table_data(data);
+
         })
         
         setTimeout(function(){

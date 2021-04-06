@@ -32,7 +32,7 @@
                       </div>
                     </form>
 
-                    <P class="dtxt" style="display: none;">Total sales made by <span>{{$result['sm_name']}}</sapn> from <span class='drng'>'{{ $result['start_date'] }}'</span> to <span class='drng'>'{{ $result['end_date'] }}' </span> is <span class='drng'>{{ $result['adv_range_sales_count'] }}</span></p>
+                    <P class="dtxt" style="display: none;">Total sales made by <span>{{ $result['sm_name'] }}</sapn> from <span class='drng'>'{{ @$result['start_date'] }}'</span> to <span class='drng'>'{{ @$result['end_date'] }}' </span> is <span class='drng'>{{ @$result['adv_range_sales_count'] }}</span></p>
 
                    </div>
 
@@ -299,11 +299,11 @@
             //$('.dtxt').show();
             $('.span').children('div').removeClass('active');
             $('.no-gutters').hide();
-            tble_lead_info("{{ $result['lead_info_details'] }}", search_flag=true);
-            tble_oppprt_info("{{ $result['adv_range_oppurtunites'] }}",search_flag=true);
+            tble_lead_info("{{ @$result['lead_info_details'] }}", search_flag=true);
+            tble_oppprt_info("{{ @$result['adv_range_oppurtunites'] }}",search_flag=true);
             $('.span').children('div').removeClass('active');
             $(".fc-add_event-button").click();
-            $(".fill_dt").text("{{$result['start_date']}}" + '-' + "{{$result['end_date']}}");
+            $(".fill_dt").text("{{ @$result['start_date']}}" + '-' + "{{ @$result['end_date']}}");
         }
         else{
           $(".fill_dt").text('Today');
@@ -349,7 +349,7 @@
 
 
         $('.opt').click(function(){
-          console.log(2);
+          // console.log(2);
           $('.opt').removeClass('active-opt');
           $(this).addClass('active-opt');
 

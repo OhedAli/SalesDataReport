@@ -34,9 +34,12 @@ today = yyyy + '-' + mm + '-' + dd;
 
 
 $('.back-btn span').on('click',function(){
+    $('.adv_time_span').children('.top-card').removeClass('active');
     $('.back-btn').fadeOut('slow');
+    $('.adv_time_span').fadeOut('slow');
+    $('.dtxt').fadeOut('slow');
     setTimeout(function(){
-        $('.no-gutters').fadeIn('slow');
+        $('.top-smry').fadeIn('slow');
     },500);
     
 });
@@ -140,13 +143,15 @@ function leader_board_update(res_details){
     let path = window.location.href;
     //let path = window.location.origin;
     path = path.substr(0,path.indexOf('public')) + 'public';
+    var data_html,pro_img;
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
             
             if (datavalue.sales_count != ''){
-                    
-                let data_html = '<div class="mem-1"><div class="tx-center">'+
-                                '<a href="javascript:void(0);" class="img-a"><img src="'+ path +'/images/profile.png" class="card-img" alt="">'+
+                
+                pro_img = ((datavalue.avatar != null && datavalue.avatar != undefined && datavalue.avatar != '') ? datavalue.avatar : 'profile.png');
+                data_html = '<div class="mem-1"><div class="tx-center">'+
+                                '<a href="javascript:void(0);" class="img-a"><img src="'+ path +'/images/uploads/avatars/'+ pro_img +'" class="card-img" alt="">'+
                                 '<div class="hexa"><img src="'+ path + '/images/hexa'+ (datakey + 1) +'.png" class="hexa1-bg" alt="">'+
                                 '<p>'+ (datakey + 1) +'</p></div></a>'+
                                 '<h5 class="mg-t-10 mg-b-5">'+
@@ -568,4 +573,45 @@ function tble_oppprt_info(res_data, search_flag)
     }
 
     datatable_reset(table_id=3);
+}
+
+
+function set_custom_sales_board(custom_data){
+
+
+    var base_data = JSON.parse($("<div/>").html(custom_data['custom_sales_details']).text());
+    $('.adv_time_span').children('.top-card').html('');
+
+    var cuscost = ((base_data[0].cuscost != undefined && base_data[0].cuscost != null) ? base_data[0].cuscost : 0);
+    var retail = ((base_data[0].retail != undefined && base_data[0].retail != null) ? base_data[0].retail : 0);
+    var finterm = ((base_data[0].retail != undefined && base_data[0].retail != null) ? base_data[0].finterm : 0.00) ;
+
+    if(custom_data['custom_text'].indexOf('Result') == -1)
+        custom_data['custom_text'] = 'This '+ custom_data['custom_text'] +'\'s Sales';
+
+    // console.log(custom_total_calls);
+
+    if(custom_data['custom_sales_count'] != 0){
+        discount = Math.round((retail - cuscost)/custom_data['custom_sales_count']);
+        finterm = (finterm /custom_data['custom_sales_count']).toFixed(2);
+    }
+    else{
+
+        finterm = 0.00;
+        discount = 0;
+    }
+
+    conv_rate = ((custom_data['custom_total_calls'] != 0 && custom_data['custom_total_calls'] != undefined ) ? ((custom_data['custom_sales_count'] / custom_data['custom_total_calls']) * 100).toFixed(2) + '%' : 'N/A');
+
+    var html = '<div class="top-part"><h6>'+ custom_data['custom_text'] +'</h6><h3>'+ (custom_data['custom_sales_count'] - custom_data['custom_ws_count']) +
+                '<span class="hdls">deals</span></h3><p class="wsl-cnt">'+ custom_data['custom_ws_count'] +'<span class="hwls">wholesale deals</span>' + 
+                '</p></div><div class="crd-tab"><div class="d-flex"><div class="ctab-bx"><p>Calls</p><p class="text-black">'+ custom_data['custom_total_calls'] +
+                '</p></div><div class="ctab-bx bl-1"><p>Closing %</p><p class="text-black">' + conv_rate + '</p></div></div>'+
+                '<div class="d-flex bt-1"><div class="ctab-bx"><p>Finance term</p><p class="text-black">' + finterm + '</p></div>' +
+                '<div class="ctab-bx bl-1"><p>Discount</p><p class="text-black">$' + discount + '</p></div></div></div>';
+
+    $('.adv_time_span').children('.top-card').html(html);
+
+    $('.adv_time_span').children('.top-card').addClass('active');
+
 }

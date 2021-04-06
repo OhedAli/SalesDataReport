@@ -18,19 +18,19 @@ class DashboardController extends Controller
 
         if(date('D') != 'Mon'){
             $lastweek = date('Y-m-d', strtotime('last Monday'));
-            $Secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
-            $Secondlastweek_start = date('Y-m-d', strtotime('-7 days', strtotime($Secondlastweek_end)));
+            $secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
+            $secondlastweek_start = date('Y-m-d', strtotime('-7 days', strtotime($secondlastweek_end)));
         }
         else{
             $lastweek = date('Y-m-d');
-            $Secondlastweek_start = date('Y-m-d', strtotime('last Monday'));
-            $Secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
+            $secondlastweek_start = date('Y-m-d', strtotime('last Monday'));
+            $secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
         }
         
         $lastmonth = date('Y-m-01');
         $days_no_prev_mnth = date('t',mktime(0,0,0, date('n') -1 ));
-        $Secondlastmonth_start = date('Y-m-d', strtotime('-'.$days_no_prev_mnth.' days', strtotime($lastmonth)));
-        $Secondlastmonth_end = date('Y-m-d', strtotime('-1 days', strtotime($lastmonth)));
+        $secondlastmonth_start = date('Y-m-d', strtotime('-'.$days_no_prev_mnth.' days', strtotime($lastmonth)));
+        $secondlastmonth_end = date('Y-m-d', strtotime('-1 days', strtotime($lastmonth)));
 
         $todayDate_start = date('Y-m-d');
         $yesterdayDate_start = date('Y-m-d', strtotime('-1 days')); 
@@ -44,18 +44,19 @@ class DashboardController extends Controller
                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
                                             ->count();
 
-        $result['today_details'] = Saleslogs::select('salesman', 
+        $result['today_details'] = Saleslogs::select('salesman', 'users.avatar',
                                 Saleslogs::raw('SUM(downpay) as downpay_add'),
                                 Saleslogs::raw('SUM(cuscost) as cuscost_add'),
                                 Saleslogs::raw('SUM(finterm) as finterm_add'), 
                                 Saleslogs::raw('SUM(retail) as retail_add'),
                                 Saleslogs::raw('count(salesman) as sales_count '))
                                 ->with('slaesagent')
+                                ->leftJoin('vsctools_autoprotect.users as users','salesman','=','users.name')
                                 ->whereBetween('purchdate',[$todayDate_start, $todayDate_end])
                                 ->groupBy('salesman')
                                 ->get();
 
-        $result['today_top'] = '';
+        $result['today_top'] = json_encode(array());
         $topper_sales_count = array();
         $topper_total_calls = array();
 
@@ -72,11 +73,7 @@ class DashboardController extends Controller
             $result['today_top'] = json_encode(array_slice($res_today, 0,3),true);
         }
 
-        $result['today_base_details'] = Saleslogs::select(Saleslogs::raw('SUM(cuscost) as cuscost'),
-                                        Saleslogs::raw('SUM(finterm) as finterm'), 
-                                        Saleslogs::raw('SUM(retail) as retail'))
-                                        ->whereBetween('purchdate',[$todayDate_start, $todayDate_end])
-                                        ->get()->toArray();
+        $result['today_base_details'] = $this->get_base_details($todayDate_start,$todayDate_end);
 
 
         $result['yesterdaycount'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])->count();
@@ -90,6 +87,13 @@ class DashboardController extends Controller
                                         ->whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])
                                         ->groupBy('salesman')
                                         ->get();
+
+        $result['yesterday_base_details'] = $this->get_base_details($yesterdayDate_start, $yesterdayDate_start);
+        $result['yesterday_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])
+                                            	->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                            	->count();
+
+        $result['yesterday_total_calls'] = $this->find_total_call($yesterdayDate_start, $yesterdayDate_start);
 
         //dd($result['yesterday_details']->toArray());
         if($result['yesterdaycount'] > 0){
@@ -107,17 +111,18 @@ class DashboardController extends Controller
                                              ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
                                              ->count();
 
-        $result['weekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),
+        $result['weekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),'users.avatar',
                                     Saleslogs::raw('SUM(cuscost) as cuscost_add'), 
                                     Saleslogs::raw('SUM(finterm) as finterm_add'), 
                                     Saleslogs::raw('SUM(retail) as retail_add'), 
                                     Saleslogs::raw('count(salesman) as sales_count '))
                                     ->with('slaesagent')
+                                    ->leftJoin('vsctools_autoprotect.users as users','salesman','=','users.name')
                                     ->whereBetween('purchdate',[$lastweek,$todayDate_end])
                                     ->groupBy('salesman')
                                     ->get();                             
                             
-        $result['weekly_top'] = '';
+        $result['weekly_top'] = json_encode(array());
         $topper_sales_count = array();
         $topper_total_calls = array();
 
@@ -132,32 +137,35 @@ class DashboardController extends Controller
 
             array_multisort($topper_sales_count,SORT_DESC,$topper_total_calls,SORT_ASC,$res_weekly);
             $result['weekly_top'] = json_encode(array_slice($res_weekly, 0,3),true);
+
         }
 
 
-        $result['weekly_base_details'] = Saleslogs::select(Saleslogs::raw('SUM(cuscost) as cuscost'),
-                                        Saleslogs::raw('SUM(finterm) as finterm'), 
-                                        Saleslogs::raw('SUM(retail) as retail'))
-                                        ->whereBetween('purchdate',[$lastweek, $todayDate_end])
-                                        ->get()->toArray();
+        $result['weekly_base_details'] = $this->get_base_details($lastweek,$todayDate_end);
 
 
-        $result['Secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])->count();
-        $result['Secondweekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),
+        $result['secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end])->count();
+        $result['secondweekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),
                                     Saleslogs::raw('SUM(cuscost) as cuscost_add'), 
                                     Saleslogs::raw('SUM(finterm) as finterm_add'), 
                                     Saleslogs::raw('SUM(retail) as retail_add'), 
                                     Saleslogs::raw('count(salesman) as sales_count '))
                                     ->with('slaesagent')
-                                    ->whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])
+                                    ->whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end])
                                     ->groupBy('salesman')
                                     ->get();
 
-        if($result['Secondweeklycount'] > 0){
-            $result['Secondweekly_details'] = json_encode($this->call_search_ytel($result['Secondweekly_details']->toArray(),$Secondlastweek_start,$Secondlastweek_end));
+        $result['secondweekly_base_details'] = $this->get_base_details($secondlastweek_start,$secondlastweek_end);
+        $result['secondweekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end]										  )->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                            	   ->count();
+
+        $result['secondweekly_total_calls'] = $this->find_total_call($secondlastweek_start,$secondlastweek_end);
+
+        if($result['secondweeklycount'] > 0){
+            $result['secondweekly_details'] = json_encode($this->call_search_ytel($result['secondweekly_details']->toArray(),$secondlastweek_start,$secondlastweek_end));
         }
 
-        $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['Secondweeklycount']);
+        $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['secondweeklycount']);
 
         $result['monthly_total_calls'] = $this->find_total_call($lastmonth,$todayDate_end);
 
@@ -170,18 +178,19 @@ class DashboardController extends Controller
                                              ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
                                              ->count();
 
-        $result['monthly_details'] =  Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add'),
+        $result['monthly_details'] =  Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add'), 'users.avatar',
                                       Saleslogs::raw('SUM(cuscost) as cuscost_add'),
                                       Saleslogs::raw('SUM(finterm) as finterm_add'), 
                                       Saleslogs::raw('SUM(retail) as retail_add'),
                                       Saleslogs::raw('count(salesman) as sales_count '))
                                       ->with('slaesagent')
+                                      ->leftJoin('vsctools_autoprotect.users as users','salesman','=','users.name')
                                       ->whereBetween('purchdate',[$lastmonth,$todayDate_end])
                                       ->groupBy('salesman')
                                       ->get();
                               
 
-        $result['monthly_top'] = '';
+        $result['monthly_top'] = json_encode(array());
         $topper_sales_count = array();
         $topper_total_calls = array();
 
@@ -201,39 +210,36 @@ class DashboardController extends Controller
 
 
 
-        $result['monthly_base_details'] = Saleslogs::select(Saleslogs::raw('SUM(cuscost) as cuscost'),
-                                          Saleslogs::raw('SUM(finterm) as finterm'), 
-                                          Saleslogs::raw('SUM(retail) as retail'))
-                                          ->whereBetween('purchdate',[$lastmonth, $todayDate_end])
-                                          ->get()->toArray();
+        $result['monthly_base_details'] = $this->get_base_details($lastmonth,$todayDate_end);
 
         // echo '<pre>';
         // print_r(json_decode($result['today_top'],true));
         // die();
 
-        $result['Secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastmonth_start,$Secondlastmonth_end])->count();
-        $result['Secondmonthly_details'] =  Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add'),
+        $result['secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])->count();
+        $result['secondmonthly_details'] =  Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add'),
                                       Saleslogs::raw('SUM(cuscost) as cuscost_add'),
                                       Saleslogs::raw('SUM(finterm) as finterm_add'), 
                                       Saleslogs::raw('SUM(retail) as retail_add'),
                                       Saleslogs::raw('count(salesman) as sales_count '))
                                       ->with('slaesagent')
-                                      ->whereBetween('purchdate',[$Secondlastmonth_start,$Secondlastmonth_end])
+                                      ->whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])
                                       ->groupBy('salesman')
                                       ->get();
 
-        if($result['Secondmonthlycount'] > 0)
-            $result['Secondmonthly_details'] = json_encode($this->call_search_ytel($result['Secondmonthly_details']->toArray(),$Secondlastmonth_start,$Secondlastmonth_end));
+        $result['secondmonthly_base_details'] = $this->get_base_details($secondlastmonth_start,$secondlastmonth_end);
+        $result['secondmonthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])->count();
 
-        $result['monthlydata'] = $this->FlagSighCheck($result['monthlycount'], $result['Secondmonthlycount']);
+         $result['secondmonthly_total_calls'] = $this->find_total_call($secondlastmonth_start,$secondlastmonth_end);
+
+        if($result['secondmonthlycount'] > 0)
+            $result['secondmonthly_details'] = json_encode($this->call_search_ytel($result['secondmonthly_details']->toArray(),$secondlastmonth_start,$secondlastmonth_end));
+
+        $result['monthlydata'] = $this->FlagSighCheck($result['monthlycount'], $result['secondmonthlycount']);
         
         if($request->isMethod('get'))
         {
             $result['adv_range_flag'] = false;
-            $result['adv_range_sales_count'] = '';
-            $result['start_date'] = '';
-            $result['end_date'] = '';
-            $result['adv_range_sales_details'] = '';
             return view('admin-dashboard',compact('result'));
         }
 
@@ -252,12 +258,12 @@ class DashboardController extends Controller
                 return $result['calendar_data'];
             }
 
-
+     
             else{
 
                 $result['adv_range_flag'] = true;
-                $start_range = $request->post('start_date').' 00:00:00';
-                $end_range = $request->post('end_date').' 23:59:59';
+                $start_range = $request->post('start_date');
+                $end_range = $request->post('end_date');
                 $result['start_date'] = date("dS F, Y", strtotime($request->post('start_date')));
                 $result['end_date'] = date("dS F, Y", strtotime($request->post('end_date')));
                 $result['adv_range_sales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])->count();
@@ -271,6 +277,13 @@ class DashboardController extends Controller
                                                       ->whereBetween('purchdate',[$start_range, $end_range])
                                                       ->groupBy('salesman')
                                                       ->get();
+
+                $result['adv_range_base_details'] = $this->get_base_details($start_range, $end_range);
+        		$result['adv_range_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])
+                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                             ->count();
+                $result['adv_range_total_calls'] = $this->find_total_call($start_range, $end_range);
+
 
                 if($result['adv_range_sales_count'] > 0)
                     $result['adv_range_sales_details'] = json_encode($this->call_search_ytel($result['adv_range_sales_details']->toArray(),$start_range,$end_range));
@@ -307,6 +320,18 @@ class DashboardController extends Controller
                 return 0;
             }
         }
+
+
+    public function get_base_details($start_date,$end_date)
+    {
+    	$base_details = Saleslogs::select(Saleslogs::raw('SUM(cuscost) as cuscost'),
+                        Saleslogs::raw('SUM(finterm) as finterm'), 
+                        Saleslogs::raw('SUM(retail) as retail'))
+                        ->whereBetween('purchdate',[$start_date, $end_date])
+                        ->get();
+
+        return $base_details;
+    }
 
 
     public function call_search_ytel($dataArr, $start_date, $end_date, $day_by_day=0)
@@ -465,19 +490,19 @@ class DashboardController extends Controller
 
         if(date('D') != 'Mon'){
             $lastweek = date('Y-m-d', strtotime('last Monday'));
-            $Secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
-            $Secondlastweek_start = date('Y-m-d', strtotime('-7 days', strtotime($Secondlastweek_end)));
+            $secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
+            $secondlastweek_start = date('Y-m-d', strtotime('-7 days', strtotime($secondlastweek_end)));
         }
         else{
             $lastweek = date('Y-m-d');
-            $Secondlastweek_start = date('Y-m-d', strtotime('last Monday'));
-            $Secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
+            $secondlastweek_start = date('Y-m-d', strtotime('last Monday'));
+            $secondlastweek_end = date('Y-m-d', strtotime('-1 days', strtotime($lastweek)));
         }
            
         $lastmonth = date('Y-m-01');
         $days_no_prev_mnth = date('t',mktime(0,0,0, date('n') -1 ));
-        $Secondlastmonth_start = date('Y-m-d', strtotime('-'.$days_no_prev_mnth.' days', strtotime($lastmonth)));
-        $Secondlastmonth_end = date('Y-m-d', strtotime('-1 days', strtotime($lastmonth)));
+        $secondlastmonth_start = date('Y-m-d', strtotime('-'.$days_no_prev_mnth.' days', strtotime($lastmonth)));
+        $secondlastmonth_end = date('Y-m-d', strtotime('-1 days', strtotime($lastmonth)));
         
         $todayDate_start = date('Y-m-d'); 
         $yesterdayDate_start = date('Y-m-d', strtotime('-1 days')); 
@@ -567,8 +592,8 @@ class DashboardController extends Controller
 
             $result['weekly_oppurtunites'] = json_encode($this->find_not_sale($user_data, $weekly_sales_data, $lastweek, $todayDate_end),true);
 
-            $result['Secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastweek_start,$Secondlastweek_end])->where('salesman',$sm_name)->count();
-            $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['Secondweeklycount']);
+            $result['secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end])->where('salesman',$sm_name)->count();
+            $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['secondweeklycount']);
         
             $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->where('salesman',$sm_name)->count();
 
@@ -626,20 +651,15 @@ class DashboardController extends Controller
             // die();
 
 
-            $result['Secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$Secondlastmonth_start,$Secondlastmonth_end])->where('salesman',$sm_name)->count();
-            $result['monthlydata'] = $this->FlagSighCheck($result['monthlycount'], $result['Secondmonthlycount']);
+            $result['secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])->where('salesman',$sm_name)->count();
+            $result['monthlydata'] = $this->FlagSighCheck($result['monthlycount'], $result['secondmonthlycount']);
 
 
-            $result['adv_range_flag'] = false;
-            $result['adv_range_sales_count'] = '';
-            $result['start_date'] = '';
-            $result['end_date'] = '';
-            $result['prev_sales_details'] = '';
-            $result['lead_info_details'] = '';
-            $result['adv_range_oppurtunites'] = '';
+            
             
             if($request->isMethod('get'))
             {
+            	$result['adv_range_flag'] = false;
                 return view('salesman-details',compact('result'));
             }
 
@@ -653,7 +673,7 @@ class DashboardController extends Controller
                     $first_date = date('Y-m-1', strtotime($full_date));
                     $last_date = date('Y-m-t', strtotime($full_date));
 
-                    $result['prev_sales_details'] = Saleslogs::select('salesman','purchdate',Saleslogs::raw('count(salesman) as sales_count '))
+                    $prev_sales_details = Saleslogs::select('salesman','purchdate',Saleslogs::raw('count(salesman) as sales_count '))
                                                     ->whereBetween('purchdate',[$first_date, $last_date])
                                                     ->where('salesman',$sm_name)
                                                     ->groupBy('salesman','purchdate')
@@ -662,9 +682,9 @@ class DashboardController extends Controller
                     $calen_res_arr =  $this->call_search_ytel($user_data, $first_date, $last_date,$day_by_day=1);
             
 		            if(!empty($calen_res_arr))
-		            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr[0],$result['prev_sales_details']->toArray()));
+		            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr[0],$prev_sales_details->toArray()));
 		            else
-		            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr,$result['prev_sales_details']->toArray()));
+		            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr,$prev_sales_details->toArray()));
                     
                     return $result['calendar_data'];
                 }
