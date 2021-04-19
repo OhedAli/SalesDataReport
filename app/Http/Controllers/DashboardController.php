@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Saleslogs;
+use App\Models\Salescalls;
 use App\Models\Ytel;
 
 class DashboardController extends Controller
@@ -55,6 +56,7 @@ class DashboardController extends Controller
                                 ->whereBetween('purchdate',[$todayDate_start, $todayDate_end])
                                 ->groupBy('salesman')
                                 ->get();
+
 
         $result['today_top'] = json_encode(array());
         $topper_sales_count = array();
@@ -188,7 +190,7 @@ class DashboardController extends Controller
                                       ->whereBetween('purchdate',[$lastmonth,$todayDate_end])
                                       ->groupBy('salesman')
                                       ->get();
-                              
+        
 
         $result['monthly_top'] = json_encode(array());
         $topper_sales_count = array();
@@ -357,7 +359,7 @@ class DashboardController extends Controller
                         foreach ($dataValue['slaesagent'] as $key => $agentvalue) {
 
                             
-                            $result = Ytel::select('user',Ytel::raw('count(user) as total_calls'))
+                            $result = Salescalls::select('user',Salescalls::raw('count(user) as total_calls'))
                                       ->where('user','=',$agentvalue['user'])
                                       ->where('list_id','999')
                                       ->where('length_in_sec','>','15')
@@ -371,6 +373,10 @@ class DashboardController extends Controller
                                 $dataValue['total_calls'] = $dataValue['total_calls'] + $result[0]['total_calls'];
                         }
 
+                    }
+
+                    else{
+                        $dataValue['total_calls'] = 0;
                     }
 
                     array_push($resArr,$dataValue);
@@ -396,13 +402,13 @@ class DashboardController extends Controller
                         $result = array();
                         foreach ($dataValue['slaesagent'] as $key => $agentvalue) {
                             // echo $agentvalue['user']."<br>";
-                            $res = Ytel::select(Ytel::raw('CAST(call_date AS DATE) as call_date'), Ytel::raw('count(call_date) as total_calls'))
+                            $res = Salescalls::select(Salescalls::raw('CAST(call_date AS DATE) as call_date'), Salescalls::raw('count(call_date) as total_calls'))
                                       ->where('user','=',$agentvalue['user'])
                                       ->where('list_id','999')
                                       ->where('length_in_sec','>','15')
                                       ->where('campaign_id','=','Sales')
                                       ->whereBetween('call_date',[$start_range,$end_range])
-                                      ->groupBy(Ytel::raw('CAST(call_date AS DATE)'))
+                                      ->groupBy(Salescalls::raw('CAST(call_date AS DATE)'))
                                       ->get()->toArray();
 
                             $result = array_merge($result,$res);
@@ -434,7 +440,7 @@ class DashboardController extends Controller
         
             if($day_by_day == 0){
 
-                $result = Ytel::where('list_id','999')
+                $result = Salescalls::where('list_id','999')
                       ->where('length_in_sec','>','15')
                       ->where('campaign_id','=','Sales')
                       ->whereBetween('call_date',[$start_range,$end_range])
@@ -447,12 +453,12 @@ class DashboardController extends Controller
             }
             else{
 
-                $result = Ytel::select(Ytel::raw('CAST(call_date AS DATE) as call_date'), Ytel::raw('count(call_date) as total_calls'))
+                $result = Salescalls::select(Salescalls::raw('CAST(call_date AS DATE) as call_date'), Salescalls::raw('count(call_date) as total_calls'))
                           ->where('list_id','999')
                           ->where('length_in_sec','>','15')
                           ->where('campaign_id','=','Sales')
                           ->whereBetween('call_date',[$start_range,$end_range])
-                          ->groupBy(Ytel::raw('CAST(call_date AS DATE)'))
+                          ->groupBy(Salescalls::raw('CAST(call_date AS DATE)'))
                           ->get();
 
                 // dd($result);
