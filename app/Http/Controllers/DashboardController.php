@@ -362,7 +362,7 @@ class DashboardController extends Controller
                             $result = Salescalls::select('user',Salescalls::raw('count(user) as total_calls'))
                                       ->where('user','=',$agentvalue['user'])
                                       ->where('list_id','999')
-                                      ->where('length_in_sec','>','15')
+                                      ->where('length_in_sec','>','20')
                                       ->where('campaign_id','=','Sales')
                                       ->whereBetween('call_date',[$start_range,$end_range])
                                       ->groupBy('user')
@@ -405,7 +405,7 @@ class DashboardController extends Controller
                             $res = Salescalls::select(Salescalls::raw('CAST(call_date AS DATE) as call_date'), Salescalls::raw('count(call_date) as total_calls'))
                                       ->where('user','=',$agentvalue['user'])
                                       ->where('list_id','999')
-                                      ->where('length_in_sec','>','15')
+                                      ->where('length_in_sec','>','20')
                                       ->where('campaign_id','=','Sales')
                                       ->whereBetween('call_date',[$start_range,$end_range])
                                       ->groupBy(Salescalls::raw('CAST(call_date AS DATE)'))
@@ -441,7 +441,7 @@ class DashboardController extends Controller
             if($day_by_day == 0){
 
                 $result = Salescalls::where('list_id','999')
-                      ->where('length_in_sec','>','15')
+                      ->where('length_in_sec','>','20')
                       ->where('campaign_id','=','Sales')
                       ->whereBetween('call_date',[$start_range,$end_range])
                       ->count();
@@ -455,7 +455,7 @@ class DashboardController extends Controller
 
                 $result = Salescalls::select(Salescalls::raw('CAST(call_date AS DATE) as call_date'), Salescalls::raw('count(call_date) as total_calls'))
                           ->where('list_id','999')
-                          ->where('length_in_sec','>','15')
+                          ->where('length_in_sec','>','20')
                           ->where('campaign_id','=','Sales')
                           ->whereBetween('call_date',[$start_range,$end_range])
                           ->groupBy(Salescalls::raw('CAST(call_date AS DATE)'))
