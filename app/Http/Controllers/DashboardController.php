@@ -490,6 +490,8 @@ class DashboardController extends Controller
     public function salesman_details(Request $request, $name)
     {
         $sm_name = str_replace("-"," ",$name);
+        $sm_name = str_replace("_","-",$sm_name);
+        
         $result = array();
         $result['sm_name'] = $sm_name;
         date_default_timezone_set("America/Chicago");
