@@ -97,7 +97,7 @@ class DashboardController extends Controller
 
         $result['yesterday_total_calls'] = $this->find_total_call($yesterdayDate_start, $yesterdayDate_start);
 
-        //dd($result['yesterday_details']->toArray());
+        // dd($result['yesterday_details']->toArray());
         if($result['yesterdaycount'] > 0){
             $result['yesterday_details'] = json_encode($this->call_search_ytel($result['yesterday_details']->toArray(),$yesterdayDate_start,$yesterdayDate_start));
         }
@@ -366,6 +366,7 @@ class DashboardController extends Controller
                                       ->where('campaign_id','=','Sales')
                                       ->whereBetween('call_date',[$start_range,$end_range])
                                       ->groupBy('user')
+                                      ->distinct('phone_number')
                                       ->get()->toArray();
 
                             // print_r($result);
@@ -409,6 +410,7 @@ class DashboardController extends Controller
                                       ->where('campaign_id','=','Sales')
                                       ->whereBetween('call_date',[$start_range,$end_range])
                                       ->groupBy(Salescalls::raw('CAST(call_date AS DATE)'))
+                                      ->distinct('phone_number')
                                       ->get()->toArray();
 
                             $result = array_merge($result,$res);
@@ -444,9 +446,11 @@ class DashboardController extends Controller
                       ->where('length_in_sec','>','20')
                       ->where('campaign_id','=','Sales')
                       ->whereBetween('call_date',[$start_range,$end_range])
+                      ->distinct('phone_number')
                       ->count();
-
-                // echo $result;
+                
+                // echo '<pre>';
+                // print_r($result);
                 // die();
 
                 return $result;
@@ -459,6 +463,7 @@ class DashboardController extends Controller
                           ->where('campaign_id','=','Sales')
                           ->whereBetween('call_date',[$start_range,$end_range])
                           ->groupBy(Salescalls::raw('CAST(call_date AS DATE)'))
+                          ->distinct('phone_number')
                           ->get();
 
                 // dd($result);
