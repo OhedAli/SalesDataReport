@@ -173,6 +173,9 @@ class DashboardController extends Controller
 
         $result['calendar_data'] = json_encode(array_merge(($this->find_total_call($lastmonth,$todayDate_end,$day_by_day=1))->toArray(),($this->find_lead($lastmonth,$todayDate_end))->toArray()));
 
+        // echo '<pre>';
+        // print_r(json_decode($result['calendar_data']));
+        // die();
         
         
         $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->count();
@@ -359,19 +362,29 @@ class DashboardController extends Controller
                         foreach ($dataValue['slaesagent'] as $key => $agentvalue) {
 
                             
-                            $result = Salescalls::select('user',Salescalls::raw('count(user) as total_calls'))
+                            $sub_res = Salescalls::select('user','phone_number')
                                       ->where('user','=',$agentvalue['user'])
                                       ->where('list_id','999')
                                       ->where('length_in_sec','>','20')
                                       ->where('campaign_id','=','Sales')
                                       ->whereBetween('call_date',[$start_range,$end_range])
-                                      ->groupBy('user')
-                                      ->distinct('phone_number')
-                                      ->get()->toArray();
+                                      // ->groupBy('user')
+                                      ->distinct('phone_number');
+                                      // ->get()->toArray();
 
-                            // print_r($result);
+                            $result = DB::connection('mysql2')
+			                		  ->table( DB::raw("({$sub_res->toSql()}) as sub_res") )
+			                		  ->select('user',DB::raw('count(user) as total_calls'))
+								      ->mergeBindings($sub_res->getQuery())
+								      ->groupBy('user')
+								      ->get()->toArray();
+
+							/*echo '<pre>';
+                            print_r($result);
+                            die();*/
+
                             if(!empty($result))
-                                $dataValue['total_calls'] = $dataValue['total_calls'] + $result[0]['total_calls'];
+                                $dataValue['total_calls'] = $dataValue['total_calls'] + $result[0]->total_calls;
                         }
 
                     }
@@ -403,17 +416,25 @@ class DashboardController extends Controller
                         $result = array();
                         foreach ($dataValue['slaesagent'] as $key => $agentvalue) {
                             // echo $agentvalue['user']."<br>";
-                            $res = Salescalls::select(Salescalls::raw('CAST(call_date AS DATE) as call_date'), Salescalls::raw('count(call_date) as total_calls'))
+                            $sub_res = Salescalls::select(Salescalls::raw('CAST(call_date AS DATE) as call_date'),'phone_number')
                                       ->where('user','=',$agentvalue['user'])
                                       ->where('list_id','999')
                                       ->where('length_in_sec','>','20')
                                       ->where('campaign_id','=','Sales')
                                       ->whereBetween('call_date',[$start_range,$end_range])
-                                      ->groupBy(Salescalls::raw('CAST(call_date AS DATE)'))
-                                      ->distinct('phone_number')
-                                      ->get()->toArray();
+                                      // ->groupBy(Salescalls::raw('CAST(call_date AS DATE)'))
+                                      ->distinct('phone_number');
+                                      // ->get()->toArray();
 
-                            $result = array_merge($result,$res);
+                            $res = 	DB::connection('mysql2')
+		                		  	->table( DB::raw("({$sub_res->toSql()}) as sub_res") )
+		                		  	->select('call_date',DB::raw('count(call_date) as total_calls'))
+							      	->mergeBindings($sub_res->getQuery())
+							      	->groupBy('call_date')
+							      	->get()->toArray();
+
+							
+                            $result = array_merge($result,json_decode(json_encode($res,true),true));
                         }
 
                         array_push($resArr,$result);
@@ -457,14 +478,19 @@ class DashboardController extends Controller
             }
             else{
 
-                $result = Salescalls::select(Salescalls::raw('CAST(call_date AS DATE) as call_date'), Salescalls::raw('count(call_date) as total_calls'))
-                          ->where('list_id','999')
+                $sub_res = Salescalls::select(Salescalls::raw('CAST(call_date AS DATE) as call_date'),'phone_number')
+                		  ->where('list_id','999')
                           ->where('length_in_sec','>','20')
                           ->where('campaign_id','=','Sales')
                           ->whereBetween('call_date',[$start_range,$end_range])
-                          ->groupBy(Salescalls::raw('CAST(call_date AS DATE)'))
-                          ->distinct('phone_number')
-                          ->get();
+                          ->distinct('phone_number');
+
+                $result = DB::connection('mysql2')
+                		  ->table( DB::raw("({$sub_res->toSql()}) as sub_res") )
+                		  ->select('call_date',DB::raw('count(call_date) as total_calls'))
+					      ->mergeBindings($sub_res->getQuery())
+					      ->groupBy('call_date')
+					      ->get();
 
                 // dd($result);
                 return $result;
