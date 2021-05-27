@@ -2,6 +2,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardActiveController;
 use App\Http\Controllers\SaleslogsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TvDashboardController;
@@ -32,6 +33,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
 Route::get('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
 Route::post('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard-active',[DashboardActiveController::class, 'index'])->name('dashboard-active');
 Route::get('/tv-dashboard',[TvDashboardController::class, 'index']);
 Route::get('/dashboard/salesman/{sm_name}',[DashboardController::class, 'salesman_details'])->name('salesman-details');
 Route::post('/dashboard/salesman/{sm_name}',[DashboardController::class, 'salesman_details'])->name('salesman-details');

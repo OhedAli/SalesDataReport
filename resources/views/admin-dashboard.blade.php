@@ -62,7 +62,14 @@
                         </div>
                       </div>
                     </form>
-
+                    @if(Auth::user()->type == 'admin')
+                    <div>
+                      <select class="slty" id="sales_type">
+                        <option value="gross" @if(Route::currentRouteName() == 'dashboard' )selected @endif>Gross Sales</option>
+                        <option value="net" @if(Route::currentRouteName() == 'dashboard-active' )selected @endif>Net Sales</option>
+                      </select>
+                    </div>
+                    @endif
                     <P class="dtxt" style="display: none;">Showing Data from <span class='drng'>'{{ @$result['start_date'] }}'</span> to <span class='drng'>'{{ @$result['end_date'] }}'</span></p>
 
                    </div>
@@ -76,8 +83,11 @@
                     <div class="card card-earning-summary active top-card">
                       <div class="top-part">
                         <h6>Today's Sales</h6>
-                        <h3>{{ $result['todaycount'] - $result['today_wholesales_count'] }} <span class="hdls">deals</span></h3> 
-                        <p class="wsl-cnt">{{ $result['today_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                        <h3>{{ $result['todaycount'] - $result['today_wholesales_count'] }} <span class="hdls"> deals</span></h3> 
+                        <p class="wsl-cnt">{{ $result['today_wholesales_count'] }} <span class="hwls"> wholesale deals</span></p>
+                        @if(Route::currentRouteName() == 'dashboard' && Auth::user()->type == 'admin')
+                        <p class="can-cnt">{{ @$result['today_cancel_count'] }} <span class="can_sale"> Cancel deals</span></p> 
+                        @endif 
                         <!-- {{$result['dailydata'][2]}}
                         <span class="valign-middle"><span class="@if($result['dailydata'][0]=='pos')tx-success @else tx-danger @endif">
                         <i class="icon @if($result['dailydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['dailydata'][1]}}%</span><br/>from last Day</span> -->
@@ -129,8 +139,11 @@
                     <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t top-card">
                       <div class="top-part">
                         <h6>This Week's Sales</h6>
-                        <h3>{{ $result['weeklycount'] - $result['weekly_wholesales_count']}} <span class="hdls">deals</span></h3> 
-                        <p class="wsl-cnt">{{ $result['weekly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                        <h3>{{ $result['weeklycount'] - $result['weekly_wholesales_count']}} <span class="hdls"> deals</span></h3> 
+                        <p class="wsl-cnt">{{ $result['weekly_wholesales_count'] }} <span class="hwls"> wholesale deals</span></p>
+                        @if(Route::currentRouteName() == 'dashboard' && Auth::user()->type == 'admin')
+                        <p class="can-cnt">{{ @$result['weekly_cancel_count'] }} <span class="can_sale"> Cancel deals</span></p>
+                        @endif
                         <!-- {{$result['weeklydata'][2]}}
                         <span class="valign-middle"><span class="@if($result['weeklydata'][0]=='pos')tx-success @else tx-danger @endif">
                         <i class="icon @if($result['weeklydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i> {{$result['weeklydata'][1]}}%</span><br/>from last week</span> -->
@@ -183,8 +196,11 @@
                     <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t top-card">
                       <div class="top-part">
                         <h6>This Month's Sales</h6>
-                        <h3>{{ $result['monthlycount'] - $result['monthly_wholesales_count'] }} <span class="hdls">deals</span></h3> 
-                        <p class="wsl-cnt">{{ $result['monthly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                        <h3>{{ $result['monthlycount'] - $result['monthly_wholesales_count'] }} <span class="hdls"> deals</span></h3> 
+                        <p class="wsl-cnt">{{ $result['monthly_wholesales_count'] }} <span class="hwls"> wholesale deals</span></p>
+                        @if(Route::currentRouteName() == 'dashboard' && Auth::user()->type == 'admin') 
+                        <p class="can-cnt">{{ @$result['monthly_cancel_count'] }} <span class="can_sale"> Cancel deals</span></p>
+                        @endif
                         <!-- {{$result['monthlydata'][2]}}
                         <span class="valign-middle"><span class="@if($result['monthlydata'][0]=='pos')tx-success @else tx-danger @endif">
                         <i class="icon @if($result['monthlydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['monthlydata'][1]}}%</span><br/>from last Month</span> -->
@@ -308,6 +324,7 @@
         var data;
         var leaderboard;
         var calendar_data = "{{ $result['calendar_data'] }}";
+        window.current_page = "{{ Route::currentRouteName() }}";
         if("{{ $result['adv_range_flag'] }}" == false){
             data = "{{ $result['today_details'] }}";
         }
@@ -320,6 +337,7 @@
             adv_data['custom_sales_details'] = "{{ @$result['adv_range_base_details'] }}";
             adv_data['custom_sales_count'] = "{{ @$result['adv_range_sales_count'] }}";
             adv_data['custom_ws_count'] = "{{ @$result['adv_range_wholesales_count'] }}";
+            adv_data['custom_cancel_count'] = "{{ @$result['adv_range_cancel_count'] }}";
             adv_data['custom_total_calls'] = "{{ @$result['adv_range_total_calls'] }}";
             adv_data['custom_text'] = "Result for {{ @$result['start_date'] }} to {{ @$result['end_date'] }} ";
             $("#datacountlead").html("{{ @$result['adv_range_sales_count'] }}");
@@ -331,7 +349,7 @@
         }
         
         insert_table_data(data);
-        deal_calendar(calendar_data);
+        deal_calendar(calendar_data,window.current_page);
         $('.span').click(function(){
             $('.dtxt').hide();
             $('.span').children('div').removeClass('active');
@@ -368,6 +386,7 @@
               custom_data['custom_sales_count'] = "{{ $result['monthlycount'] }}";
               custom_data['custom_ws_count'] = "{{ $result['monthly_wholesales_count'] }}";
               custom_data['custom_total_calls'] = "{{ $result['monthly_total_calls'] }}";
+              custom_data['custom_cancel_count'] = "{{ @$result['monthly_cancel_count'] }}";
               custom_data['custom_text'] = "Month";
               $('#datacountlead').html("{{ $result['monthlycount'] }}");
           }
@@ -377,6 +396,7 @@
               custom_data['custom_sales_count'] = "{{ $result['secondmonthlycount'] }}";
               custom_data['custom_ws_count'] = "{{ $result['secondmonthly_wholesales_count'] }}";
               custom_data['custom_total_calls'] = "{{ $result['secondmonthly_total_calls'] }}";
+              custom_data['custom_cancel_count'] = "{{ @$result['secondmonthly_cancel_count'] }}";
               custom_data['custom_text'] = "Last Month";
               $('#datacountlead').html("{{ $result['secondmonthlycount'] }}");
           }
@@ -386,6 +406,7 @@
               custom_data['custom_sales_count'] = "{{ $result['weeklycount'] }}";
               custom_data['custom_ws_count'] = "{{ $result['weekly_wholesales_count'] }}";
               custom_data['custom_total_calls'] = "{{ $result['weekly_total_calls'] }}";
+              custom_data['custom_cancel_count'] = "{{ @$result['weekly_cancel_count'] }}";
               custom_data['custom_text'] = "Week";
               $('#datacountlead').html("{{ $result['weeklycount'] }}");
             }
@@ -395,6 +416,7 @@
              custom_data['custom_sales_count'] = "{{ $result['secondweeklycount'] }}";
              custom_data['custom_ws_count'] = "{{ $result['secondweekly_wholesales_count'] }}";
              custom_data['custom_total_calls'] = "{{ $result['secondweekly_total_calls'] }}";
+             custom_data['custom_cancel_count'] = "{{ @$result['secondweekly_cancel_count'] }}";
              custom_data['custom_text'] = "Last Week";
              $('#datacountlead').html("{{ $result['secondweeklycount'] }}");
             }
@@ -404,6 +426,7 @@
               custom_data['custom_sales_count'] = "{{ $result['yesterdaycount'] }}";
               custom_data['custom_ws_count'] = "{{ $result['yesterday_wholesales_count'] }}";
               custom_data['custom_total_calls'] = "{{ $result['yesterday_total_calls'] }}";
+              custom_data['custom_cancel_count'] = "{{ @$result['yesterday_cancel_count'] }}";
               custom_data['custom_text'] = "Yesterday";
               $('#datacountlead').html("{{ $result['yesterdaycount'] }}");
             }
@@ -413,11 +436,12 @@
               custom_data['custom_sales_count'] = "{{ $result['todaycount'] }}";
               custom_data['custom_ws_count'] = "{{ $result['today_wholesales_count'] }}";
               custom_data['custom_total_calls'] = "{{ $result['today_total_calls'] }}";
+              custom_data['custom_cancel_count'] = "{{ @$result['today_cancel_count'] }}";
               custom_data['custom_text'] = "Today";
               $('#datacountlead').html("{{ $result['todaycount'] }}");
           }
 
-          set_custom_sales_board(custom_data);
+          set_custom_sales_board(custom_data,window.current_page);
 
 
 
@@ -428,7 +452,7 @@
           },500);
           insert_table_data(data);
 
-        })
+        });
         
         setTimeout(function(){
           $('.calen').hide()
@@ -466,13 +490,23 @@
               },
               success: function(result){
                   //console.log(result);
-                  deal_calendar(result);
+                  deal_calendar(result,window.current_page);
               },
               error: function(err){
                   console.log(err);
               }
 
           });
+      });
+
+      $(document).on('change','#sales_type',function(){
+
+        if($(this).val() == 'net'){
+          window.location.href = "{{ route('dashboard-active') }}";
+        }
+        else{
+            window.location.href = "{{ route('dashboard') }}";
+        }
       });
         
 

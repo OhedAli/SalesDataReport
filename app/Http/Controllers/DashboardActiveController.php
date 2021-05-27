@@ -8,9 +8,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Saleslogs;
 use App\Models\Salescalls;
 use App\Models\Cancellogs;
-use App\Models\Ytel;
 
-class DashboardController extends Controller
+class DashboardActiveController extends Controller
 {
     public function index(Request $request){
 
@@ -41,12 +40,15 @@ class DashboardController extends Controller
         $result['today_total_calls'] = $this->find_total_call($todayDate_start,$todayDate_end);
 
 
-        $result['todaycount'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])->count();
+        $result['todaycount'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])
+                                ->where('cancelled_flag','=','0')
+                                ->count();
         $result['today_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])
                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                            ->where('cancelled_flag','=','0')
                                             ->count();
 
-        $result['today_cancel_count'] = Cancellogs::whereBetween('CanDate',[$todayDate_start, $todayDate_end])->count();
+        // $result['today_cancel_count'] = Cancellogs::whereBetween('CanDate',[$todayDate_start, $todayDate_end])->count();
 
         $result['today_details'] = Saleslogs::select('salesman', 'users.avatar',
                                 Saleslogs::raw('SUM(downpay) as downpay_add'),
@@ -57,6 +59,7 @@ class DashboardController extends Controller
                                 ->with('slaesagent')
                                 ->leftJoin('vsctools_autoprotect.users as users','salesman','=','users.name')
                                 ->whereBetween('purchdate',[$todayDate_start, $todayDate_end])
+                                ->where('cancelled_flag','=','0')
                                 ->groupBy('salesman')
                                 ->get();
 
@@ -81,7 +84,9 @@ class DashboardController extends Controller
         $result['today_base_details'] = $this->get_base_details($todayDate_start,$todayDate_end);
 
 
-        $result['yesterdaycount'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])->count();
+        $result['yesterdaycount'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])
+                                    ->where('cancelled_flag','=','0')
+                                    ->count();
         $result['yesterday_details'] = Saleslogs::select('salesman', 
                                         Saleslogs::raw('SUM(downpay) as downpay_add'),
                                         Saleslogs::raw('SUM(cuscost) as cuscost_add'),
@@ -90,18 +95,17 @@ class DashboardController extends Controller
                                         Saleslogs::raw('count(salesman) as sales_count '))
                                         ->with('slaesagent')
                                         ->whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])
+                                        ->where('cancelled_flag','=','0')
                                         ->groupBy('salesman')
                                         ->get();
 
         $result['yesterday_base_details'] = $this->get_base_details($yesterdayDate_start, $yesterdayDate_start);
         $result['yesterday_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])
                                             	->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->where('cancelled_flag','=','0')
                                             	->count();
 
         $result['yesterday_total_calls'] = $this->find_total_call($yesterdayDate_start, $yesterdayDate_start);
-
-        $result['yesterday_cancel_count'] = Cancellogs::whereBetween('CanDate',
-                                            [$yesterdayDate_start, $yesterdayDate_start])->count();
 
         // dd($result['yesterday_details']->toArray());
         if($result['yesterdaycount'] > 0){
@@ -114,12 +118,15 @@ class DashboardController extends Controller
         $result['weekly_total_calls'] = $this->find_total_call($lastweek,$todayDate_end);
         $result['weekly_total_calls_daywise'] = $this->find_total_call($lastweek,$todayDate_end,$day_by_day=1);
         
-        $result['weeklycount'] = Saleslogs::whereBetween('purchdate',[$lastweek,$todayDate_end])->count();
+        $result['weeklycount'] = Saleslogs::whereBetween('purchdate',[$lastweek,$todayDate_end])
+                                 ->where('cancelled_flag','=','0')
+                                 ->count();
         $result['weekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastweek, $todayDate_end])
                                              ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                             ->where('cancelled_flag','=','0')
                                              ->count();
 
-        $result['weekly_cancel_count'] = Cancellogs::whereBetween('CanDate',[$lastweek, $todayDate_end])->count();
+        // $result['weekly_cancel_count'] = Cancellogs::whereBetween('CanDate',[$lastweek, $todayDate_end])->count();
 
         $result['weekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),'users.avatar',
                                     Saleslogs::raw('SUM(cuscost) as cuscost_add'), 
@@ -129,6 +136,7 @@ class DashboardController extends Controller
                                     ->with('slaesagent')
                                     ->leftJoin('vsctools_autoprotect.users as users','salesman','=','users.name')
                                     ->whereBetween('purchdate',[$lastweek,$todayDate_end])
+                                    ->where('cancelled_flag','=','0')
                                     ->groupBy('salesman')
                                     ->get();                             
                             
@@ -154,25 +162,26 @@ class DashboardController extends Controller
         $result['weekly_base_details'] = $this->get_base_details($lastweek,$todayDate_end);
 
 
-        $result['secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end])->count();
+        $result['secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end])
+                                       ->where('cancelled_flag','=','0')
+                                       ->count();
         $result['secondweekly_details'] = Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add '),
-                                    Saleslogs::raw('SUM(cuscost) as cuscost_add'), 
-                                    Saleslogs::raw('SUM(finterm) as finterm_add'), 
-                                    Saleslogs::raw('SUM(retail) as retail_add'), 
-                                    Saleslogs::raw('count(salesman) as sales_count '))
-                                    ->with('slaesagent')
-                                    ->whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end])
-                                    ->groupBy('salesman')
-                                    ->get();
+                                          Saleslogs::raw('SUM(cuscost) as cuscost_add'), 
+                                          Saleslogs::raw('SUM(finterm) as finterm_add'), 
+                                          Saleslogs::raw('SUM(retail) as retail_add'), 
+                                          Saleslogs::raw('count(salesman) as sales_count '))
+                                          ->with('slaesagent')
+                                          ->whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end])
+                                          ->where('cancelled_flag','=','0')
+                                          ->groupBy('salesman')
+                                          ->get();
 
         $result['secondweekly_base_details'] = $this->get_base_details($secondlastweek_start,$secondlastweek_end);
         $result['secondweekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end]										  )->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                   ->where('cancelled_flag','=','0')
                                             	   ->count();
 
         $result['secondweekly_total_calls'] = $this->find_total_call($secondlastweek_start,$secondlastweek_end);
-
-        $result['secondweekly_cancel_count'] = Cancellogs::whereBetween('CanDate',
-                                               [$secondlastweek_start, $secondlastweek_end])->count();
 
         if($result['secondweeklycount'] > 0){
             $result['secondweekly_details'] = json_encode($this->call_search_ytel($result['secondweekly_details']->toArray(),$secondlastweek_start,$secondlastweek_end));
@@ -182,16 +191,19 @@ class DashboardController extends Controller
 
         $result['monthly_total_calls'] = $this->find_total_call($lastmonth,$todayDate_end);
 
-        $result['calendar_data'] = json_encode(array_merge(($this->find_total_call($lastmonth,$todayDate_end,$day_by_day=1))->toArray(),($this->find_lead($lastmonth,$todayDate_end))->toArray(),($this->cancel_lead($lastmonth,$todayDate_end))->toArray()));
+        $result['calendar_data'] = json_encode(array_merge(($this->find_total_call($lastmonth,$todayDate_end,$day_by_day=1))->toArray(),($this->find_lead($lastmonth,$todayDate_end))->toArray(),$this->cancel_lead($lastmonth,$todayDate_end)->toArray()));
 
         // echo '<pre>';
         // print_r(json_decode($result['calendar_data']));
         // die();
         
         
-        $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->count();
+        $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])
+                                  ->where('cancelled_flag','=','0')
+                                  ->count();
         $result['monthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastmonth, $todayDate_end])
                                              ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                             ->where('cancelled_flag','=','0')
                                              ->count();
 
         $result['monthly_cancel_count'] = Cancellogs::whereBetween('CanDate',[$lastmonth, $todayDate_end])->count();
@@ -204,6 +216,7 @@ class DashboardController extends Controller
                                       ->with('slaesagent')
                                       ->leftJoin('vsctools_autoprotect.users as users','salesman','=','users.name')
                                       ->whereBetween('purchdate',[$lastmonth,$todayDate_end])
+                                      ->where('cancelled_flag','=','0')
                                       ->groupBy('salesman')
                                       ->get();
         
@@ -234,7 +247,9 @@ class DashboardController extends Controller
         // print_r(json_decode($result['today_top'],true));
         // die();
 
-        $result['secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])->count();
+        $result['secondmonthlycount'] = Saleslogs::whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])
+                                        ->where('cancelled_flag','=','0')
+                                        ->count();
         $result['secondmonthly_details'] =  Saleslogs::select('salesman',Saleslogs::raw('SUM(downpay) as downpay_add'),
                                       Saleslogs::raw('SUM(cuscost) as cuscost_add'),
                                       Saleslogs::raw('SUM(finterm) as finterm_add'), 
@@ -242,16 +257,14 @@ class DashboardController extends Controller
                                       Saleslogs::raw('count(salesman) as sales_count '))
                                       ->with('slaesagent')
                                       ->whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])
+                                      ->where('cancelled_flag','=','0')
                                       ->groupBy('salesman')
                                       ->get();
 
         $result['secondmonthly_base_details'] = $this->get_base_details($secondlastmonth_start,$secondlastmonth_end);
-        $result['secondmonthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])->count();
+        $result['secondmonthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])->where('cancelled_flag','=','0')->count();
 
-        $result['secondmonthly_total_calls'] = $this->find_total_call($secondlastmonth_start,$secondlastmonth_end);
-
-        $result['secondmonthly_cancel_count'] = Cancellogs::whereBetween('CanDate',
-                                                [$secondlastmonth_start, $secondlastmonth_end])->count();
+         $result['secondmonthly_total_calls'] = $this->find_total_call($secondlastmonth_start,$secondlastmonth_end);
 
         if($result['secondmonthlycount'] > 0)
             $result['secondmonthly_details'] = json_encode($this->call_search_ytel($result['secondmonthly_details']->toArray(),$secondlastmonth_start,$secondlastmonth_end));
@@ -274,7 +287,7 @@ class DashboardController extends Controller
                 $first_date = date('Y-m-1', strtotime($full_date));
                 $last_date = date('Y-m-t', strtotime($full_date));
 
-                $result['calendar_data'] = json_encode(array_merge(($this->find_total_call($first_date,$last_date,$day_by_day=1))->toArray(),($this->find_lead($first_date,$last_date))->toArray(),($this->cancel_lead($first_date,$last_date))->toArray()));
+                $result['calendar_data'] = json_encode(array_merge(($this->find_total_call($first_date,$last_date,$day_by_day=1))->toArray(),($this->find_lead($first_date,$last_date))->toArray()));
 
                 return $result['calendar_data'];
             }
@@ -287,8 +300,10 @@ class DashboardController extends Controller
                 $end_range = $request->post('end_date');
                 $result['start_date'] = date("dS F, Y", strtotime($request->post('start_date')));
                 $result['end_date'] = date("dS F, Y", strtotime($request->post('end_date')));
-                $result['adv_range_sales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])->count();
-                $result['adv_range_cancel_count'] = Cancellogs::whereBetween('CanDate',[$start_range, $end_range])->count();
+                $result['adv_range_sales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])
+                                                   ->where('cancelled_flag','=','0')
+                                                   ->count();
+                // $result['adv_range_cancel_count'] = Cancellogs::whereBetween('CanDate',[$start_range, $end_range])->count();
                 $result['adv_range_sales_details'] =  Saleslogs::select('salesman',
                                                       Saleslogs::raw('SUM(downpay) as downpay_add'),
                                                       Saleslogs::raw('SUM(cuscost) as cuscost_add'),
@@ -297,12 +312,14 @@ class DashboardController extends Controller
                                                       Saleslogs::raw('count(salesman) as sales_count '))
                                                       ->with('slaesagent')
                                                       ->whereBetween('purchdate',[$start_range, $end_range])
+                                                      ->where('cancelled_flag','=','0')
                                                       ->groupBy('salesman')
                                                       ->get();
 
                 $result['adv_range_base_details'] = $this->get_base_details($start_range, $end_range);
         		$result['adv_range_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])
                                              ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                             ->where('cancelled_flag','=','0')
                                              ->count();
                 $result['adv_range_total_calls'] = $this->find_total_call($start_range, $end_range);
 
@@ -350,6 +367,7 @@ class DashboardController extends Controller
                         Saleslogs::raw('SUM(finterm) as finterm'), 
                         Saleslogs::raw('SUM(retail) as retail'))
                         ->whereBetween('purchdate',[$start_date, $end_date])
+                        ->where('cancelled_flag','=','0')
                         ->get();
 
         return $base_details;
@@ -526,6 +544,7 @@ class DashboardController extends Controller
     {
         $lead_res = Saleslogs::select('purchdate', Saleslogs::raw('count(purchdate) as sales_count'))
                     ->whereBetween('purchdate',[$stat_date, $end_date])
+                    ->where('cancelled_flag','=','0')
                     ->groupBy('purchdate')
                     ->get();
 
@@ -537,18 +556,6 @@ class DashboardController extends Controller
     {
         $cancel_lead_res = Cancellogs::select('CanDate', Saleslogs::raw('count(CanDate) as cancel_count'))
                            ->whereBetween('CanDate',[$stat_date, $end_date])
-                           ->groupBy('CanDate')
-                           ->get();
-
-        return $cancel_lead_res;
-
-    }
-
-    public function sm_cancel_lead($stat_date, $end_date,$sm_name)
-    {
-        $cancel_lead_res = Cancellogs::select('CanDate', Saleslogs::raw('count(CanDate) as cancel_count'))
-                           ->whereBetween('CanDate',[$stat_date, $end_date])
-                           ->where('salesman','=',$sm_name)
                            ->groupBy('CanDate')
                            ->get();
 
@@ -596,10 +603,6 @@ class DashboardController extends Controller
 
             $result['todaycount'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])->where('salesman',$sm_name)->count();
 
-            $result['today_cancel_sm_count'] = Cancellogs::whereBetween('CanDate',[$todayDate_start, $todayDate_end])
-                                               ->where('salesman',$sm_name)
-                                               ->count();
-
             $result['today_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])
                                                 ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
                                                 ->where('salesman',$sm_name)
@@ -618,19 +621,7 @@ class DashboardController extends Controller
                                   ->whereBetween('purchdate', [$todayDate_start, $todayDate_end])
                                   ->where('salesman',$sm_name)
                                   ->get()
-                                  ->toArray();   
-
-
-
-            $today_cancel_data =  Cancellogs::select('*',
-            					  Cancellogs::raw("regexp_replace(custPhone, '[^0-9]', '') as phone_no"))
-                                  ->whereBetween('CanDate', [$todayDate_start, $todayDate_end])
-                                  ->where('salesman',$sm_name)
-                                  ->get()
-                                  ->toArray();
-
-            $result['today_cancel_data'] = json_encode($this->fetch_recording_path($user_data,$today_cancel_data),true);
-
+                                  ->toArray();                            
             
             if($result['todaycount'] > 0){
                 $result['today_details'] = $this->call_search_ytel($result['today_details']->toArray(),$todayDate_start,$todayDate_end);
@@ -651,10 +642,6 @@ class DashboardController extends Controller
         
             $result['weeklycount'] = Saleslogs::whereBetween('purchdate',[$lastweek,$todayDate_end])->where('salesman',$sm_name)->count();
 
-            $result['weekly_cancel_sm_count'] = Cancellogs::whereBetween('CanDate',[$lastweek, $todayDate_end])
-                                               ->where('salesman',$sm_name)
-                                               ->count();
-
             $result['weekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastweek, $todayDate_end])
                                                  ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
                                                  ->where('salesman',$sm_name)
@@ -670,21 +657,12 @@ class DashboardController extends Controller
                                         ->get();
 
 
-            $weekly_sales_data =  Saleslogs::select('*',Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
+            $weekly_sales_data = Saleslogs::select('*',Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
                                   ->whereBetween('purchdate', [$lastweek, $todayDate_end])
                                   ->where('salesman',$sm_name)
                                   ->get()
                                   ->toArray();
-
-
-            $weekly_cancel_data =  Cancellogs::select('*',
-            					   Cancellogs::raw("regexp_replace(custPhone, '[^0-9]', '') as phone_no"))
-                                   ->whereBetween('CanDate', [$lastweek, $todayDate_end])
-                                   ->where('salesman',$sm_name)
-                                   ->get()
-                                   ->toArray();
-
-            $result['weekly_cancel_data'] = json_encode($this->fetch_recording_path($user_data,$weekly_cancel_data),true);
+                                        
 
             if($result['weeklycount'] > 0){
                 $result['weekly_details'] = $this->call_search_ytel($result['weekly_details']->toArray(),$lastweek,$todayDate_end);
@@ -698,18 +676,12 @@ class DashboardController extends Controller
                 $result['weekly_sales_data'] = json_encode($weekly_sales_data,true);
             }
 
-            
-
             $result['weekly_oppurtunites'] = json_encode($this->find_not_sale($user_data, $weekly_sales_data, $lastweek, $todayDate_end),true);
 
             $result['secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end])->where('salesman',$sm_name)->count();
             $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['secondweeklycount']);
         
             $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->where('salesman',$sm_name)->count();
-
-            $result['monthly_cancel_sm_count'] = Cancellogs::whereBetween('CanDate',[$lastmonth, $todayDate_end])
-                                               ->where('salesman',$sm_name)
-                                               ->count();
 
             $result['monthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastmonth, $todayDate_end])
                                                   ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
@@ -735,26 +707,15 @@ class DashboardController extends Controller
             $calen_res_arr =  $this->call_search_ytel($user_data, $lastmonth, $todayDate_end,$day_by_day=1);
 
             if(!empty($calen_res_arr))
-            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr[0],$result['monthly_sm_details']->toArray(),($this->sm_cancel_lead($lastmonth,$todayDate_end,$sm_name))->toArray()));
+            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr[0],$result['monthly_sm_details']->toArray()));
             else
-            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr,$result['monthly_sm_details']->toArray(),($this->sm_cancel_lead($lastmonth,$todayDate_end,$sm_name))->toArray()));
-
+            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr,$result['monthly_sm_details']->toArray()));
 
             $monthly_sales_data = Saleslogs::select('*',Saleslogs::raw("regexp_replace(phone, '[^0-9]', '') as phone_no"))
                                   ->whereBetween('purchdate', [$lastmonth, $todayDate_end])
                                   ->where('salesman',$sm_name)
                                   ->get()
                                   ->toArray();
-
-
-            $monthly_cancel_data =  Cancellogs::select('*',
-            					   Cancellogs::raw("regexp_replace(custPhone, '[^0-9]', '') as phone_no"))
-                                   ->whereBetween('CanDate', [$lastmonth, $todayDate_end])
-                                   ->where('salesman',$sm_name)
-                                   ->get()
-                                   ->toArray();
-
-            $result['monthly_cancel_data'] = json_encode($this->fetch_recording_path($user_data,$monthly_cancel_data),true);
 
             if($result['monthlycount'] > 0){
                 $result['monthly_details'] = $this->call_search_ytel($monthly_data->toArray(),$lastmonth,$todayDate_end);
@@ -807,13 +768,11 @@ class DashboardController extends Controller
                     $calen_res_arr =  $this->call_search_ytel($user_data, $first_date, $last_date,$day_by_day=1);
             
 		            if(!empty($calen_res_arr))
-		            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr[0],$prev_sales_details->toArray(),($this->sm_cancel_lead($first_date,$last_date,$sm_name))->toArray()));
+		            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr[0],$prev_sales_details->toArray()));
 		            else
-		            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr,$prev_sales_details->toArray(),($this->sm_cancel_lead($first_date,$last_date,$sm_name))->toArray()));
+		            	$result['calendar_data'] = json_encode(array_merge($calen_res_arr,$prev_sales_details->toArray()));
                     
                     return $result['calendar_data'];
-
-
                 }
 
                 elseif($request->post('leadDate') != ""){
@@ -832,15 +791,6 @@ class DashboardController extends Controller
                     $result['cal_date_data']['lead_info'] = $this->fetch_recording_path($user_data,$cal_sales_data);
                     
                     $result['cal_date_data']['opprt_info'] = $this->find_not_sale($user_data, $cal_sales_data, $caldate, $caldate);
-
-                    $cal_cancel_data =  Cancellogs::select('*',
-	            					  	Cancellogs::raw("regexp_replace(custPhone, '[^0-9]', '') as phone_no"))
-	                                  	->whereBetween('CanDate', [$caldate, $caldate])
-	                                  	->where('salesman',$sm_name)
-	                                  	->get()
-	                                  	->toArray();
-
-            		$result['cal_date_data']['cancel_info'] = $this->fetch_recording_path($user_data,$cal_cancel_data);
 
                     // print_r(json_encode($result['cal_date_data']));
 
@@ -865,15 +815,6 @@ class DashboardController extends Controller
                     $result['lead_info_details'] = json_encode($this->fetch_recording_path($user_data,$adv_lead_info_details),true);
 
                     $result['adv_range_oppurtunites'] = json_encode($this->find_not_sale($user_data, $adv_lead_info_details, $start_range, $end_range),true);
-
-                    $adv_cancel_data =  Cancellogs::select('*',
-	            					  	Cancellogs::raw("regexp_replace(custPhone, '[^0-9]', '') as phone_no"))
-	                                  	->whereBetween('CanDate', [$start_range, $end_range])
-	                                  	->where('salesman',$sm_name)
-	                                  	->get()
-	                                  	->toArray();
-
-            		$result['adv_cancel_data'] = json_encode($this->fetch_recording_path($user_data,$adv_cancel_data),true);
 
                     return view('salesman-details',compact('result'));
                 }
@@ -970,5 +911,4 @@ class DashboardController extends Controller
         return $resArr;
 
     }
-      
 }
