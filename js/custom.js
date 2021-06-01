@@ -236,6 +236,8 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
     var downpayment = (downpay_add / cuscost_add) * 100;
     var finterm = finterm_add / sales_count;
     var discount = retail_add - cuscost_add;
+    if(discount < 0)
+        discount = 0;
     discount = '$' + Math.round(discount / sales_count);
     var rec_class_name,calls,conv_rate;
 
