@@ -45,7 +45,8 @@
                   <div class="top-part">
                     <h6>Today's Sales</h6>
                     <h3>{{ $result['todaycount'] - $result['today_wholesales_count'] }} <span class="hdls">deals</span></h3> 
-                    <p class="wsl-cnt">{{ $result['today_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                    <p class="wsl-cnt">{{ $result['today_wholesales_count'] }} <span class="hwls">wholesale deals</span></p>
+                    <p class="can-cnt">{{ @$result['today_cancel_sm_count'] }} <span class="can_sale"> Cancel deals</span></p>
                     <!-- {{$result['dailydata'][2]}}
                     <span class="valign-middle"><span class="@if($result['dailydata'][0]=='pos')tx-success @else tx-danger @endif">
                     <i class="icon @if($result['dailydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['dailydata'][1]}}%</span><br/>from last Day</span> -->
@@ -100,7 +101,8 @@
                   <div class="top-part">
                     <h6>This Week's Sales</h6>
                     <h3>{{ $result['weeklycount'] - $result['weekly_wholesales_count']}} <span class="hdls">deals</span></h3> 
-                    <p class="wsl-cnt">{{ $result['weekly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                    <p class="wsl-cnt">{{ $result['weekly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p>
+                    <p class="can-cnt">{{ @$result['weekly_cancel_sm_count'] }} <span class="can_sale"> Cancel deals</span></p> 
                     <!-- {{$result['weeklydata'][2]}}
                     <span class="valign-middle"><span class="@if($result['weeklydata'][0]=='pos')tx-success @else tx-danger @endif">
                     <i class="icon @if($result['weeklydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i> {{$result['weeklydata'][1]}}%</span><br/>from last week</span> -->
@@ -155,7 +157,8 @@
                   <div class="top-part">
                     <h6>This Month's Sales</h6>
                     <h3>{{ $result['monthlycount'] - $result['monthly_wholesales_count'] }} <span class="hdls">deals</span></h3> 
-                    <p class="wsl-cnt">{{ $result['monthly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p> 
+                    <p class="wsl-cnt">{{ $result['monthly_wholesales_count'] }} <span class="hwls">wholesale deals</span></p>
+                    <p class="can-cnt">{{ @$result['monthly_cancel_sm_count'] }} <span class="can_sale"> Cancel deals</span></p> 
                     <!-- {{$result['monthlydata'][2]}}
                     <span class="valign-middle"><span class="@if($result['monthlydata'][0]=='pos')tx-success @else tx-danger @endif">
                     <i class="icon @if($result['monthlydata'][0]=='pos')ion-android-arrow-up @else ion-android-arrow-down @endif mg-r-5"></i>{{$result['monthlydata'][1]}}%</span><br/>from last Month</span> -->
@@ -222,6 +225,7 @@
           <div class="opts">
             <span class="active-opt opt">Sales</span>
             <span class="opt">Opportunities</span>
+            <span class="opt">Cancel</span>
           </div>
         </div>
         
@@ -276,7 +280,34 @@
                 </table>
               </div><!-- table-responsive -->
 
-          </div>
+        </div>
+
+        <div class="section-wrapper cancel_info" style="display: none;">
+          
+              <label class="section-title">Cancel Info for: <span class="fill_dt"></span></label>
+              <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
+
+              <div class="table-responsive table-wrapper dash_table">
+                <table id="datatable4" class="table mg-b-0 table display responsive nowrap" style="max-width: 100% !important;">
+                    <thead>
+                    <tr>
+                        <th>APP NUMBER</th>
+                        <th>NAME</th>
+                        <th>DOWN PAYMENT</th>
+                        <th>FINANCE TERM</th>
+                        <!-- <th>DISCOUNT</th> -->
+                        <th>Type</th>
+                        <th>Purchase At</th>
+                        <th>Recording</th>
+                    </tr>
+                    </thead>
+                    <tbody id="cancel_data">
+                        
+                    </tbody>
+                </table>
+              </div><!-- table-responsive -->
+
+        </div>
 
       </div><!-- container -->
     </div><!-- slim-mainpanel -->
@@ -289,7 +320,7 @@
       var src_url = "{{ route('salesman-details',':name') }}";
       src_url = src_url.replace(':name',name);
       
-      
+      window.current_page = "{{ Route::currentRouteName() }}";
 
       $(document).ready(function(){
 
@@ -301,6 +332,7 @@
             $('.no-gutters').hide();
             tble_lead_info("{{ @$result['lead_info_details'] }}", search_flag=true);
             tble_oppprt_info("{{ @$result['adv_range_oppurtunites'] }}",search_flag=true);
+            tble_cancel_info("{{ @$result['adv_cancel_data'] }}", search_flag=true);
             $('.span').children('div').removeClass('active');
             $(".fc-add_event-button").click();
             $(".fill_dt").text("{{ @$result['start_date']}}" + '-' + "{{ @$result['end_date']}}");
@@ -309,11 +341,12 @@
           $(".fill_dt").text('Today');
           tble_lead_info("{{ $result['today_sales_data'] }}", search_flag=true);
           tble_oppprt_info("{{ $result['today_oppurtunites'] }}", search_flag=true);
+          tble_cancel_info("{{ $result['today_cancel_data'] }}", search_flag=true);
 
          }
         
         var cal_data = "{{ $result['calendar_data'] }}";
-        deal_calendar(cal_data);
+        deal_calendar(cal_data,window.current_page);
         $(".lead_data_info").fadeIn();
         
         $('.span').on('click',function(){
@@ -326,16 +359,19 @@
             if(time_span == 'monthly'){
               tble_lead_info("{{ $result['monthly_sales_data'] }}", search_flag=true);
               tble_oppprt_info("{{ $result['monthly_oppurtunites'] }}", search_flag=true);
+              tble_cancel_info("{{ $result['monthly_cancel_data'] }}", search_flag=true);
               $(".fill_dt").html('THIS MONTH');
             }
             else if(time_span == 'weekly'){
               tble_lead_info("{{ $result['weekly_sales_data'] }}", search_flag=true);
               tble_oppprt_info("{{ $result['weekly_oppurtunites'] }}", search_flag=true);
+              tble_cancel_info("{{ $result['weekly_cancel_data'] }}", search_flag=true);
               $(".fill_dt").html('THIS WEEK');
             }
             else{
               tble_lead_info("{{ $result['today_sales_data'] }}", search_flag=true);
               tble_oppprt_info("{{ $result['today_oppurtunites'] }}", search_flag=true);
+              tble_cancel_info("{{ $result['today_cancel_data'] }}", search_flag=true);
               $(".fill_dt").html('TODAY');
             }
 
@@ -355,22 +391,31 @@
 
           if($(this).text() == 'Sales'){
             $(".opprt_info").fadeOut();
+            $(".cancel_info").fadeOut();
             
             setTimeout(function(){
               $(".lead_data_info").fadeIn();
             },200);
             
           }
-          else{
+          else if($(this).text() == 'Opportunities'){
             $(".lead_data_info").fadeOut();
+            $(".cancel_info").fadeOut();
             setTimeout(function(){
               $(".opprt_info").fadeIn();
             },200);
             
           }
 
+          else{
+            $(".lead_data_info").fadeOut();
+            $(".opprt_info").fadeOut();
+            setTimeout(function(){
+              $(".cancel_info").fadeIn();
+            },200);
+            
+          }
 
-          
         });
 
         
@@ -392,7 +437,7 @@
             },
             success: function(result){
                 //console.log(result);
-                deal_calendar(result);
+                deal_calendar(result,window.current_page);
             },
             error: function(err){
                 console.log(err);
@@ -433,6 +478,7 @@ function sales_info_salesman(click_date)
             // console.log(cal_date_data.lead_info);
             tble_lead_info(cal_date_data.lead_info,search_flag=false);
             tble_oppprt_info(cal_date_data.opprt_info,search_flag=false);
+            tble_cancel_info(cal_date_data.cancel_info,search_flag=false);
             setTimeout(function(){
               click_tab();
               $("html,body").animate({scrollTop : $(".opts").offset().top },2000);

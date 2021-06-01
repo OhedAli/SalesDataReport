@@ -38,6 +38,7 @@ $('.back-btn span').on('click',function(){
     $('.back-btn').fadeOut('slow');
     $('.adv_time_span').fadeOut('slow');
     $('.dtxt').fadeOut('slow');
+    $('#changedays').val('');
     setTimeout(function(){
         $('.top-smry').fadeIn('slow');
     },500);
@@ -81,7 +82,7 @@ function tble_lead_info(result_data, search_flag){
             else
                 type = 'WHOLESALE';
 
-            data += '<tr>' +
+            data += '<tr '+ (arrData.cancelled_flag == 1 ? 'class="cancel_rec"' : '' ) + '>' +
             '<td>' + arrData.app_number + '</td>' +
             '<td>' + arrData.first_name + ' '+ arrData.last_name + '</td>' +
             '<td>$' + Math.round(arrData.downpay) + '</td>' +
@@ -134,42 +135,67 @@ function insert_table_data(res_details) {
     
 }
 
-function leader_board_update(res_details){
+function leader_board_update(slm_res_details,team_res_details){
    
-    let result = JSON.parse($("<div/>").html(res_details).text());
-
+    let sm_result = JSON.parse($("<div/>").html(slm_res_details).text());
+    let team_result = JSON.parse($("<div/>").html(team_res_details).text());
     //console.log(result);
-    $(".l-board").html('');
+    $("#ldr_tbl").html('');
+    $("#team_ldr_tbl").html('');
     let path = window.location.href;
     //let path = window.location.origin;
     path = path.substr(0,path.indexOf('public')) + 'public';
-    var data_html,pro_img;
-    if (result.length != 0) {
-        $.each(result, function (datakey, datavalue) {
+    var slm_data_html,team_data_html,pro_img;
+    if (sm_result.length != 0) {
+        $.each(sm_result, function (datakey, datavalue) {
             
             if (datavalue.sales_count != ''){
                 
                 pro_img = ((datavalue.avatar != null && datavalue.avatar != undefined && datavalue.avatar != '') ? datavalue.avatar : 'profile.png');
-                data_html = '<div class="mem-1"><div class="tx-center">'+
-                                '<a href="javascript:void(0);" class="img-a"><img src="'+ path +'/images/uploads/avatars/'+ pro_img +'" class="card-img" alt="">'+
-                                '<div class="hexa"><img src="'+ path + '/images/hexa'+ (datakey + 1) +'.png" class="hexa1-bg" alt="">'+
-                                '<p>'+ (datakey + 1) +'</p></div></a>'+
-                                '<h5 class="mg-t-10 mg-b-5">'+
-                                '<a href="javascript:void(0);" class="contact-name sm_name leader_name_'+ datakey + '">'+ datavalue.salesman + '</a>'+
-                                '<p><span class="leaderboardcount'+ datakey +'">'+ datavalue.sales_count + '</span> Sales</p>'+
-                                '</div></div>';
+                // data_html = '<div class="mem-1"><div class="tx-center">'+
+                //             '<a href="javascript:void(0);" class="img-a"><img src="'+ path +'/images/uploads/avatars/'+ pro_img +'" class="card-img" alt="">'+
+                //             '<div class="hexa"><img src="'+ path + '/images/hexa'+ (datakey + 1) +'.png" class="hexa1-bg" alt="">'+
+                //             '<p>'+ (datakey + 1) +'</p></div></a>'+
+                //             '<h5 class="mg-t-10 mg-b-5">'+
+                //             '<a href="javascript:void(0);" class="contact-name sm_name leader_name_'+ datakey + '">'+ datavalue.salesman + '</a>'+
+                //             '<p><span class="leaderboardcount'+ datakey +'">'+ datavalue.sales_count + '</span> Sales</p>'+
+                //             '</div></div>';
 
-                $(".l-board").append(data_html);
-                
+
+                slm_data_html = '<tr><td>'+ (datakey + 1) +'</td><td><div class="'+ (datakey <= 2 ? 'top-slm' : '')  +'">' + 
+                                '<img src="' + path +'/images/uploads/avatars/'+ pro_img +'" class="img-fluid t-user card-img" alt="Profile Img">' +
+                                '</div><span class="sl-name">' + datavalue.salesman + '</span></td><td>'+ datavalue.sales_count +'</td></tr>';
+
+                $("#ldr_tbl").append(slm_data_html);    
             }
-                
 
         });
 
     }
 
     else{
-        $(".l-board").html('');
+        slm_data_html = '<tr><td colspan="3"><div class="mem-1"><div class="tx-center">Nothing to be displayed</div></div></td></tr>';
+        $("#ldr_tbl").html(slm_data_html);
+    }
+
+    if (team_result.length != 0) {
+        $.each(team_result, function (datakey, datavalue) {
+            
+            if (datavalue.team_deal_count != ''){
+                
+                team_data_html = '<tr><td>'+ (datakey + 1) +'</td><td>' + datavalue.team + 
+                                 '</td><td>'+ datavalue.team_deal_count +'</td></tr>';
+
+                $("#team_ldr_tbl").append(team_data_html);    
+            }
+
+        });
+
+    }
+
+    else{
+        team_data_html = '<tr><td colspan="3"><div class="mem-1"><div class="tx-center">Nothing to be displayed</div></div></td></tr>';
+        $("#team_ldr_tbl").html(team_data_html);
     }
 
 }
@@ -252,9 +278,10 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
     return data;
 }
 
-function deal_calendar(res, prev) {
+function deal_calendar(res, cpage) {
     var data_call = [];
     var data_lead = [];
+    var data_cancel = [];
     var result;
     // console.log(1);
     result = JSON.parse($("<div/>").html(res).text());
@@ -264,6 +291,9 @@ function deal_calendar(res, prev) {
         if(dvalue.hasOwnProperty('call_date')){
             data_call[dvalue.call_date] = dvalue.total_calls;
         }
+        else if(dvalue.hasOwnProperty('CanDate')){
+            data_cancel[dvalue.CanDate] = dvalue.cancel_count;
+        }
         else{
             data_lead[dvalue.purchdate] = dvalue.sales_count;
         }
@@ -271,14 +301,16 @@ function deal_calendar(res, prev) {
     });
 
     var cal_date = get_calendar_date();
-    place_lead_count(data_call, data_lead, cal_date);
+    place_lead_count(data_call, data_lead, data_cancel, cpage, cal_date);
 }
 
-function place_lead_count(data_call, data_lead, date) {
+function place_lead_count(data_call, data_lead, data_cancel, cpage, date) {
     //console.log(data_arr);
     var keys_call = Object.keys(data_call);
     var keys_lead = Object.keys(data_lead);
+    var keys_cancel = Object.keys(data_cancel);
     //console.log(keys);
+    var call_cnt,cancel_cnt;
     var lead_cnt=0;
     var html='';
     var flag = false;
@@ -295,6 +327,10 @@ function place_lead_count(data_call, data_lead, date) {
                     }
                     else if(keys_lead.indexOf(cal_date) != -1){
                         keys = keys_lead;
+                        flag = true;
+                    }
+                    else if(keys_cancel.indexOf(cal_date) != -1){
+                        keys = keys_cancel;
                         flag = true;
                     }
                     else{
@@ -315,10 +351,17 @@ function place_lead_count(data_call, data_lead, date) {
                                     call_cnt = data_call[key_date];
                                 else
                                     call_cnt = 'N/A';
+
+                                if(data_cancel[key_date] != undefined)
+                                    cancel_cnt = data_cancel[key_date];
+                                else
+                                    cancel_cnt = 'N/A';
+
                             }
                         });
 
                         html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>" + lead_cnt + "</strong></a></div>" +
+                               (cpage != 'dashboard-active' ? "<div class='fc-cancel fc-data'><a style='cursor:pointer'>Cancel: <strong>" + cancel_cnt + "</strong></a></div>" : "" )  +
                                "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>" + call_cnt + "</strong></a></div>" +
                                "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Closing %: <strong>" + (call_cnt != 'N/A' ? ((lead_cnt/call_cnt) * 100).toFixed(2) + '%' : 'N/A') + "</strong></a></div>";
 
@@ -327,6 +370,7 @@ function place_lead_count(data_call, data_lead, date) {
                     }
                     else{
                         html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>0</strong></a></div>" +
+                               (cpage != 'dashboard-active' ? "<div class='fc-cancel fc-data'><a style='cursor:pointer'>Cancel: <strong>0</strong></a></div>" : "" ) +
                                "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>0</strong></a></div>" +
                                "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Closing %: <strong>0%</strong></a></div>";
                         
@@ -337,15 +381,20 @@ function place_lead_count(data_call, data_lead, date) {
                 else {
                     lead_cnt = data_lead[window.today];
                     call_cnt = data_call[window.today];
+                    cancel_cnt = data_cancel[window.today];
                     if (lead_cnt == undefined)
-                        lead_cnt = 0
+                        lead_cnt = 0;
 
                     if (call_cnt == undefined)
-                        call_cnt = 0
+                        call_cnt = 0;
+
+                    if (cancel_cnt == undefined)
+                        cancel_cnt = 0;
 
                     html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>" + lead_cnt + "</strong></a></div>" +
-                               "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>" + call_cnt + "</strong></a></div>" +
-                               "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Closing %: <strong>" + (call_cnt != 0 ? ((lead_cnt/call_cnt) * 100).toFixed(2) + '%' : 'N/A') + "</strong></a></div>";
+                           (cpage != 'dashboard-active' ? "<div class='fc-cancel fc-data'><a style='cursor:pointer'>Cancel: <strong>" + cancel_cnt + "</strong></a></div>" : "" ) +
+                           "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>" + call_cnt + "</strong></a></div>" +
+                           "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Closing %: <strong>" + (call_cnt != 0 ? ((lead_cnt/call_cnt) * 100).toFixed(2) + '%' : 'N/A') + "</strong></a></div>";
 
 
                     $(this).append(html);
@@ -362,6 +411,10 @@ function place_lead_count(data_call, data_lead, date) {
                 }
                 else if(keys_lead.indexOf(cal_date) != -1){
                     keys = keys_lead;
+                    flag = true;
+                }
+                else if(keys_cancel.indexOf(cal_date) != -1){
+                    keys = keys_cancel;
                     flag = true;
                 }
                 else{
@@ -381,10 +434,17 @@ function place_lead_count(data_call, data_lead, date) {
                                 call_cnt = data_call[key_date];
                             else
                                 call_cnt = 'N/A';
+
+                            if(data_cancel[key_date] != undefined)
+                                cancel_cnt = data_cancel[key_date];
+                            else
+                                cancel_cnt = 'N/A';
+
                         }
                     });
 
                     html = "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>" + lead_cnt + "</strong></a></div>" +
+                           (cpage != 'dashboard-active' ? "<div class='fc-cancel fc-data'><a style='cursor:pointer'>Cancel: <strong>" + cancel_cnt + "</strong></a></div>" : "" ) +
                            "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>" + call_cnt + "</strong></a></div>" +
                            "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Closing %: <strong>" + ((lead_cnt/call_cnt) * 100).toFixed(2) + "%</strong></a></div>";
 
@@ -394,6 +454,7 @@ function place_lead_count(data_call, data_lead, date) {
                 else{
 
                     html =  "<div class='fc-lead fc-data'><a style='cursor:pointer'>Sales: <strong>0</strong></a></div>" +
+                            (cpage != 'dashboard-active' ? "<div class='fc-cancel fc-data'><a style='cursor:pointer'>Cancel: <strong>0</strong></a></div>" : "" ) +
                             "<div class='fc-call fc-data'><a style='cursor:pointer'>Calls: <strong>0</strong></a></div>" +
                             "<div class='fc-cvr fc-data'><a style='cursor:pointer'>Closing %: <strong>0%</strong></a></div>";
                         
@@ -575,8 +636,57 @@ function tble_oppprt_info(res_data, search_flag)
     datatable_reset(table_id=3);
 }
 
+function tble_cancel_info(result_data, search_flag){
 
-function set_custom_sales_board(custom_data){
+    if ($.fn.DataTable.isDataTable("#datatable4"))
+        $('#datatable4').DataTable().clear().destroy();
+
+    
+    if(search_flag == true){
+     resultObj = JSON.parse($("<div/>").html(result_data).text());
+    } 
+    else {
+      resultObj = result_data;
+    }
+    // console.log(resultObj);
+   var data = '';
+   var type;
+   if (resultObj.length != 0) {
+        resultObj.forEach(function(arrData){
+            let discount = (arrData.retail - arrData.cuscost);
+            if(discount < 0)
+                discount = 0;
+
+            if(arrData.label1 != 'WHOLESALE')
+                type = 'SALE';
+            else
+                type = 'WHOLESALE';
+
+            data += '<tr class="cancel_rec">' +
+            '<td>' + arrData.appNumber + '</td>' +
+            '<td>' + arrData.custFirstName + ' '+ arrData.custLastName + '</td>' +
+            '<td>$' + Math.round(arrData.downpay) + '</td>' +
+            '<td>' + arrData.finterm  + '</td>' +
+            // '<td>$' + Math.round(discount) + '</td>' +
+            '<td>' + type + '</td>' +
+            '<td>' + arrData.purchdate + '</td>' +
+            '<td>' + (arrData.filename != undefined ? '<a href="' + arrData.location + '" target="_blank">' + arrData.filename + '</a>' : 'N/A') + '</td>' +
+            '</tr>';
+             
+        })
+
+    
+        $("#cancel_data").html(data);
+    }
+    else {
+        $("#cancel_data").html('');
+    }
+
+    datatable_reset(table_id=4);
+}
+
+
+function set_custom_sales_board(custom_data, cpage){
 
 
     var base_data = JSON.parse($("<div/>").html(custom_data['custom_sales_details']).text());
@@ -587,7 +697,7 @@ function set_custom_sales_board(custom_data){
     var finterm = ((base_data[0].retail != undefined && base_data[0].retail != null) ? base_data[0].finterm : 0.00) ;
 
     if(custom_data['custom_text'].indexOf('Result') == -1)
-        custom_data['custom_text'] = 'This '+ custom_data['custom_text'] +'\'s Sales';
+        custom_data['custom_text'] = custom_data['custom_text'] +' Sales';
 
     // console.log(custom_total_calls);
 
@@ -604,8 +714,9 @@ function set_custom_sales_board(custom_data){
     conv_rate = ((custom_data['custom_total_calls'] != 0 && custom_data['custom_total_calls'] != undefined ) ? ((custom_data['custom_sales_count'] / custom_data['custom_total_calls']) * 100).toFixed(2) + '%' : 'N/A');
 
     var html = '<div class="top-part"><h6>'+ custom_data['custom_text'] +'</h6><h3>'+ (custom_data['custom_sales_count'] - custom_data['custom_ws_count']) +
-                '<span class="hdls">deals</span></h3><p class="wsl-cnt">'+ custom_data['custom_ws_count'] +'<span class="hwls">wholesale deals</span>' + 
-                '</p></div><div class="crd-tab"><div class="d-flex"><div class="ctab-bx"><p>Calls</p><p class="text-black">'+ custom_data['custom_total_calls'] +
+                '<span class="hdls"> deals</span></h3><p class="wsl-cnt">'+ custom_data['custom_ws_count'] +'<span class="hwls"> wholesale deals</span>' + 
+                '</p>'+ (cpage != 'dashboard-active' ? '<p class="can-cnt">'+ custom_data['custom_cancel_count'] +'<span class="can_sale"> Cancel deals</span></p>' : '' ) + 
+                '</div><div class="crd-tab"><div class="d-flex"><div class="ctab-bx"><p>Calls</p><p class="text-black">'+ custom_data['custom_total_calls'] +
                 '</p></div><div class="ctab-bx bl-1"><p>Closing %</p><p class="text-black">' + conv_rate + '</p></div></div>'+
                 '<div class="d-flex bt-1"><div class="ctab-bx"><p>Finance term</p><p class="text-black">' + finterm + '</p></div>' +
                 '<div class="ctab-bx bl-1"><p>Discount</p><p class="text-black">$' + discount + '</p></div></div></div>';
