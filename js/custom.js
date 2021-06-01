@@ -38,6 +38,7 @@ $('.back-btn span').on('click',function(){
     $('.back-btn').fadeOut('slow');
     $('.adv_time_span').fadeOut('slow');
     $('.dtxt').fadeOut('slow');
+    $('#changedays').val('');
     setTimeout(function(){
         $('.top-smry').fadeIn('slow');
     },500);
@@ -134,42 +135,67 @@ function insert_table_data(res_details) {
     
 }
 
-function leader_board_update(res_details){
+function leader_board_update(slm_res_details,team_res_details){
    
-    let result = JSON.parse($("<div/>").html(res_details).text());
-
+    let sm_result = JSON.parse($("<div/>").html(slm_res_details).text());
+    let team_result = JSON.parse($("<div/>").html(team_res_details).text());
     //console.log(result);
-    $(".l-board").html('');
+    $("#ldr_tbl").html('');
+    $("#team_ldr_tbl").html('');
     let path = window.location.href;
     //let path = window.location.origin;
     path = path.substr(0,path.indexOf('public')) + 'public';
-    var data_html,pro_img;
-    if (result.length != 0) {
-        $.each(result, function (datakey, datavalue) {
+    var slm_data_html,team_data_html,pro_img;
+    if (sm_result.length != 0) {
+        $.each(sm_result, function (datakey, datavalue) {
             
             if (datavalue.sales_count != ''){
                 
                 pro_img = ((datavalue.avatar != null && datavalue.avatar != undefined && datavalue.avatar != '') ? datavalue.avatar : 'profile.png');
-                data_html = '<div class="mem-1"><div class="tx-center">'+
-                                '<a href="javascript:void(0);" class="img-a"><img src="'+ path +'/images/uploads/avatars/'+ pro_img +'" class="card-img" alt="">'+
-                                '<div class="hexa"><img src="'+ path + '/images/hexa'+ (datakey + 1) +'.png" class="hexa1-bg" alt="">'+
-                                '<p>'+ (datakey + 1) +'</p></div></a>'+
-                                '<h5 class="mg-t-10 mg-b-5">'+
-                                '<a href="javascript:void(0);" class="contact-name sm_name leader_name_'+ datakey + '">'+ datavalue.salesman + '</a>'+
-                                '<p><span class="leaderboardcount'+ datakey +'">'+ datavalue.sales_count + '</span> Sales</p>'+
-                                '</div></div>';
+                // data_html = '<div class="mem-1"><div class="tx-center">'+
+                //             '<a href="javascript:void(0);" class="img-a"><img src="'+ path +'/images/uploads/avatars/'+ pro_img +'" class="card-img" alt="">'+
+                //             '<div class="hexa"><img src="'+ path + '/images/hexa'+ (datakey + 1) +'.png" class="hexa1-bg" alt="">'+
+                //             '<p>'+ (datakey + 1) +'</p></div></a>'+
+                //             '<h5 class="mg-t-10 mg-b-5">'+
+                //             '<a href="javascript:void(0);" class="contact-name sm_name leader_name_'+ datakey + '">'+ datavalue.salesman + '</a>'+
+                //             '<p><span class="leaderboardcount'+ datakey +'">'+ datavalue.sales_count + '</span> Sales</p>'+
+                //             '</div></div>';
 
-                $(".l-board").append(data_html);
-                
+
+                slm_data_html = '<tr><td>'+ (datakey + 1) +'</td><td><div class="'+ (datakey <= 2 ? 'top-slm' : '')  +'">' + 
+                                '<img src="' + path +'/images/uploads/avatars/'+ pro_img +'" class="img-fluid t-user card-img" alt="Profile Img">' +
+                                '</div><span class="sl-name">' + datavalue.salesman + '</span></td><td>'+ datavalue.sales_count +'</td></tr>';
+
+                $("#ldr_tbl").append(slm_data_html);    
             }
-                
 
         });
 
     }
 
     else{
-        $(".l-board").html('');
+        slm_data_html = '<tr><td colspan="3"><div class="mem-1"><div class="tx-center">Nothing to be displayed</div></div></td></tr>';
+        $("#ldr_tbl").html(slm_data_html);
+    }
+
+    if (team_result.length != 0) {
+        $.each(team_result, function (datakey, datavalue) {
+            
+            if (datavalue.team_deal_count != ''){
+                
+                team_data_html = '<tr><td>'+ (datakey + 1) +'</td><td>' + datavalue.team + 
+                                 '</td><td>'+ datavalue.team_deal_count +'</td></tr>';
+
+                $("#team_ldr_tbl").append(team_data_html);    
+            }
+
+        });
+
+    }
+
+    else{
+        team_data_html = '<tr><td colspan="3"><div class="mem-1"><div class="tx-center">Nothing to be displayed</div></div></td></tr>';
+        $("#team_ldr_tbl").html(team_data_html);
     }
 
 }
@@ -671,7 +697,7 @@ function set_custom_sales_board(custom_data, cpage){
     var finterm = ((base_data[0].retail != undefined && base_data[0].retail != null) ? base_data[0].finterm : 0.00) ;
 
     if(custom_data['custom_text'].indexOf('Result') == -1)
-        custom_data['custom_text'] = 'This '+ custom_data['custom_text'] +'\'s Sales';
+        custom_data['custom_text'] = custom_data['custom_text'] +' Sales';
 
     // console.log(custom_total_calls);
 

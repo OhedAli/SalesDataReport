@@ -329,7 +329,7 @@ input {
 
 .m-lead {
     background: #e6e7e8;
-    max-width: 700px;
+    /*max-width: 700px;*/
     padding: 30px 15px;
     margin: 30px auto;
     animation: pulse 2s infinite;
@@ -452,6 +452,58 @@ input {
     overflow: visible;
     bottom: -18px;
 }
+.top-slm{
+    position: relative;
+    float: left;
+    clear: both;
+    margin-right: 12px;
+}
+#ldr_tbl tr:nth-child(1) .top-slm:after{
+  position: absolute;
+    content: "";
+    background: url(../images/frame.png) no-repeat;
+    width: 40px;
+    height: 40px;
+    background-size: 100%;
+    background-position: center;
+    left: -3px;
+    overflow: visible;
+    bottom: -4px;  
+}
+#ldr_tbl tr:nth-child(2) .top-slm:after{
+  position: absolute;
+    content: "";
+    background: url(../images/frame-v2.png) no-repeat;
+    width: 40px;
+    height: 40px;
+    background-size: 100%;
+    background-position: center;
+    left: -3px;
+    overflow: visible;
+    bottom: -4px;  
+}
+#ldr_tbl tr:nth-child(3) .top-slm:after{
+  position: absolute;
+    content: "";
+    background: url(../images/frame-v1.png) no-repeat;
+    width: 40px;
+    height: 40px;
+    background-size: 100%;
+    background-position: center;
+    left: -3px;
+    overflow: visible;
+    bottom: -4px;  
+}
+.card-img{
+
+    float: left;
+    clear: both;
+    margin-right: 12px;
+}
+.m-lead h6{
+    margin-bottom: 15px;
+}
+
 
 
 
@@ -566,6 +618,8 @@ p.text-black{
 }
 .dt-head{
     display: flex;
+    display: -webkit-flex;
+    position: relative;
 }
 
 .sales-values{
@@ -578,6 +632,18 @@ p.text-black{
 }
 
 .reload button, .cal-tab button{
+    background-color: #1b84e7;
+    background-image: none;
+    color: #fff;
+    border-radius: 4px;
+    border: 0px;
+    cursor: pointer;
+    max-width: 90px;
+    height: 35px;
+    margin-right: 10px
+}
+
+.export-btn button{
     background-color: #1b84e7;
     background-image: none;
     color: #fff;
@@ -707,6 +773,93 @@ p.text-black{
 #sales_type:focus-visible {
     outline: -webkit-focus-ring-color auto 0px !important;
 }
+
+#exprt_frmt{
+        height: 35px;
+    width: 160px;
+    padding: 0px 15px;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    margin-left: 5px;
+    margin-right: 10px;
+}
+.export-sec{
+    display: flex;
+    display: -webkit-flex;
+    position: absolute;
+    right: 0px;
+}
+
+.top-left-tab .t-user, .top-right-tab .t-user{
+      width: 35px;
+      height: 35px;
+      object-fit: cover;
+      border: 2px solid #e2dddd;
+      border-radius: 50%;
+    }
+    .top-left-tab td, .top-right-tab td{
+      height: 60px;
+    }
+
+    .top-left-tab th, .top-right-tab th{
+          text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 500;
+    }
+
+    .top-left-tab .table-dark thead th {
+      background-color: #dee2e6;
+      color: #343a40;
+      border-color: #dee2e6; 
+    }
+    .top-right-tab .table-dark thead th {
+      background-color: #dee2e6;
+      color: #343a40;
+      border-color: #dee2e6; 
+    }
+
+.top-left-tab .table-dark.table-striped tbody tr:nth-of-type(odd) {
+     background-color: #f9f9f9;
+     border-color: #dee2e6; 
+     color: #4e7194;
+}
+.top-left-tab .table-dark.table-striped tbody tr:nth-of-type(even) {
+     background-color: #fff;
+     border-color: #dee2e6; 
+     color: #4e7194;
+}
+.top-right-tab .table-dark.table-striped tbody tr:nth-of-type(odd) {
+     background-color: #f9f9f9;
+     border-color: #dee2e6; 
+     color: #4e7194;
+}
+.top-right-tab .table-dark.table-striped tbody tr:nth-of-type(even) {
+     background-color: #fff;
+     border-color: #dee2e6; 
+     color: #4e7194;
+}
+.top-left-tab .table td, .table th {
+    border-color: #dee2e6;
+}
+.top-right-tab .table td, .table th {
+    border-color: #dee2e6;
+}
+.top-left-tab .table, .top-right-tab .table{
+  border:1px solid #dee2e6;
+}
+.sl-name{
+    position: relative;
+    top: 6px;
+}
+
+
+.top-left-tab .table td{
+       vertical-align: middle;
+}
+.top-right-tab .table td{
+      vertical-align: middle;
+}
+
 @media screen and (min-width:992px) and (max-width: 1199px) {
     .ctab-bx {
         min-height: 85px;

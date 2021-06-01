@@ -7,6 +7,7 @@ use App\Http\Controllers\SaleslogsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TvDashboardController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SalesExportController;
 
 
 
@@ -39,6 +40,8 @@ Route::get('/dashboard/salesman/{sm_name}',[DashboardController::class, 'salesma
 Route::post('/dashboard/salesman/{sm_name}',[DashboardController::class, 'salesman_details'])->name('salesman-details');
 Route::get('/sales',[SaleslogsController::class, 'index'])->name('saleslogs');
 Route::get('/wholesales',[SaleslogsController::class, 'WholeSales'])->name('wholesaleslogs');
+
+Route::get('/dashboard/{date_range}/{file_type}',[SalesExportController::class, 'index'])->name('export');
 
 Route::get('sales/{id}',[SaleslogsController::class, 'showdetails'])->name('sales-view');
 

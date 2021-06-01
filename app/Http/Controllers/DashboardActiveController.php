@@ -78,8 +78,17 @@ class DashboardActiveController extends Controller
             }
 
             array_multisort($topper_sales_count,SORT_DESC,$topper_total_calls,SORT_ASC,$res_today);
-            $result['today_top'] = json_encode(array_slice($res_today, 0,3),true);
+            $result['today_top'] = json_encode(array_slice($res_today, 0,10),true);
         }
+
+        $result['today_top_team'] = Saleslogs::select('team', Saleslogs::raw('count(team) as team_deal_count '))
+                                    ->whereBetween('purchdate',[$todayDate_start,$todayDate_end])
+                                    ->where('team','!=','')
+                                    ->where('cancelled_flag','=','0')
+                                    ->groupBy('team')
+                                    ->orderBy('team_deal_count','desc')
+                                    ->limit(4)
+                                    ->get();
 
         $result['today_base_details'] = $this->get_base_details($todayDate_start,$todayDate_end);
 
@@ -154,9 +163,18 @@ class DashboardActiveController extends Controller
             }
 
             array_multisort($topper_sales_count,SORT_DESC,$topper_total_calls,SORT_ASC,$res_weekly);
-            $result['weekly_top'] = json_encode(array_slice($res_weekly, 0,3),true);
+            $result['weekly_top'] = json_encode(array_slice($res_weekly, 0,10),true);
 
         }
+
+        $result['weekly_top_team'] = Saleslogs::select('team', Saleslogs::raw('count(team) as team_deal_count '))
+                                      ->whereBetween('purchdate',[$lastweek,$todayDate_end])
+                                      ->where('team','!=','')
+                                      ->where('cancelled_flag','=','0')
+                                      ->groupBy('team')
+                                      ->orderBy('team_deal_count','desc')
+                                      ->limit(4)
+                                      ->get();
 
 
         $result['weekly_base_details'] = $this->get_base_details($lastweek,$todayDate_end);
@@ -236,10 +254,17 @@ class DashboardActiveController extends Controller
             }
 
             array_multisort($topper_sales_count,SORT_DESC,$topper_total_calls,SORT_ASC,$res_monthly);
-            $result['monthly_top'] = json_encode(array_slice($res_monthly, 0,3),true);
+            $result['monthly_top'] = json_encode(array_slice($res_monthly, 0,10),true);
         }
 
-
+        $result['monthly_top_team'] = Saleslogs::select('team', Saleslogs::raw('count(team) as team_deal_count '))
+                                      ->whereBetween('purchdate',[$lastmonth,$todayDate_end])
+                                      ->where('team','!=','')
+                                      ->where('cancelled_flag','=','0')
+                                      ->groupBy('team')
+                                      ->orderBy('team_deal_count','desc')
+                                      ->limit(4)
+                                      ->get();
 
         $result['monthly_base_details'] = $this->get_base_details($lastmonth,$todayDate_end);
 
