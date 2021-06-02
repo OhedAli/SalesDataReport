@@ -65,7 +65,7 @@
                           </tr>
                         </thead>
                         <tbody id="team_ldr_tbl">
-                  @if(!empty($result['today_top_team']))
+                  @if($result['today_top_team'] != '[]')
 
                     @foreach($result['today_top_team'] as $key=>$value)
                         <tr>
