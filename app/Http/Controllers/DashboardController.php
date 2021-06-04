@@ -43,8 +43,12 @@ class DashboardController extends Controller
 
         $result['todaycount'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])->count();
         $result['today_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])
-                                            ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
-                                            ->count();
+                                            ->where(function($query){
+                                            return $query
+                                                ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                            })->count();
 
         $result['today_cancel_count'] = Cancellogs::whereBetween('CanDate',[$todayDate_start, $todayDate_end])->count();
 
@@ -104,9 +108,11 @@ class DashboardController extends Controller
                                         ->get();
 
         $result['yesterday_base_details'] = $this->get_base_details($yesterdayDate_start, $yesterdayDate_start);
-        $result['yesterday_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])
-                                            	->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
-                                            	->count();
+        $result['yesterday_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])->where(function($query){
+                                   return $query->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                    })->count();
 
         $result['yesterday_total_calls'] = $this->find_total_call($yesterdayDate_start, $yesterdayDate_start);
 
@@ -126,8 +132,12 @@ class DashboardController extends Controller
         
         $result['weeklycount'] = Saleslogs::whereBetween('purchdate',[$lastweek,$todayDate_end])->count();
         $result['weekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastweek, $todayDate_end])
-                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
-                                             ->count();
+                                             ->where(function($query){
+                                             return $query
+                                                ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                             })->count();
 
         $result['weekly_cancel_count'] = Cancellogs::whereBetween('CanDate',[$lastweek, $todayDate_end])->count();
 
@@ -183,8 +193,12 @@ class DashboardController extends Controller
                                     ->get();
 
         $result['secondweekly_base_details'] = $this->get_base_details($secondlastweek_start,$secondlastweek_end);
-        $result['secondweekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end]										  )->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
-                                            	   ->count();
+        $result['secondweekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end])->where(function($query){
+                                        return $query
+                                                ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                            })->count();
 
         $result['secondweekly_total_calls'] = $this->find_total_call($secondlastweek_start,$secondlastweek_end);
 
@@ -208,8 +222,12 @@ class DashboardController extends Controller
         
         $result['monthlycount'] = Saleslogs::whereBetween('purchdate',[$lastmonth,$todayDate_end])->count();
         $result['monthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastmonth, $todayDate_end])
-                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
-                                             ->count();
+                                             ->where(function($query){
+                                             return $query
+                                                ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                             })->count();
 
         $result['monthly_cancel_count'] = Cancellogs::whereBetween('CanDate',[$lastmonth, $todayDate_end])->count();
 
@@ -270,7 +288,12 @@ class DashboardController extends Controller
                                       ->get();
 
         $result['secondmonthly_base_details'] = $this->get_base_details($secondlastmonth_start,$secondlastmonth_end);
-        $result['secondmonthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])->count();
+        $result['secondmonthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])->where(function($query){
+                                            return $query
+                                                   ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                   ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                   ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                            })->count();
 
         $result['secondmonthly_total_calls'] = $this->find_total_call($secondlastmonth_start,$secondlastmonth_end);
 
@@ -326,8 +349,13 @@ class DashboardController extends Controller
 
                 $result['adv_range_base_details'] = $this->get_base_details($start_range, $end_range);
         		$result['adv_range_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])
-                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
-                                             ->count();
+                                                        ->where(function($query){
+                                                        return $query
+                                                            ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                            ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                            ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                                        })->count();
+
                 $result['adv_range_total_calls'] = $this->find_total_call($start_range, $end_range);
 
 
@@ -625,9 +653,13 @@ class DashboardController extends Controller
                                                ->count();
 
             $result['today_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])
-                                                ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
                                                 ->where('salesman',$sm_name)
-                                                ->count();
+                                                ->where(function($query){
+                                                    return $query
+                                                        ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                        ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                        ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                                })->count();
 
             $result['today_details'] =  Saleslogs::select('salesman',
                                         Saleslogs::raw('SUM(cuscost) as cuscost_add'),
@@ -680,9 +712,13 @@ class DashboardController extends Controller
                                                ->count();
 
             $result['weekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastweek, $todayDate_end])
-                                                 ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
                                                  ->where('salesman',$sm_name)
-                                                 ->count();
+                                                 ->where(function($query){
+                                                    return $query
+                                                        ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                        ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                        ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                                 })->count();
 
             $result['weekly_details'] = Saleslogs::select('salesman',
                                         Saleslogs::raw('SUM(cuscost) as cuscost_add'),
@@ -736,9 +772,13 @@ class DashboardController extends Controller
                                                ->count();
 
             $result['monthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastmonth, $todayDate_end])
-                                                  ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND'])
                                                   ->where('salesman',$sm_name)
-                                                  ->count();
+                                                  ->where(function($query){
+                                                        return $query
+                                                            ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                            ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                            ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                                  })->count();
 
             $result['monthly_sm_details'] =  Saleslogs::select('salesman','purchdate',Saleslogs::raw('count(salesman) as sales_count '))
                                              ->whereBetween('purchdate',[$lastmonth, $todayDate_end])
