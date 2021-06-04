@@ -44,9 +44,13 @@ class DashboardActiveController extends Controller
                                 ->where('cancelled_flag','=','0')
                                 ->count();
         $result['today_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$todayDate_start, $todayDate_end])
-                                            ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
                                             ->where('cancelled_flag','=','0')
-                                            ->count();
+                                            ->where(function($query){
+                                                return $query
+                                                    ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                    ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                    ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                            })->count();
 
         // $result['today_cancel_count'] = Cancellogs::whereBetween('CanDate',[$todayDate_start, $todayDate_end])->count();
 
@@ -109,10 +113,13 @@ class DashboardActiveController extends Controller
                                         ->get();
 
         $result['yesterday_base_details'] = $this->get_base_details($yesterdayDate_start, $yesterdayDate_start);
-        $result['yesterday_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])
-                                            	->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
-                                                ->where('cancelled_flag','=','0')
-                                            	->count();
+        $result['yesterday_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$yesterdayDate_start, $yesterdayDate_start])->where('cancelled_flag','=','0')
+                                 ->where(function($query){
+                                            return $query
+                                                ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                 })->count();
 
         $result['yesterday_total_calls'] = $this->find_total_call($yesterdayDate_start, $yesterdayDate_start);
 
@@ -131,9 +138,13 @@ class DashboardActiveController extends Controller
                                  ->where('cancelled_flag','=','0')
                                  ->count();
         $result['weekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastweek, $todayDate_end])
-                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
                                              ->where('cancelled_flag','=','0')
-                                             ->count();
+                                             ->where(function($query){
+                                                return $query
+                                                    ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                    ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                    ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                            })->count();
 
         // $result['weekly_cancel_count'] = Cancellogs::whereBetween('CanDate',[$lastweek, $todayDate_end])->count();
 
@@ -195,9 +206,13 @@ class DashboardActiveController extends Controller
                                           ->get();
 
         $result['secondweekly_base_details'] = $this->get_base_details($secondlastweek_start,$secondlastweek_end);
-        $result['secondweekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end]										  )->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
-                                                   ->where('cancelled_flag','=','0')
-                                            	   ->count();
+        $result['secondweekly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end])->where('cancelled_flag','=','0')
+                                ->where(function($query){
+                                            return $query
+                                                ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                })->count();
 
         $result['secondweekly_total_calls'] = $this->find_total_call($secondlastweek_start,$secondlastweek_end);
 
@@ -220,9 +235,13 @@ class DashboardActiveController extends Controller
                                   ->where('cancelled_flag','=','0')
                                   ->count();
         $result['monthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$lastmonth, $todayDate_end])
-                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
                                              ->where('cancelled_flag','=','0')
-                                             ->count();
+                                             ->where(function($query){
+                                                return $query
+                                                    ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                    ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                    ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                             })->count();
 
         $result['monthly_cancel_count'] = Cancellogs::whereBetween('CanDate',[$lastmonth, $todayDate_end])->count();
 
@@ -287,7 +306,13 @@ class DashboardActiveController extends Controller
                                       ->get();
 
         $result['secondmonthly_base_details'] = $this->get_base_details($secondlastmonth_start,$secondlastmonth_end);
-        $result['secondmonthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])->where('cancelled_flag','=','0')->count();
+        $result['secondmonthly_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$secondlastmonth_start,$secondlastmonth_end])->where('cancelled_flag','=','0')
+                                 ->where(function($query){
+                                            return $query
+                                                ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                 })->count();
 
          $result['secondmonthly_total_calls'] = $this->find_total_call($secondlastmonth_start,$secondlastmonth_end);
 
@@ -343,9 +368,14 @@ class DashboardActiveController extends Controller
 
                 $result['adv_range_base_details'] = $this->get_base_details($start_range, $end_range);
         		$result['adv_range_wholesales_count'] = Saleslogs::whereBetween('purchdate',[$start_range, $end_range])
-                                             ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
-                                             ->where('cancelled_flag','=','0')
-                                             ->count();
+                                                        ->where('cancelled_flag','=','0')
+                                                        ->where(function($query){
+                                                            return $query
+                                                                ->whereIn('label1',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                                ->orWhereIn('label2',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'])
+                                                                ->orWhereIn('label3',['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD']);
+                                                        })->count();
+                                                        
                 $result['adv_range_total_calls'] = $this->find_total_call($start_range, $end_range);
 
 

@@ -71,16 +71,17 @@ function tble_lead_info(result_data, search_flag){
     // console.log(resultObj);
    var data = '';
    var type;
+   var ws_arr = ['WHOLESALE','WSINBOUND','WSOUTBOUND','WSPDCLRD'];
    if (resultObj.length != 0) {
         resultObj.forEach(function(arrData){
             let discount = (arrData.retail - arrData.cuscost);
             if(discount < 0)
                 discount = 0;
 
-            if(arrData.label1 != 'WHOLESALE')
-                type = 'SALE';
-            else
+            if(ws_arr.indexOf(arrData.label1) != -1 || ws_arr.indexOf(arrData.label2) != -1 || ws_arr.indexOf(arrData.label3) != -1)
                 type = 'WHOLESALE';
+            else
+                type = 'SALE';
 
             data += '<tr '+ (arrData.cancelled_flag == 1 ? 'class="cancel_rec"' : '' ) + '>' +
             '<td>' + arrData.app_number + '</td>' +
