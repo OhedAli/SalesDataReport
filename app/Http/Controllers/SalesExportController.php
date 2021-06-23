@@ -8,7 +8,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class SalesExportController extends Controller
 {
-    public function index(Request $request, $date_range, $file_type)
+    public function index(Request $request, $date_range, $file_type, $tab_type)
     {
 
     	date_default_timezone_set("America/Chicago");
@@ -76,6 +76,6 @@ class SalesExportController extends Controller
     	// die();
 
     	$export_file_name = 'salesagentlogs-'.date('mdy').'.'.$file_type;
-    	return Excel::download(new SalesLogsExport($start_range,$end_range),$export_file_name);
+    	return Excel::download(new SalesLogsExport($start_range,$end_range,$tab_type),$export_file_name);
     }
 }
