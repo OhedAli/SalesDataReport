@@ -21,4 +21,13 @@ class Saleslogs extends Model
     {
         return $this->hasMany(Salesagent::class, 'user_alter_name', 'salesman');
     }
+
+    public function team_lead_agent()
+    {
+        return $this->hasMany(Salesagent::class, 'manager_alter_name', 't_o')
+                    ->where('user_group','=','TO')
+                    ->where(function($query){
+                        return $query->where('user_ytel_name','like','T.O. %')->orWhere('user_ytel_name','like','T O %');
+                    });
+    }
 }

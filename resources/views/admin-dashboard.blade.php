@@ -23,8 +23,8 @@
                         </thead>
                         <tbody id="ldr_tbl">
                   @if($result['today_top'] != '[]')
-
                     @foreach(json_decode($result['today_top'],true) as $key=>$value)
+                      @if($value['sales_count'] != 0)
                         <tr>
                           <td>{{ $key + 1 }}</td>
                           <td>
@@ -35,6 +35,7 @@
                           </td>
                           <td>{{$value['sales_count']}}</td>
                         </tr>
+                      @endif
                     @endforeach
                   @else
                   <tr>
@@ -336,8 +337,14 @@
           <!-- col-6 -->
          
         </div><!-- row -->
-      
-        <div class="section-wrapper sales_info">
+        
+        <div class="section-opts mt-4">
+          <div class="opts">
+            <span class="active-opt opt" data-value='sales_man'>Sales Man Info</span>
+            <span class="opt" data-value='manager'>Manager Info</span>
+          </div>
+        </div>
+        <div class="section-wrapper sales_info mt-0">
           <div class="dt-head">
             <div class="sales-values">
               <label class="section-title">Sales Info</label>
@@ -367,7 +374,7 @@
             
             <!--<p class="mg-b-20 mg-sm-b-40"></p>-->
 
-            <div class="table-responsive table-wrapper dash_table">
+            <div class="table-responsive table-wrapper dash_table sm-table">
             <table id="datatable1" class="table mg-b-0 table display responsive nowrap">
                 <thead>
                 <tr>
@@ -384,7 +391,27 @@
                     
                 </tbody>
             </table>
-            </div><!-- table-responsive -->
+            </div>
+
+
+            <div class="table-responsive table-wrapper dash_table mng-table" style="display:none;">
+            <table id="datatable1m" class="table mg-b-0 table display responsive nowrap">
+                <thead>
+                <tr>
+                    <th>Manager</th>
+                    <th>Sales</th>
+                    <th>DOWN PAYMENT</th>
+                    <th>FINANCE TERM</th>
+                    <th>DISCOUNT</th>
+                    <th>Calls</th>
+                    <th>Closing %</th>
+                </tr>
+                </thead>
+                <tbody id="sales_info_data_manager">
+                    
+                </tbody>
+            </table>
+            </div>
             
             <div class="card pd-25 calen" style="display:none;">
               <div id="fullCalendar"></div>
@@ -405,10 +432,12 @@
         window.current_page = "{{ Route::currentRouteName() }}";
         window.adv_range_flag = "{{ $result['adv_range_flag'] }}";
         if("{{ $result['adv_range_flag'] }}" == false){
-            data = "{{ $result['today_details'] }}";
+            sales_man_data = "{{ $result['today_details'] }}";
+            manager_data = "{{ $result['today_manager_details'] }}";
         }
         else{
-            data = "{{ @$result['adv_range_sales_details'] }}";
+            sales_man_data = "{{ @$result['adv_range_sales_details'] }}";
+            manager_data = "{{ @$result['adv_range_manager_details'] }}";
             $('.span').children('div').removeClass('active');
             $('.dtxt').show();
             $('.top-smry').fadeOut('slow');
@@ -420,14 +449,15 @@
             adv_data['custom_total_calls'] = "{{ @$result['adv_range_total_calls'] }}";
             adv_data['custom_text'] = "Result for {{ @$result['start_date'] }} to {{ @$result['end_date'] }} ";
             $("#datacountlead").html("{{ @$result['adv_range_sales_count'] }}");
-            set_custom_sales_board(adv_data);
+            set_custom_sales_board(adv_data,window.current_page);
             setTimeout(function(){
                 $('.adv_time_span').fadeIn('slow');
                 $('.back-btn').fadeIn('slow');
             },500);
         }
         
-        insert_table_data(data);
+        insert_table_data(sales_man_data,'sales_man');
+        insert_table_data(manager_data,'manager');
         deal_calendar(calendar_data,window.current_page);
         $('.span').click(function(){
             window.adv_range_flag = false;
@@ -435,29 +465,61 @@
             $('.span').children('div').removeClass('active');
             $(this).children('div').addClass('active');
             if($(this).attr('id') == 'monthly'){
-                data = "{{ $result['monthly_details'] }}";
+                sm_data = "{{ $result['monthly_details'] }}";
+                manager_data = "{{ $result['monthly_manager_details'] }}";
                 sm_leaderboard = "{{$result['monthly_top']}}";
                 team_leaderboard = "{{$result['monthly_top_team']}}";
                 $('.name_topper').html('Monthly');
                 $('#datacountlead').html("{{ $result['monthlycount'] }}");
             }
             else if($(this).attr('id') == 'weekly'){
-                data = "{{ $result['weekly_details'] }}";
+                sm_data = "{{ $result['weekly_details'] }}";
+                manager_data = "{{ $result['weekly_manager_details'] }}";
                 sm_leaderboard = "{{$result['weekly_top']}}";
                 team_leaderboard = "{{$result['weekly_top_team']}}";
                 $('.name_topper').html('Weekly');
                 $('#datacountlead').html("{{ $result['weeklycount'] }}");
             }
             else{
-                data = "{{ $result['today_details'] }}";
+                sm_data = "{{ $result['today_details'] }}";
+                manager_data = "{{ $result['today_manager_details'] }}";
                 sm_leaderboard = "{{$result['today_top']}}";
                 team_leaderboard = "{{$result['today_top_team']}}";
                 $('.name_topper').html('Today');
                 $('#datacountlead').html("{{ $result['todaycount'] }}");
             }
             leader_board_update(sm_leaderboard,team_leaderboard);
-            insert_table_data(data);
-            
+
+            insert_table_data(sm_data,'sales_man');
+            insert_table_data(manager_data,'manager');
+        });
+
+
+        $('.opt').click(function(){
+          // console.log(2);
+          $('.opt').removeClass('active-opt');
+          $(this).addClass('active-opt');
+
+          if(!$('.cal-tab').find('button').hasClass('caledar-btn')){
+
+            if($(this).data('value') == 'sales_man'){
+              $(".mng-table").fadeOut();
+              
+              setTimeout(function(){
+                $(".sm-table").fadeIn();
+              },200);
+              $('#datacountlead').parent('p').show();
+            }
+            else{
+              $(".sm-table").fadeOut();
+              setTimeout(function(){
+                $(".mng-table").fadeIn();
+              },200);
+              $('#datacountlead').parent('p').hide();
+            }
+
+          }
+          
         });
 
         $('#changedays').change(function(){
@@ -466,7 +528,8 @@
           window.adv_range_flag = false;
           $('.dtxt').fadeOut('slow');
           if(this.value == 'monthly'){
-              data = "{{ $result['monthly_details'] }}";
+              sm_data = "{{ $result['monthly_details'] }}";
+              manager_data = "{{ $result['monthly_manager_details'] }}";
               custom_data['custom_sales_details'] = "{{ $result['monthly_base_details'] }}";
               custom_data['custom_sales_count'] = "{{ $result['monthlycount'] }}";
               custom_data['custom_ws_count'] = "{{ $result['monthly_wholesales_count'] }}";
@@ -476,7 +539,8 @@
               $('#datacountlead').html("{{ $result['monthlycount'] }}");
           }
           else if(this.value == 'last_month'){
-              data = "{{ $result['secondmonthly_details'] }}";
+              sm_data = "{{ $result['secondmonthly_details'] }}";
+              manager_data = "{{ $result['secondmonthly_manager_details'] }}";
               custom_data['custom_sales_details'] = "{{ $result['secondmonthly_base_details'] }}";
               custom_data['custom_sales_count'] = "{{ $result['secondmonthlycount'] }}";
               custom_data['custom_ws_count'] = "{{ $result['secondmonthly_wholesales_count'] }}";
@@ -486,7 +550,8 @@
               $('#datacountlead').html("{{ $result['secondmonthlycount'] }}");
           }
           else if(this.value == 'weekly'){
-              data = "{{ $result['weekly_details'] }}";
+              sm_data = "{{ $result['weekly_details'] }}";
+              manager_data = "{{ $result['weekly_manager_details'] }}";
               custom_data['custom_sales_details'] = "{{ $result['weekly_base_details'] }}";
               custom_data['custom_sales_count'] = "{{ $result['weeklycount'] }}";
               custom_data['custom_ws_count'] = "{{ $result['weekly_wholesales_count'] }}";
@@ -496,7 +561,8 @@
               $('#datacountlead').html("{{ $result['weeklycount'] }}");
             }
           else if(this.value == 'last_week'){
-             data = "{{ $result['secondweekly_details'] }}";
+             sm_data = "{{ $result['secondweekly_details'] }}";
+             manager_data = "{{ $result['secondweekly_manager_details'] }}";
              custom_data['custom_sales_details'] = "{{ $result['secondweekly_base_details'] }}";
              custom_data['custom_sales_count'] = "{{ $result['secondweeklycount'] }}";
              custom_data['custom_ws_count'] = "{{ $result['secondweekly_wholesales_count'] }}";
@@ -506,7 +572,8 @@
              $('#datacountlead').html("{{ $result['secondweeklycount'] }}");
             }
           else if(this.value == 'yesterday'){
-              data = "{{ $result['yesterday_details'] }}";
+              sm_data = "{{ $result['yesterday_details'] }}";
+              manager_data = "{{ $result['yesterday_manager_details'] }}";
               custom_data['custom_sales_details'] = "{{ $result['yesterday_base_details'] }}";
               custom_data['custom_sales_count'] = "{{ $result['yesterdaycount'] }}";
               custom_data['custom_ws_count'] = "{{ $result['yesterday_wholesales_count'] }}";
@@ -516,7 +583,8 @@
               $('#datacountlead').html("{{ $result['yesterdaycount'] }}");
             }
           else{
-              data = "{{ $result['today_details'] }}";
+              sm_data = "{{ $result['today_details'] }}";
+              manager_data = "{{ $result['today_manager_details'] }}";
               custom_data['custom_sales_details'] = "{{ $result['today_base_details'] }}";
               custom_data['custom_sales_count'] = "{{ $result['todaycount'] }}";
               custom_data['custom_ws_count'] = "{{ $result['today_wholesales_count'] }}";
@@ -535,7 +603,8 @@
               $('.adv_time_span').fadeIn('slow');
               $('.back-btn').fadeIn('slow');
           },500);
-          insert_table_data(data);
+          insert_table_data(sm_data,'sales_man');
+          insert_table_data(manager_data,'manager');
 
         });
         
@@ -597,10 +666,10 @@
 
       $(document).on('click','.export-btn',function(){
 
-        var date_range,file_type;
+        var date_range,file_type,tab_type;
 
         if(window.adv_range_flag == true){
-          console.log(1);
+          // console.log(1);
             date_range = "{{ @$result['start_date'] }}-" + "{{ @$result['end_date'] }}";
         }
 
@@ -613,14 +682,15 @@
           }
         }
 
+        tab_type = $('.active-opt').data('value');
         file_type = $("#exprt_frmt").val();
 
         // console.log(date_range);
 
-        const mapObj =  {date_range: date_range, file_type: file_type};
+        const mapObj =  {date_range: date_range, file_type: file_type, tab_type: tab_type};
 
-        var export_url = "{{ route('export',['date_range','file_type']) }}";
-        export_url = export_url.replace(/\b(?:date_range|file_type)\b/gi, matched => mapObj[matched]);
+        var export_url = "{{ route('export',['date_range','file_type','tab_type']) }}";
+        export_url = export_url.replace(/\b(?:date_range|file_type|tab_type)\b/gi, matched => mapObj[matched]);
         // console.log(export_url);
         window.location.href = export_url;
 

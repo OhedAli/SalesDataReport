@@ -859,6 +859,7 @@ p.text-black{
 .top-right-tab .table td{
       vertical-align: middle;
 }
+#datatable1m{width: 100% !important;}
 
 @media screen and (min-width:992px) and (max-width: 1199px) {
     .ctab-bx {

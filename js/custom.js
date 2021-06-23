@@ -108,12 +108,21 @@ function tble_lead_info(result_data, search_flag){
 
 
 
-function insert_table_data(res_details) {
+function insert_table_data(res_details,type) {
     
-    if ($.fn.DataTable.isDataTable("#datatable1")){
-        $('#datatable1').DataTable().clear().destroy();
-        $("#sales_info_data").empty();
+    if(type == 'sales_man'){
+        if ($.fn.DataTable.isDataTable("#datatable1")){
+            $('#datatable1').DataTable().clear().destroy();
+            $("#sales_info_data").empty();
+        }
     }
+    else{
+        if ($.fn.DataTable.isDataTable("#datatable1m")){
+            $('#datatable1m').DataTable().clear().destroy();
+            $("#sales_info_data_manager").empty();
+        }
+    }
+    
 
     let result = JSON.parse($("<div/>").html(res_details).text());
     
@@ -121,18 +130,29 @@ function insert_table_data(res_details) {
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
             
-            if (datavalue.salesman != '')
-                html_data += table_data_insertion(datavalue.salesman, datavalue.sales_count, datavalue.downpay_add, datavalue.cuscost_add, datavalue.finterm_add, datavalue.retail_add,datavalue.total_calls);
+            if (datavalue.salesman != ''){
+                name = (type == 'sales_man' ? datavalue.salesman : datavalue.manager);
+                html_data += table_data_insertion(name, datavalue.sales_count, datavalue.downpay_add, datavalue.cuscost_add, datavalue.finterm_add, datavalue.retail_add,datavalue.total_calls,type);
+            }
 
         });
 
-        $("#sales_info_data").html(html_data);
+        if(type == 'sales_man')
+            $("#sales_info_data").html(html_data);
+        else
+            $("#sales_info_data_manager").html(html_data);
     }
     else {
-        $("#sales_info_data").html('');
+        if(type == 'sales_man')
+            $("#sales_info_data").html('');
+        else
+            $("#sales_info_data_manager").html('');
     }
 
-    datatable_reset(table_id=1);
+    if(type == 'sales_man')
+        datatable_reset(table_id=1);
+    else
+        datatable_reset(table_id='1m');
     
 }
 
@@ -232,16 +252,25 @@ function datatable_reset(table_id) {
 
 }
 
-function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, finterm_add, retail_add,total_calls) {
+function table_data_insertion(name, sales_count, downpay_add, cuscost_add, finterm_add, retail_add, total_calls, type) {
     
-    var downpayment = (downpay_add / cuscost_add) * 100;
-    var finterm = finterm_add / sales_count;
-    var discount = retail_add - cuscost_add;
-    if(discount < 0)
-        discount = 0;
-    discount = '$' + Math.round(discount / sales_count);
-    var rec_class_name,calls,conv_rate;
+    var downpayment,finterm,discount,rec_class_name,calls,conv_rate;
+    // console.log(downpay_add);
 
+    if(sales_count != 0){
+        downpayment = ((downpay_add / cuscost_add) * 100).toFixed(2) + '%';
+        finterm = (finterm_add / sales_count).toFixed(2);
+        discount = retail_add - cuscost_add;
+        if(discount < 0)
+        discount = 0;
+        discount = '$' + Math.round(discount / sales_count);
+    }
+    else{
+        downpayment = 'N/A';
+        finterm = 'N/A';
+        discount = 'N/A';
+    }
+    
     if(total_calls !== undefined  && total_calls != 0){
 
         calls = total_calls;
@@ -270,10 +299,10 @@ function table_data_insertion(salesman, sales_count, downpay_add, cuscost_add, f
     data = '';
 
     data += '<tr class=' + rec_class_name + '>' +
-        '<td><a class="sm_name" href="javascript:void(0);">' + salesman + '</a></td>' +
+        '<td>'+ (type == 'sales_man' ? '<a class="sm_name" href="javascript:void(0);">' + name + '</a>' : name) + '</td>' +
         '<td>' + sales_count + '</td>' +
-        '<td>' + downpayment.toFixed(2) + '%</td>' +
-        '<td>' + finterm.toFixed(2) + '</td>' +
+        '<td>' + downpayment + '</td>' +
+        '<td>' + finterm + '</td>' +
         '<td>' + discount + '</td>' +
         '<td>' + calls + '</td>' +
         '<td>' + conv_rate + '</td>' +
@@ -559,14 +588,22 @@ $('.reload').on('click',function(){
 });
 
 $('.cal-tab button').on('click',function(){
+
+    var tab_type = $('.active-opt').data('value');
     if($(this).hasClass('caledar-btn')){
         $('.calen').fadeOut('fast');
-        $('.dash_table').fadeIn('slow');
+        if(tab_type == 'sales_man')
+            $('.sm-table').fadeIn('slow');
+        else
+            $('.mng-table').fadeIn('slow');
         $(this).children('span').html('Calendar');
     }
     else{
         $('.calen').fadeIn('slow');
-        $('.dash_table').fadeOut('fast');
+        if(tab_type == 'sales_man')
+            $('.sm-table').fadeOut('fast');
+        else
+            $('.mng-table').fadeOut('fast');
         $(this).children('span').html('Sales Table');
     }
     $(this).toggleClass('caledar-btn');
