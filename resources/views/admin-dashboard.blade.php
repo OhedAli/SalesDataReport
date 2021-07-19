@@ -101,7 +101,7 @@
                        <form action="" method="post">
                       <!--  Details -->
                       @csrf
-                      <div class="form-group">
+                      <div class="form-group mb-cstm">
                       <h6 class="slim-card-title">Your Sales Summary</h6>
                           <div class="controls f1">
                              <label for="arrive" class="label-date"><i class="fa fa-calendar"></i>&nbsp;&nbsp;From:</label>
@@ -139,6 +139,10 @@
                     @endif
                     <P class="dtxt" style="display: none;">Showing Data from <span class='drng'>'{{ @$result['start_date'] }}'</span> to <span class='drng'>'{{ @$result['end_date'] }}'</span></p>
 
+                    <div class="pif-input">
+                      <input type="checkbox" name="pifs" id="pifs_checkbox" checked="checked">PIFs
+                    </div>
+
                    </div>
             </div>
 
@@ -150,8 +154,8 @@
                     <div class="card card-earning-summary active top-card">
                       <div class="top-part">
                         <h6>Today's Sales</h6>
-                        <h3>{{ $result['todaycount'] - $result['today_wholesales_count'] }} <span class="hdls"> deals</span></h3> 
-                        <p class="wsl-cnt">{{ $result['today_wholesales_count'] }} <span class="hwls"> wholesale deals</span></p>
+                        <h3>{{ $result['todaycount'] }} <span class="hdls"> deals</span></h3> 
+                        <p class="pifs-cnt">{{ $result['today_pifs_count'] }} <span class="pifs"> PIFs</span></p>
                         @if(Route::currentRouteName() == 'dashboard' && Auth::user()->type == 'admin')
                         <p class="can-cnt">{{ @$result['today_cancel_count'] }} <span class="can_sale"> Cancel deals</span></p> 
                         @endif 
@@ -180,7 +184,7 @@
                         <div class="d-flex bt-1">
                           <div class="ctab-bx">
                             <p>Finance term</p>
-                            <p class="text-black">
+                            <p class="text-black today-finterm">
                               @if($result['todaycount'] == 0) 
                                 0.00
                               @else
@@ -206,8 +210,8 @@
                     <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t top-card">
                       <div class="top-part">
                         <h6>This Week's Sales</h6>
-                        <h3>{{ $result['weeklycount'] - $result['weekly_wholesales_count']}} <span class="hdls"> deals</span></h3> 
-                        <p class="wsl-cnt">{{ $result['weekly_wholesales_count'] }} <span class="hwls"> wholesale deals</span></p>
+                        <h3>{{ $result['weeklycount'] }} <span class="hdls"> deals</span></h3> 
+                        <p class="pifs-cnt">{{ $result['weekly_pifs_count'] }} <span class="pifs"> PIFs</span></p>
                         @if(Route::currentRouteName() == 'dashboard' && Auth::user()->type == 'admin')
                         <p class="can-cnt">{{ @$result['weekly_cancel_count'] }} <span class="can_sale"> Cancel deals</span></p>
                         @endif
@@ -236,7 +240,7 @@
                         <div class="d-flex bt-1">
                           <div class="ctab-bx">
                             <p>Finance term</p>
-                            <p class="text-black">
+                            <p class="text-black week-finterm">
                               @if($result['weeklycount'] == 0) 
                                 0.00
                               @else
@@ -263,8 +267,8 @@
                     <div class="card card-earning-summary mg-sm-l--1 bd-t-0 bd-sm-t top-card">
                       <div class="top-part">
                         <h6>This Month's Sales</h6>
-                        <h3>{{ $result['monthlycount'] - $result['monthly_wholesales_count'] }} <span class="hdls"> deals</span></h3> 
-                        <p class="wsl-cnt">{{ $result['monthly_wholesales_count'] }} <span class="hwls"> wholesale deals</span></p>
+                        <h3>{{ $result['monthlycount'] }} <span class="hdls"> deals</span></h3> 
+                        <p class="pifs-cnt">{{ $result['monthly_pifs_count'] }} <span class="pifs"> PIFs</span></p>
                         @if(Route::currentRouteName() == 'dashboard' && Auth::user()->type == 'admin') 
                         <p class="can-cnt">{{ @$result['monthly_cancel_count'] }} <span class="can_sale"> Cancel deals</span></p>
                         @endif
@@ -293,7 +297,7 @@
                         <div class="d-flex bt-1">
                           <div class="ctab-bx">
                             <p>Finance term</p>
-                            <p class="text-black">
+                            <p class="text-black month-finterm">
                               @if($result['monthlycount'] == 0) 
                                 0.00
                               @else
@@ -431,33 +435,19 @@
         var calendar_data = "{{ $result['calendar_data'] }}";
         window.current_page = "{{ Route::currentRouteName() }}";
         window.adv_range_flag = "{{ $result['adv_range_flag'] }}";
-        if("{{ $result['adv_range_flag'] }}" == false){
-            sales_man_data = "{{ $result['today_details'] }}";
-            manager_data = "{{ $result['today_manager_details'] }}";
-        }
-        else{
-            sales_man_data = "{{ @$result['adv_range_sales_details'] }}";
-            manager_data = "{{ @$result['adv_range_manager_details'] }}";
+
+        if("{{ $result['adv_range_flag'] }}" == true){
             $('.span').children('div').removeClass('active');
             $('.dtxt').show();
             $('.top-smry').fadeOut('slow');
-            let adv_data = [];
-            adv_data['custom_sales_details'] = "{{ @$result['adv_range_base_details'] }}";
-            adv_data['custom_sales_count'] = "{{ @$result['adv_range_sales_count'] }}";
-            adv_data['custom_ws_count'] = "{{ @$result['adv_range_wholesales_count'] }}";
-            adv_data['custom_cancel_count'] = "{{ @$result['adv_range_cancel_count'] }}";
-            adv_data['custom_total_calls'] = "{{ @$result['adv_range_total_calls'] }}";
-            adv_data['custom_text'] = "Result for {{ @$result['start_date'] }} to {{ @$result['end_date'] }} ";
-            $("#datacountlead").html("{{ @$result['adv_range_sales_count'] }}");
-            set_custom_sales_board(adv_data,window.current_page);
+            setSalesBoard();
             setTimeout(function(){
                 $('.adv_time_span').fadeIn('slow');
                 $('.back-btn').fadeIn('slow');
             },500);
         }
         
-        insert_table_data(sales_man_data,'sales_man');
-        insert_table_data(manager_data,'manager');
+        setSalesRecord();
         deal_calendar(calendar_data,window.current_page);
         $('.span').click(function(){
             window.adv_range_flag = false;
@@ -490,8 +480,8 @@
             }
             leader_board_update(sm_leaderboard,team_leaderboard);
 
-            insert_table_data(sm_data,'sales_man');
-            insert_table_data(manager_data,'manager');
+            setSalesRecord();
+
         });
 
 
@@ -526,85 +516,15 @@
           //console.log(this.value);
           var data,custom_data = [] ;
           window.adv_range_flag = false;
+          var pifs_check = $("#pifs_checkbox").prop("checked");
+          setSalesBoard();
+          setSalesRecord();
           $('.dtxt').fadeOut('slow');
-          if(this.value == 'monthly'){
-              sm_data = "{{ $result['monthly_details'] }}";
-              manager_data = "{{ $result['monthly_manager_details'] }}";
-              custom_data['custom_sales_details'] = "{{ $result['monthly_base_details'] }}";
-              custom_data['custom_sales_count'] = "{{ $result['monthlycount'] }}";
-              custom_data['custom_ws_count'] = "{{ $result['monthly_wholesales_count'] }}";
-              custom_data['custom_total_calls'] = "{{ $result['monthly_total_calls'] }}";
-              custom_data['custom_cancel_count'] = "{{ @$result['monthly_cancel_count'] }}";
-              custom_data['custom_text'] = "This Month's";
-              $('#datacountlead').html("{{ $result['monthlycount'] }}");
-          }
-          else if(this.value == 'last_month'){
-              sm_data = "{{ $result['secondmonthly_details'] }}";
-              manager_data = "{{ $result['secondmonthly_manager_details'] }}";
-              custom_data['custom_sales_details'] = "{{ $result['secondmonthly_base_details'] }}";
-              custom_data['custom_sales_count'] = "{{ $result['secondmonthlycount'] }}";
-              custom_data['custom_ws_count'] = "{{ $result['secondmonthly_wholesales_count'] }}";
-              custom_data['custom_total_calls'] = "{{ $result['secondmonthly_total_calls'] }}";
-              custom_data['custom_cancel_count'] = "{{ @$result['secondmonthly_cancel_count'] }}";
-              custom_data['custom_text'] = "Last Month's";
-              $('#datacountlead').html("{{ $result['secondmonthlycount'] }}");
-          }
-          else if(this.value == 'weekly'){
-              sm_data = "{{ $result['weekly_details'] }}";
-              manager_data = "{{ $result['weekly_manager_details'] }}";
-              custom_data['custom_sales_details'] = "{{ $result['weekly_base_details'] }}";
-              custom_data['custom_sales_count'] = "{{ $result['weeklycount'] }}";
-              custom_data['custom_ws_count'] = "{{ $result['weekly_wholesales_count'] }}";
-              custom_data['custom_total_calls'] = "{{ $result['weekly_total_calls'] }}";
-              custom_data['custom_cancel_count'] = "{{ @$result['weekly_cancel_count'] }}";
-              custom_data['custom_text'] = "This Week's";
-              $('#datacountlead').html("{{ $result['weeklycount'] }}");
-            }
-          else if(this.value == 'last_week'){
-             sm_data = "{{ $result['secondweekly_details'] }}";
-             manager_data = "{{ $result['secondweekly_manager_details'] }}";
-             custom_data['custom_sales_details'] = "{{ $result['secondweekly_base_details'] }}";
-             custom_data['custom_sales_count'] = "{{ $result['secondweeklycount'] }}";
-             custom_data['custom_ws_count'] = "{{ $result['secondweekly_wholesales_count'] }}";
-             custom_data['custom_total_calls'] = "{{ $result['secondweekly_total_calls'] }}";
-             custom_data['custom_cancel_count'] = "{{ @$result['secondweekly_cancel_count'] }}";
-             custom_data['custom_text'] = "Last Week's";
-             $('#datacountlead').html("{{ $result['secondweeklycount'] }}");
-            }
-          else if(this.value == 'yesterday'){
-              sm_data = "{{ $result['yesterday_details'] }}";
-              manager_data = "{{ $result['yesterday_manager_details'] }}";
-              custom_data['custom_sales_details'] = "{{ $result['yesterday_base_details'] }}";
-              custom_data['custom_sales_count'] = "{{ $result['yesterdaycount'] }}";
-              custom_data['custom_ws_count'] = "{{ $result['yesterday_wholesales_count'] }}";
-              custom_data['custom_total_calls'] = "{{ $result['yesterday_total_calls'] }}";
-              custom_data['custom_cancel_count'] = "{{ @$result['yesterday_cancel_count'] }}";
-              custom_data['custom_text'] = "Yesterday's";
-              $('#datacountlead').html("{{ $result['yesterdaycount'] }}");
-            }
-          else{
-              sm_data = "{{ $result['today_details'] }}";
-              manager_data = "{{ $result['today_manager_details'] }}";
-              custom_data['custom_sales_details'] = "{{ $result['today_base_details'] }}";
-              custom_data['custom_sales_count'] = "{{ $result['todaycount'] }}";
-              custom_data['custom_ws_count'] = "{{ $result['today_wholesales_count'] }}";
-              custom_data['custom_total_calls'] = "{{ $result['today_total_calls'] }}";
-              custom_data['custom_cancel_count'] = "{{ @$result['today_cancel_count'] }}";
-              custom_data['custom_text'] = "Today's";
-              $('#datacountlead').html("{{ $result['todaycount'] }}");
-          }
-
-          set_custom_sales_board(custom_data,window.current_page);
-
-
-
           $('.top-smry').fadeOut('slow');
           setTimeout(function(){
               $('.adv_time_span').fadeIn('slow');
               $('.back-btn').fadeIn('slow');
           },500);
-          insert_table_data(sm_data,'sales_man');
-          insert_table_data(manager_data,'manager');
 
         });
         
@@ -664,15 +584,54 @@
       });
 
 
-      $(document).on('click','.export-btn',function(){
+      // $(document).on('click','.export-btn',function(){
 
-        var date_range,file_type,tab_type;
+      //   var date_range,file_type,tab_type;
+
+      //   if(window.adv_range_flag == true){
+      //     // console.log(1);
+      //       date_range = "{{ @$result['start_date'] }}-" + "{{ @$result['end_date'] }}";
+      //   }
+
+      //   else{
+      //     if($("#changedays").val() != ''){
+      //       date_range = $("#changedays").val();
+      //     }
+      //     else{
+      //       date_range = $(".active").parent('div').attr("id");
+      //     }
+      //   }
+
+      //   tab_type = $('.active-opt').data('value');
+      //   file_type = $("#exprt_frmt").val();
+
+      //   var pifs_check = $("#pifs_checkbox").prop("checked");
+
+      //   // console.log(date_range);
+
+      //   const mapObj =  {date_range: date_range, file_type: file_type, tab_type: tab_type, pifs_check};
+
+      //   var export_url = "{{ route('export',['date_range','file_type','tab_type','pifs_check']) }}";
+      //   export_url = export_url.replace(/\b(?:date_range|file_type|tab_type|pifs_check)\b/gi, matched => mapObj[matched]);
+      //   // console.log(export_url);
+      //   window.location.href = export_url;
+
+
+      // });
+
+      $(document).on('change','#pifs_checkbox',function(){
+        setSalesBoard();
+        setSalesRecord();
+      });
+
+      function setSalesRecord(){
+
+        var sales_man_data, manager_data, date_range;
+        var pifs_check = $("#pifs_checkbox").prop("checked");
 
         if(window.adv_range_flag == true){
-          // console.log(1);
-            date_range = "{{ @$result['start_date'] }}-" + "{{ @$result['end_date'] }}";
+          date_range = "advance";
         }
-
         else{
           if($("#changedays").val() != ''){
             date_range = $("#changedays").val();
@@ -682,20 +641,199 @@
           }
         }
 
-        tab_type = $('.active-opt').data('value');
-        file_type = $("#exprt_frmt").val();
+        if(pifs_check == true){
 
-        // console.log(date_range);
+          if(date_range == 'advance'){
+            sales_man_data = "{{ @$result['adv_range_sales_details'] }}";
+            manager_data = "{{ @$result['adv_range_manager_details'] }}";
+          }
+          else if(date_range == 'monthly'){
+            sales_man_data = "{{ @$result['monthly_details'] }}";
+            manager_data = "{{ @$result['monthly_manager_details'] }}";
+          }
+          else if(date_range == 'last_month'){
+            sales_man_data = "{{ @$result['secondmonthly_details'] }}";
+            manager_data = "{{ @$result['secondmonthly_manager_details'] }}";
+          }
+          else if(date_range == 'weekly'){
+            sales_man_data = "{{ @$result['weekly_details'] }}";
+            manager_data = "{{ @$result['weekly_manager_details'] }}";
+          }
+          else if(date_range == 'last_week'){
+            sales_man_data = "{{ @$result['secondweekly_details'] }}";
+            manager_data = "{{ @$result['secondweekly_manager_details'] }}";
+          }
+          else if(date_range == 'yesterday'){
+            sales_man_data = "{{ @$result['yesterday_details'] }}";
+            manager_data = "{{ @$result['yesterday_manager_details'] }}";
+          }
+          else{
+            sales_man_data = "{{ @$result['today_details'] }}";
+            manager_data = "{{ @$result['today_manager_details'] }}";
+          }
 
-        const mapObj =  {date_range: date_range, file_type: file_type, tab_type: tab_type};
+        }
+        else{
 
-        var export_url = "{{ route('export',['date_range','file_type','tab_type']) }}";
-        export_url = export_url.replace(/\b(?:date_range|file_type|tab_type)\b/gi, matched => mapObj[matched]);
-        // console.log(export_url);
-        window.location.href = export_url;
+          if(date_range == 'advance'){
+            sales_man_data = "{{ @$result['adv_range_pifs_details'] }}";
+            manager_data = "{{ @$result['adv_range_pifs_manager_details'] }}";
+          }
+          else if(date_range == 'monthly'){
+            sales_man_data = "{{ @$result['monthly_pifs_details'] }}";
+            manager_data = "{{ @$result['monthly_pifs_manager_details'] }}";
+          }
+          else if(date_range == 'last_month'){
+            sales_man_data = "{{ @$result['secondmonthly_pifs_details'] }}";
+            manager_data = "{{ @$result['secondmonthly_pifs_manager_details'] }}";
+          }
+          else if(date_range == 'weekly'){
+            sales_man_data = "{{ @$result['weekly_pifs_details'] }}";
+            manager_data = "{{ @$result['weekly_pifs_manager_details'] }}";
+          }
+          else if(date_range == 'last_week'){
+            sales_man_data = "{{ @$result['secondweekly_pifs_details'] }}";
+            manager_data = "{{ @$result['secondweekly_pifs_manager_details'] }}";
+          }
+          else if(date_range == 'yesterday'){
+            sales_man_data = "{{ @$result['yesterday_pifs_details'] }}";
+            manager_data = "{{ @$result['yesterday_pifs_manager_details'] }}";
+          }
+          else{
+            sales_man_data = "{{ @$result['today_pifs_details'] }}";
+            manager_data = "{{ @$result['today_pifs_manager_details'] }}";
+          }
 
+        }
 
-      });
+        insert_table_data(sales_man_data,'sales_man',pifs_check);
+        insert_table_data(manager_data,'manager',pifs_check);
 
+      }
+
+      function setSalesBoard(){
+
+        var pifs_check = $("#pifs_checkbox").prop("checked"); 
+        var custom_data = [];
+        if(window.adv_range_flag == true ){
+          custom_data['custom_sales_details'] = "{{ @$result['adv_range_base_details'] }}";
+          custom_data['custom_sales_count'] = "{{ @$result['adv_range_sales_count'] }}";
+          custom_data['custom_ws_count'] = "{{ @$result['adv_range_wholesales_count'] }}";
+          custom_data['custom_pifs_count'] = "{{ @$result['adv_range_pifs_count'] }}";
+          custom_data['custom_cancel_count'] = "{{ @$result['adv_range_cancel_count'] }}";
+          custom_data['custom_total_calls'] = "{{ @$result['adv_range_total_calls'] }}";
+          custom_data['custom_text'] = "Result for {{ @$result['start_date'] }} to {{ @$result['end_date'] }} ";
+          $("#datacountlead").html("{{ @$result['adv_range_sales_count'] }}");
+          set_custom_sales_board(custom_data,window.current_page,pifs_check);
+        } 
+
+        else if($("#changedays").val() != ''){
+
+          let days_span = $("#changedays").val();
+
+          if(days_span == 'monthly'){
+              sm_data = "{{ $result['monthly_details'] }}";
+              manager_data = "{{ $result['monthly_manager_details'] }}";
+              custom_data['custom_sales_details'] = "{{ $result['monthly_base_details'] }}";
+              custom_data['custom_sales_count'] = "{{ $result['monthlycount'] }}";
+              custom_data['custom_ws_count'] = "{{ $result['monthly_wholesales_count'] }}";
+              custom_data['custom_pifs_count'] = "{{ $result['monthly_pifs_count'] }}";
+              custom_data['custom_total_calls'] = "{{ $result['monthly_total_calls'] }}";
+              custom_data['custom_cancel_count'] = "{{ @$result['monthly_cancel_count'] }}";
+              custom_data['custom_text'] = "This Month's";
+              $('#datacountlead').html("{{ $result['monthlycount'] }}");
+          }
+          else if(days_span == 'last_month'){
+              sm_data = "{{ $result['secondmonthly_details'] }}";
+              manager_data = "{{ $result['secondmonthly_manager_details'] }}";
+              custom_data['custom_sales_details'] = "{{ $result['secondmonthly_base_details'] }}";
+              custom_data['custom_sales_count'] = "{{ $result['secondmonthlycount'] }}";
+              custom_data['custom_ws_count'] = "{{ $result['secondmonthly_wholesales_count'] }}";
+              custom_data['custom_pifs_count'] = "{{ $result['secondmonthly_pifs_count'] }}";
+              custom_data['custom_total_calls'] = "{{ $result['secondmonthly_total_calls'] }}";
+              custom_data['custom_cancel_count'] = "{{ @$result['secondmonthly_cancel_count'] }}";
+              custom_data['custom_text'] = "Last Month's";
+              $('#datacountlead').html("{{ $result['secondmonthlycount'] }}");
+          }
+          else if(days_span == 'weekly'){
+              sm_data = "{{ $result['weekly_details'] }}";
+              manager_data = "{{ $result['weekly_manager_details'] }}";
+              custom_data['custom_sales_details'] = "{{ $result['weekly_base_details'] }}";
+              custom_data['custom_sales_count'] = "{{ $result['weeklycount'] }}";
+              custom_data['custom_ws_count'] = "{{ $result['weekly_wholesales_count'] }}";
+              custom_data['custom_pifs_count'] = "{{ $result['weekly_pifs_count'] }}";
+              custom_data['custom_total_calls'] = "{{ $result['weekly_total_calls'] }}";
+              custom_data['custom_cancel_count'] = "{{ @$result['weekly_cancel_count'] }}";
+              custom_data['custom_text'] = "This Week's";
+              $('#datacountlead').html("{{ $result['weeklycount'] }}");
+            }
+          else if(days_span == 'last_week'){
+             sm_data = "{{ $result['secondweekly_details'] }}";
+             manager_data = "{{ $result['secondweekly_manager_details'] }}";
+             custom_data['custom_sales_details'] = "{{ $result['secondweekly_base_details'] }}";
+             custom_data['custom_sales_count'] = "{{ $result['secondweeklycount'] }}";
+             custom_data['custom_ws_count'] = "{{ $result['secondweekly_wholesales_count'] }}";
+             custom_data['custom_pifs_count'] = "{{ $result['secondweekly_pifs_count'] }}";
+             custom_data['custom_total_calls'] = "{{ $result['secondweekly_total_calls'] }}";
+             custom_data['custom_cancel_count'] = "{{ @$result['secondweekly_cancel_count'] }}";
+             custom_data['custom_text'] = "Last Week's";
+             $('#datacountlead').html("{{ $result['secondweeklycount'] }}");
+            }
+          else if(days_span == 'yesterday'){
+              sm_data = "{{ $result['yesterday_details'] }}";
+              manager_data = "{{ $result['yesterday_manager_details'] }}";
+              custom_data['custom_sales_details'] = "{{ $result['yesterday_base_details'] }}";
+              custom_data['custom_sales_count'] = "{{ $result['yesterdaycount'] }}";
+              custom_data['custom_ws_count'] = "{{ $result['yesterday_wholesales_count'] }}";
+              custom_data['custom_pifs_count'] = "{{ $result['yesterday_pifs_count'] }}";
+              custom_data['custom_total_calls'] = "{{ $result['yesterday_total_calls'] }}";
+              custom_data['custom_cancel_count'] = "{{ @$result['yesterday_cancel_count'] }}";
+              custom_data['custom_text'] = "Yesterday's";
+              $('#datacountlead').html("{{ $result['yesterdaycount'] }}");
+            }
+          else{
+              sm_data = "{{ $result['today_details'] }}";
+              manager_data = "{{ $result['today_manager_details'] }}";
+              custom_data['custom_sales_details'] = "{{ $result['today_base_details'] }}";
+              custom_data['custom_sales_count'] = "{{ $result['todaycount'] }}";
+              custom_data['custom_ws_count'] = "{{ $result['today_wholesales_count'] }}";
+              custom_data['custom_pifs_count'] = "{{ $result['today_pifs_count'] }}";
+              custom_data['custom_total_calls'] = "{{ $result['today_total_calls'] }}";
+              custom_data['custom_cancel_count'] = "{{ @$result['today_cancel_count'] }}";
+              custom_data['custom_text'] = "Today's";
+              $('#datacountlead').html("{{ $result['todaycount'] }}");
+          }
+          set_custom_sales_board(custom_data,window.current_page,pifs_check);
+        }
+
+        else{
+
+          var today_total_sales = "{{ $result['todaycount'] }}";
+          var today_sales_pifs = "{{ $result['today_pifs_count'] }}";
+          var today_finterm = "{{ $result['today_base_details'][0]['finterm'] }}";
+          var weekly_total_sales = "{{ $result['weeklycount'] }}";
+          var weekly_sales_pifs = "{{ $result['weekly_pifs_count'] }}";
+          var weekly_finterm = "{{ $result['weekly_base_details'][0]['finterm'] }}";
+          var monthly_total_sales = "{{ $result['monthlycount'] }}";
+          var monthly_sales_pifs = "{{ $result['monthly_pifs_count'] }}";
+          var monthly_finterm = "{{ $result['monthly_base_details'][0]['finterm'] }}";
+
+          if(pifs_check == false){
+            $(".pifs-cnt").hide();
+            $(".today-finterm").text((today_finterm/(today_total_sales - today_sales_pifs)).toFixed(2));
+            $(".week-finterm").text((weekly_finterm/(weekly_total_sales - weekly_sales_pifs)).toFixed(2));
+            $(".month-finterm").text((monthly_finterm/(monthly_total_sales - monthly_sales_pifs)).toFixed(2));
+          }
+          else{
+            $(".pifs-cnt").show();
+            $(".today-finterm").text((today_finterm/today_total_sales ).toFixed(2));
+            $(".week-finterm").text((weekly_finterm/weekly_total_sales ).toFixed(2));
+            $(".month-finterm").text((monthly_finterm/monthly_total_sales ).toFixed(2));
+          }
+
+        }
+        
+
+      }
       
   </script>

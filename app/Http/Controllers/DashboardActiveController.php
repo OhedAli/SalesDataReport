@@ -47,6 +47,8 @@ class DashboardActiveController extends Controller
                                 ->count();
         $result['today_wholesales_count'] = $this->count_ws_saleslog($todayDate_start, $todayDate_end);
 
+        $result['today_pifs_count'] = $this->count_pifs($todayDate_start, $todayDate_end);
+
         // $result['today_cancel_count'] = Cancellogs::whereBetween('CanDate',[$todayDate_start, $todayDate_end])->count();
 
         $result['today_details'] = $this->get_saleslog_details_sm($todayDate_start, $todayDate_end);
@@ -59,6 +61,7 @@ class DashboardActiveController extends Controller
         if($result['todaycount'] > 0){
             $res_today = $this->call_search_ytel($result['today_details']->toArray(),$todayDate_start,$todayDate_end);
             $result['today_details'] = json_encode($res_today,true);
+            $result['today_pifs_details'] = json_encode($this->get_saleslog_details_sm_pifs($todayDate_start, $todayDate_end, $res_today),true);
 
             foreach ($res_today as $key => $res_today_top) {
                 $topper_sales_count[$key] = $res_today_top['sales_count'];
@@ -87,9 +90,11 @@ class DashboardActiveController extends Controller
                                                 }));
         if(!empty($manager_today_details)){
             $result['today_manager_details'] = json_encode($this->find_manager_details($manager_today_details,$todayDate_start,$todayDate_end),true);
+            $result['today_pifs_manager_details'] = json_encode($this->get_saleslog_details_manager_pifs($todayDate_start,$todayDate_end,json_decode($result['today_manager_details'],true)),true);
         }
         else{
             $result['today_manager_details'] = json_encode(array());
+            $result['today_pifs_manager_details'] = json_encode(array());
         }
 
 
@@ -107,18 +112,23 @@ class DashboardActiveController extends Controller
                                                 }));
         if(!empty($manager_yesterday_details)){
             $result['yesterday_manager_details'] = json_encode($this->find_manager_details($manager_yesterday_details,$yesterdayDate_start, $yesterdayDate_start),true);
+            $result['yesterday_pifs_manager_details'] = json_encode($this->get_saleslog_details_manager_pifs($yesterdayDate_start, $yesterdayDate_start,json_decode($result['yesterday_manager_details'],true)),true);
         }
         else{
             $result['yesterday_manager_details'] = json_encode(array());
+            $result['yesterday_pifs_manager_details'] = json_encode(array());
         }
 
         $result['yesterday_wholesales_count'] = $this->count_ws_saleslog($yesterdayDate_start, $yesterdayDate_start);
+
+        $result['yesterday_pifs_count'] = $this->count_pifs($yesterdayDate_start, $yesterdayDate_start);
 
         $result['yesterday_total_calls'] = $this->find_total_call($yesterdayDate_start, $yesterdayDate_start);
 
         // dd($result['yesterday_details']->toArray());
         if($result['yesterdaycount'] > 0){
             $result['yesterday_details'] = json_encode($this->call_search_ytel($result['yesterday_details']->toArray(),$yesterdayDate_start,$yesterdayDate_start));
+            $result['yesterday_pifs_details'] = json_encode($this->get_saleslog_details_sm_pifs($yesterdayDate_start,$yesterdayDate_start, json_decode($result['yesterday_details'],true)),true);
         }
         
         $result['dailydata'] = $this->FlagSighCheck($result['todaycount'], $result['yesterdaycount']);
@@ -132,6 +142,8 @@ class DashboardActiveController extends Controller
                                  ->count();
         $result['weekly_wholesales_count'] = $this->count_ws_saleslog($lastweek,$todayDate_end);
 
+        $result['weekly_pifs_count'] = $this->count_pifs($lastweek,$todayDate_end);
+
         // $result['weekly_cancel_count'] = Cancellogs::whereBetween('CanDate',[$lastweek, $todayDate_end])->count();
 
         $result['weekly_details'] = $this->get_saleslog_details_sm($lastweek, $todayDate_end);                             
@@ -143,6 +155,7 @@ class DashboardActiveController extends Controller
         if($result['weeklycount'] > 0){
             $res_weekly = $this->call_search_ytel($result['weekly_details']->toArray(),$lastweek,$todayDate_end);
             $result['weekly_details'] = json_encode($res_weekly,true);
+            $result['weekly_pifs_details'] = json_encode($this->get_saleslog_details_sm_pifs($lastweek, $todayDate_end, $res_weekly),true);
 
             foreach ($res_weekly as $key => $res_weekly_top) {
                 $topper_sales_count[$key] = $res_weekly_top['sales_count'];
@@ -173,9 +186,11 @@ class DashboardActiveController extends Controller
                                                 }));
         if(!empty($manager_weekly_details)){
             $result['weekly_manager_details'] = json_encode($this->find_manager_details($manager_weekly_details,$lastweek,$todayDate_end),true);
+            $result['weekly_pifs_manager_details'] = json_encode($this->get_saleslog_details_manager_pifs($lastweek,$todayDate_end,json_decode($result['weekly_manager_details'],true)),true);
         }
         else{
             $result['weekly_manager_details'] = json_encode(array());
+            $result['weekly_pifs_manager_details'] = json_encode(array());
         }
 
         $result['secondweeklycount'] = Saleslogs::whereBetween('purchdate',[$secondlastweek_start,$secondlastweek_end])
@@ -192,17 +207,22 @@ class DashboardActiveController extends Controller
                                                 }));
         if(!empty($manager_prev_week_details)){
             $result['secondweekly_manager_details'] = json_encode($this->find_manager_details($manager_prev_week_details,$secondlastweek_start,$secondlastweek_end),true);
+            $result['secondweekly_pifs_manager_details'] = json_encode($this->get_saleslog_details_manager_pifs($secondlastweek_start,$secondlastweek_end,json_decode($result['secondweekly_manager_details'],true)),true);
         }
         else{
             $result['secondweekly_manager_details'] = json_encode(array());
+            $result['secondweekly_pifs_manager_details'] = json_encode(array());
         }
 
         $result['secondweekly_wholesales_count'] = $this->count_ws_saleslog($secondlastweek_start,$secondlastweek_end);
+
+        $result['secondweekly_pifs_count'] = $this->count_pifs($secondlastweek_start,$secondlastweek_end);
 
         $result['secondweekly_total_calls'] = $this->find_total_call($secondlastweek_start,$secondlastweek_end);
 
         if($result['secondweeklycount'] > 0){
             $result['secondweekly_details'] = json_encode($this->call_search_ytel($result['secondweekly_details']->toArray(),$secondlastweek_start,$secondlastweek_end));
+            $result['secondweekly_pifs_details'] = json_encode($this->get_saleslog_details_sm_pifs($secondlastweek_start,$secondlastweek_end, json_decode($result['secondweekly_details'],true)),true);
         }
 
         $result['weeklydata'] = $this->FlagSighCheck($result['weeklycount'], $result['secondweeklycount']);
@@ -221,6 +241,8 @@ class DashboardActiveController extends Controller
                                   ->count();
         $result['monthly_wholesales_count'] = $this->count_ws_saleslog($lastmonth,$todayDate_end);
 
+        $result['monthly_pifs_count'] = $this->count_pifs($lastmonth,$todayDate_end);
+
         $result['monthly_cancel_count'] = Cancellogs::whereBetween('CanDate',[$lastmonth, $todayDate_end])->count();
 
         $result['monthly_details'] =  $this->get_saleslog_details_sm($lastmonth, $todayDate_end);
@@ -234,6 +256,7 @@ class DashboardActiveController extends Controller
 
             $res_monthly = $this->call_search_ytel($result['monthly_details']->toArray(),$lastmonth,$todayDate_end);
             $result['monthly_details'] = json_encode($res_monthly,true);
+            $result['monthly_pifs_details'] = json_encode($this->get_saleslog_details_sm_pifs($lastmonth,$todayDate_end, $res_monthly),true);
 
             foreach ($res_monthly as $key => $res_monthly_top) {
                 $topper_sales_count[$key] = $res_monthly_top['sales_count'];
@@ -262,9 +285,11 @@ class DashboardActiveController extends Controller
                                                 }));
         if(!empty($manager_monthly_details)){
             $result['monthly_manager_details'] = json_encode($this->find_manager_details($manager_monthly_details,$lastmonth,$todayDate_end),true);
+            $result['monthly_pifs_manager_details'] = json_encode($this->get_saleslog_details_manager_pifs($lastmonth,$todayDate_end,json_decode($result['monthly_manager_details'],true)),true);
         }
         else{
             $result['monthly_manager_details'] = json_encode(array());
+            $result['monthly_pifs_manager_details'] = json_encode(array());
         }
 
         // echo '<pre>';
@@ -285,17 +310,23 @@ class DashboardActiveController extends Controller
                                                 }));
         if(!empty($manager_prev_month_details)){
             $result['secondmonthly_manager_details'] = json_encode($this->find_manager_details($manager_prev_month_details,$secondlastmonth_start,$secondlastmonth_end),true);
+            $result['secondmonthly_pifs_manager_details'] = json_encode($this->get_saleslog_details_manager_pifs($secondlastmonth_start,$secondlastmonth_end,json_decode($result['secondmonthly_manager_details'],true)),true);
         }
         else{
             $result['secondmonthly_manager_details'] = json_encode(array());
+            $result['secondmonthly_pifs_manager_details'] = json_encode(array());
         }
 
         $result['secondmonthly_wholesales_count'] = $this->count_ws_saleslog($secondlastmonth_start,$secondlastmonth_end);
 
-         $result['secondmonthly_total_calls'] = $this->find_total_call($secondlastmonth_start,$secondlastmonth_end);
+        $result['secondmonthly_pifs_count'] = $this->count_pifs($secondlastmonth_start,$secondlastmonth_end);
 
-        if($result['secondmonthlycount'] > 0)
+        $result['secondmonthly_total_calls'] = $this->find_total_call($secondlastmonth_start,$secondlastmonth_end);
+
+        if($result['secondmonthlycount'] > 0){
             $result['secondmonthly_details'] = json_encode($this->call_search_ytel($result['secondmonthly_details']->toArray(),$secondlastmonth_start,$secondlastmonth_end));
+            $result['secondmonthly_pifs_details'] = json_encode($this->get_saleslog_details_sm_pifs($secondlastmonth_start,$secondlastmonth_end, json_decode($result['secondmonthly_details'],true)),true);
+        }
 
         $result['monthlydata'] = $this->FlagSighCheck($result['monthlycount'], $result['secondmonthlycount']);
         
@@ -343,18 +374,24 @@ class DashboardActiveController extends Controller
                                                         }));
                 if(!empty($manager_adv_range_details)){
                     $result['adv_range_manager_details'] = json_encode($this->find_manager_details($manager_adv_range_details,$start_range, $end_range),true);
+                    $result['adv_range_pifs_manager_details'] = json_encode($this->get_saleslog_details_manager_pifs($start_range, $end_range,json_decode($result['adv_range_manager_details'],true)),true);
                 }
                 else{
                     $result['adv_range_manager_details'] = json_encode(array());
+                    $result['adv_range_pifs_manager_details'] = json_encode(array());
                 }
                 
         		$result['adv_range_wholesales_count'] = $this->count_ws_saleslog($start_range, $end_range);
+
+                $result['adv_range_pifs_count'] = $this->count_pifs($start_range, $end_range);
                                                         
                 $result['adv_range_total_calls'] = $this->find_total_call($start_range, $end_range);
 
 
-                if($result['adv_range_sales_count'] > 0)
+                if($result['adv_range_sales_count'] > 0){
                     $result['adv_range_sales_details'] = json_encode($this->call_search_ytel($result['adv_range_sales_details']->toArray(),$start_range,$end_range));
+                    $result['adv_range_pifs_details'] = json_encode($this->get_saleslog_details_sm_pifs($start_range,$end_range, json_decode($result['adv_range_sales_details'],true)),true);
+                }
 
                 return view('admin-dashboard',compact('result'));
             }
@@ -385,6 +422,34 @@ class DashboardActiveController extends Controller
         return $resData;
     }
 
+    public function get_saleslog_details_sm_pifs($startDate, $endDate, $salesDataWithoutPifs)
+    {
+        $resPIFData = Saleslogs::select('salesman', 'users.avatar',
+                      Saleslogs::raw('SUM(downpay) as pifs_downpay_add'),
+                      Saleslogs::raw('SUM(cuscost) as pifs_cuscost_add'),
+                      Saleslogs::raw('SUM(finterm) as pifs_finterm_add'),
+                      Saleslogs::raw('count(salesman) as pifs_sales_count'))
+                      ->with('slaesagent')
+                      ->leftJoin('vsctools_autoprotect.users as users','salesman','=','users.name')
+                      ->whereBetween('purchdate',[$startDate, $endDate])
+                      ->where('cancelled_flag','=','0')
+                      ->where('finterm','<>',0)
+                      ->groupBy('salesman')
+                      ->get()
+                      ->toArray();
+
+        foreach ($resPIFData as $key => $value) {
+            
+            $scrhIndex = array_search($value['salesman'], array_column($salesDataWithoutPifs,'salesman'));
+            $resPIFData[$key]['sales_count'] = $salesDataWithoutPifs[$scrhIndex]['sales_count'];
+            $resPIFData[$key]['cuscost_add'] = $salesDataWithoutPifs[$scrhIndex]['cuscost_add'];
+            $resPIFData[$key]['retail_add'] = $salesDataWithoutPifs[$scrhIndex]['retail_add'];
+            $resPIFData[$key]['total_calls'] = $salesDataWithoutPifs[$scrhIndex]['total_calls'];
+        }
+
+        return $resPIFData;
+    }
+
     public function count_ws_saleslog($startDate, $endDate)
     {
         $wsCount =  Saleslogs::whereBetween('purchdate',[$startDate, $endDate])
@@ -398,6 +463,16 @@ class DashboardActiveController extends Controller
 
 
         return $wsCount;
+    }
+
+    public function count_pifs($startDate, $endDate)
+    {
+        $pifsCount = Saleslogs::whereBetween('purchdate',[$startDate, $endDate])
+                     ->where('cancelled_flag','=','0')
+                     ->where('finterm','=',0)
+                     ->count();
+
+        return $pifsCount;
     }
 
     public function get_saleslog_details_manager($startDate, $endDate)
@@ -418,6 +493,41 @@ class DashboardActiveController extends Controller
 
         return $resData;
 
+    }
+
+    public function get_saleslog_details_manager_pifs($startDate, $endDate, $salesDataWithoutPifs)
+    {
+        $resDataArr = array();
+        $resPIFMangerData = Saleslogs::select('t_o',Saleslogs::raw('SUM(downpay) as pifs_downpay_add'),
+                            Saleslogs::raw('SUM(cuscost) as pifs_cuscost_add'),
+                            Saleslogs::raw('SUM(finterm) as pifs_finterm_add'),
+                            Saleslogs::raw('count(t_o) as pifs_sales_count '))
+                            ->with('team_lead_agent')
+                            ->whereBetween('purchdate',[$startDate, $endDate])
+                            ->where('cancelled_flag','=','0')
+                            ->where('finterm','<>',0)
+                            ->where('t_o','<>','')
+                            ->groupBy('t_o')
+                            ->get()
+                            ->toArray();
+
+        foreach ($resPIFMangerData as $key => $value) {
+
+            if(!empty($value['team_lead_agent'])){
+                $scrhIndex = array_search($value['t_o'], array_column($salesDataWithoutPifs,'t_o'));
+                $value['manager'] = $salesDataWithoutPifs[$scrhIndex]['manager'];
+                $value['avatar'] = $salesDataWithoutPifs[$scrhIndex]['avatar'];
+                $value['sales_count'] = $salesDataWithoutPifs[$scrhIndex]['sales_count'];
+                $value['cuscost_add'] = $salesDataWithoutPifs[$scrhIndex]['cuscost_add'];
+                $value['retail_add'] = $salesDataWithoutPifs[$scrhIndex]['retail_add'];
+                $value['total_calls'] = $salesDataWithoutPifs[$scrhIndex]['total_calls'];
+
+                array_push($resDataArr, $value);
+            }
+            
+        }
+
+        return $resDataArr;
     }
 
     public function find_manager_details($managerData, $start_date, $end_date)

@@ -42,7 +42,7 @@ Route::post('/dashboard/salesman/{sm_name}',[DashboardController::class, 'salesm
 Route::get('/sales',[SaleslogsController::class, 'index'])->name('saleslogs');
 Route::get('/wholesales',[SaleslogsController::class, 'WholeSales'])->name('wholesaleslogs');
 
-Route::get('/dashboard/{date_range}/{file_type}/{tab_type}',[SalesExportController::class, 'index'])->name('export');
+Route::get('/dashboard/{date_range}/{file_type}/{tab_type}/{pifs_check}',[SalesExportController::class, 'index'])->name('export');
 
 Route::get('sales/{id}',[SaleslogsController::class, 'showdetails'])->name('sales-view');
 

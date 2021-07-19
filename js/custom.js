@@ -56,7 +56,7 @@ function markActiveNav(page) {
         $("a[name='" + page + "']").parent().addClass('active');
 }
 
-function tble_lead_info(result_data, search_flag){
+function tble_lead_info(result_data, search_flag, pifs_check){
 
     if ($.fn.DataTable.isDataTable("#datatable2"))
         $('#datatable2').DataTable().clear().destroy();
@@ -83,18 +83,22 @@ function tble_lead_info(result_data, search_flag){
             else
                 type = 'SALE';
 
-            data += '<tr '+ (arrData.cancelled_flag == 1 ? 'class="cancel_rec"' : '' ) + '>' +
-            '<td>' + arrData.app_number + '</td>' +
-            '<td>' + arrData.first_name + ' '+ arrData.last_name + '</td>' +
-            '<td>$' + Math.round(arrData.downpay) + '</td>' +
-            '<td>' + arrData.finterm  + '</td>' +
-            '<td>$' + Math.round(discount) + '</td>' +
-            '<td>' + type + '</td>' +
-            '<td>' + arrData.purchdate + '</td>' +
-            '<td>' + (arrData.filename != undefined ? '<a href="' + arrData.location + '" target="_blank">' + arrData.filename + '</a>' : 'N/A') + '</td>' +
-            '</tr>';
+            if((pifs_check == false && arrData.finterm != 0) ||  pifs_check == true){
+
+                data += '<tr '+ (arrData.cancelled_flag == 1 ? 'class="cancel_rec"' : '' ) + '>' +
+                '<td>' + arrData.app_number + '</td>' +
+                '<td>' + arrData.first_name + ' '+ arrData.last_name + '</td>' +
+                '<td>$' + Math.round(arrData.downpay) + '</td>' +
+                '<td>' + arrData.finterm  + '</td>' +
+                '<td>$' + Math.round(discount) + '</td>' +
+                '<td>' + type + '</td>' +
+                '<td>' + arrData.purchdate + '</td>' +
+                '<td>' + (arrData.filename != undefined ? '<a href="' + arrData.location + '" target="_blank">' + arrData.filename + '</a>' : 'N/A') + '</td>' +
+                '</tr>';
+
+            }
              
-        })
+        });
 
     
         $("#lead_data").html(data);
@@ -108,7 +112,7 @@ function tble_lead_info(result_data, search_flag){
 
 
 
-function insert_table_data(res_details,type) {
+function insert_table_data(res_details,type,pif_check) {
     
     if(type == 'sales_man'){
         if ($.fn.DataTable.isDataTable("#datatable1")){
@@ -123,16 +127,20 @@ function insert_table_data(res_details,type) {
         }
     }
     
+    // console.log(res_details);
+    var result;
 
-    let result = JSON.parse($("<div/>").html(res_details).text());
+    if(res_details != '')
+        result = JSON.parse($("<div/>").html(res_details).text());
+    else
+        result = '';
     
     html_data = '';
     if (result.length != 0) {
         $.each(result, function (datakey, datavalue) {
             
             if (datavalue.salesman != ''){
-                name = (type == 'sales_man' ? datavalue.salesman : datavalue.manager);
-                html_data += table_data_insertion(name, datavalue.sales_count, datavalue.downpay_add, datavalue.cuscost_add, datavalue.finterm_add, datavalue.retail_add,datavalue.total_calls,type);
+                html_data += table_data_insertion(datavalue, type, pif_check);
             }
 
         });
@@ -226,6 +234,11 @@ function datatable_reset(table_id) {
     if(table_id == 1){
     	$('#datatable1').DataTable({
 	        responsive: true,
+            dom: 'Bfrtip',
+            buttons: [
+                { extend: 'csv', className: 'csv-salesman', title: 'Autoprotect USA Sales Agent Info' },
+                { extend: 'excel', className: 'excel-salesman', title: 'Autoprotect USA Sales Agent Info'}
+            ],
 	        "order": [[1, "desc"]],
 	        "columnDefs" : [{targets:5, type:"num-html"},{targets:6, type:"num-html"}],
 	        language: {
@@ -234,6 +247,23 @@ function datatable_reset(table_id) {
 	            lengthMenu: '_MENU_ items/page',
 	        }
     	});
+    }
+    else if(table_id == '1m'){
+        $('#datatable1m').DataTable({
+            responsive: true,
+            dom: 'Bfrtip',
+            buttons: [
+                { extend: 'csv', className: 'csv-manager', title: 'Autoprotect USA Manager Info'},
+                { extend: 'excel', className: 'excel-manager', title: 'Autoprotect USA Manager Info'}
+            ],
+            "order": [[1, "desc"]],
+            "columnDefs" : [{targets:5, type:"num-html"},{targets:6, type:"num-html"}],
+            language: {
+                searchPlaceholder: 'Search...',
+                sSearch: '',
+                lengthMenu: '_MENU_ items/page',
+            }
+        });
     }
     else{
     	$('#datatable'+table_id).DataTable({
@@ -252,29 +282,41 @@ function datatable_reset(table_id) {
 
 }
 
-function table_data_insertion(name, sales_count, downpay_add, cuscost_add, finterm_add, retail_add, total_calls, type) {
+function table_data_insertion(data_value, type, pif_check) {
     
     var downpayment,finterm,discount,rec_class_name,calls,conv_rate;
     // console.log(downpay_add);
 
-    if(sales_count != 0){
-        downpayment = ((downpay_add / cuscost_add) * 100).toFixed(2) + '%';
-        finterm = (finterm_add / sales_count).toFixed(2);
-        discount = retail_add - cuscost_add;
-        if(discount < 0)
-        discount = 0;
-        discount = '$' + Math.round(discount / sales_count);
+    if(pif_check == true){
+        if(data_value.sales_count != 0){
+            downpayment = ((data_value.downpay_add / data_value.cuscost_add) * 100).toFixed(2) + '%';
+            finterm = (data_value.finterm_add / data_value.sales_count).toFixed(2);
+            discount = data_value.retail_add - data_value.cuscost_add;
+            if(discount < 0)
+                discount = 0;
+            discount = '$' + Math.round(discount / data_value.sales_count);
+        }
+        else{
+            downpayment = 'N/A';
+            finterm = 'N/A';
+            discount = 'N/A';
+        }
     }
+
     else{
-        downpayment = 'N/A';
-        finterm = 'N/A';
-        discount = 'N/A';
+        downpayment = ((data_value.pifs_downpay_add / data_value.pifs_cuscost_add) * 100).toFixed(2) + '%';
+        finterm = (data_value.pifs_finterm_add / data_value.pifs_sales_count).toFixed(2);
+        discount = data_value.retail_add - data_value.cuscost_add;
+        if(discount < 0)
+            discount = 0;
+        discount = '$' + Math.round(discount / data_value.sales_count);
     }
     
-    if(total_calls !== undefined  && total_calls != 0){
+    
+    if(data_value.total_calls !== undefined  && data_value.total_calls != 0){
 
-        calls = total_calls;
-        conv_rate = ((sales_count/total_calls) * 100).toFixed(2);
+        calls = data_value.total_calls;
+        conv_rate = ((data_value.sales_count/data_value.total_calls) * 100).toFixed(2);
         if(conv_rate < 7)
             rec_class_name = 'lower';
         else if(conv_rate > 8)
@@ -284,8 +326,8 @@ function table_data_insertion(name, sales_count, downpay_add, cuscost_add, finte
 
         conv_rate = conv_rate + '%';
     }
-    else if(total_calls == 0){
-        calls = total_calls;
+    else if(data_value.total_calls == 0){
+        calls = data_value.total_calls;
         conv_rate = 'N/A';
         rec_class_name = 'normal';
     }
@@ -299,8 +341,8 @@ function table_data_insertion(name, sales_count, downpay_add, cuscost_add, finte
     data = '';
 
     data += '<tr class=' + rec_class_name + '>' +
-        '<td>'+ (type == 'sales_man' ? '<a class="sm_name" href="javascript:void(0);">' + name + '</a>' : name) + '</td>' +
-        '<td>' + sales_count + '</td>' +
+        '<td>'+ (type == 'sales_man' ? '<a class="sm_name" href="javascript:void(0);">' + data_value.salesman + '</a>' : data_value.manager) + '</td>' +
+        '<td>' + data_value.sales_count + '</td>' +
         '<td>' + downpayment + '</td>' +
         '<td>' + finterm + '</td>' +
         '<td>' + discount + '</td>' +
@@ -676,7 +718,7 @@ function tble_oppprt_info(res_data, search_flag)
     datatable_reset(table_id=3);
 }
 
-function tble_cancel_info(result_data, search_flag){
+function tble_cancel_info(result_data, search_flag, pifs_check){
 
     if ($.fn.DataTable.isDataTable("#datatable4"))
         $('#datatable4').DataTable().clear().destroy();
@@ -702,18 +744,22 @@ function tble_cancel_info(result_data, search_flag){
             else
                 type = 'WHOLESALE';
 
-            data += '<tr class="cancel_rec">' +
-            '<td>' + arrData.appNumber + '</td>' +
-            '<td>' + arrData.custFirstName + ' '+ arrData.custLastName + '</td>' +
-            '<td>$' + Math.round(arrData.downpay) + '</td>' +
-            '<td>' + arrData.finterm  + '</td>' +
-            // '<td>$' + Math.round(discount) + '</td>' +
-            '<td>' + type + '</td>' +
-            '<td>' + arrData.purchdate + '</td>' +
-            '<td>' + (arrData.filename != undefined ? '<a href="' + arrData.location + '" target="_blank">' + arrData.filename + '</a>' : 'N/A') + '</td>' +
-            '</tr>';
-             
-        })
+
+            if((pifs_check == false && arrData.finterm != 0) ||  pifs_check == true){
+
+                data += '<tr class="cancel_rec">' +
+                '<td>' + arrData.appNumber + '</td>' +
+                '<td>' + arrData.custFirstName + ' '+ arrData.custLastName + '</td>' +
+                '<td>$' + Math.round(arrData.downpay) + '</td>' +
+                '<td>' + arrData.finterm  + '</td>' +
+                // '<td>$' + Math.round(discount) + '</td>' +
+                '<td>' + type + '</td>' +
+                '<td>' + arrData.purchdate + '</td>' +
+                '<td>' + (arrData.filename != undefined ? '<a href="' + arrData.location + '" target="_blank">' + arrData.filename + '</a>' : 'N/A') + '</td>' +
+                '</tr>';
+            }
+
+        });
 
     
         $("#cancel_data").html(data);
@@ -726,7 +772,7 @@ function tble_cancel_info(result_data, search_flag){
 }
 
 
-function set_custom_sales_board(custom_data, cpage){
+function set_custom_sales_board(custom_data, cpage, pifs_check){
 
 
     var base_data = JSON.parse($("<div/>").html(custom_data['custom_sales_details']).text());
@@ -743,7 +789,10 @@ function set_custom_sales_board(custom_data, cpage){
 
     if(custom_data['custom_sales_count'] != 0){
         discount = Math.round((retail - cuscost)/custom_data['custom_sales_count']);
-        finterm = (finterm /custom_data['custom_sales_count']).toFixed(2);
+        if(pifs_check == true)
+            finterm = (finterm /custom_data['custom_sales_count']).toFixed(2);
+        else
+            finterm = (finterm /(custom_data['custom_sales_count'] - custom_data['custom_pifs_count'])).toFixed(2);
     }
     else{
 
@@ -753,9 +802,9 @@ function set_custom_sales_board(custom_data, cpage){
 
     conv_rate = ((custom_data['custom_total_calls'] != 0 && custom_data['custom_total_calls'] != undefined ) ? ((custom_data['custom_sales_count'] / custom_data['custom_total_calls']) * 100).toFixed(2) + '%' : 'N/A');
 
-    var html = '<div class="top-part"><h6>'+ custom_data['custom_text'] +'</h6><h3>'+ (custom_data['custom_sales_count'] - custom_data['custom_ws_count']) +
-                '<span class="hdls"> deals</span></h3><p class="wsl-cnt">'+ custom_data['custom_ws_count'] +'<span class="hwls"> wholesale deals</span>' + 
-                '</p>'+ (cpage != 'dashboard-active' ? '<p class="can-cnt">'+ custom_data['custom_cancel_count'] +'<span class="can_sale"> Cancel deals</span></p>' : '' ) + 
+    var html = '<div class="top-part"><h6>'+ custom_data['custom_text'] +'</h6><h3>'+ custom_data['custom_sales_count'] +
+                '<span class="hdls"> deals</span></h3>'+(pifs_check == true ? '<p class="pifs-cnt">'+ custom_data['custom_pifs_count'] +'<span class="pifs"> PIFs</span>' + 
+                '</p>' : '' )+ (cpage != 'dashboard-active' ? '<p class="can-cnt">'+ custom_data['custom_cancel_count'] +'<span class="can_sale"> Cancel deals</span></p>' : '' ) + 
                 '</div><div class="crd-tab"><div class="d-flex"><div class="ctab-bx"><p>Calls</p><p class="text-black">'+ custom_data['custom_total_calls'] +
                 '</p></div><div class="ctab-bx bl-1"><p>Closing %</p><p class="text-black">' + conv_rate + '</p></div></div>'+
                 '<div class="d-flex bt-1"><div class="ctab-bx"><p>Finance term</p><p class="text-black">' + finterm + '</p></div>' +
@@ -766,3 +815,16 @@ function set_custom_sales_board(custom_data, cpage){
     $('.adv_time_span').children('.top-card').addClass('active');
 
 }
+
+$(document).on('click','.export-btn',function(){
+    var export_format = $("#exprt_frmt").val();
+    var tab_type = $(".active-opt").data('value');
+    if(export_format == 'xlsx' && tab_type == 'manager')
+        $(".excel-manager").click();
+    else if(export_format == 'csv' && tab_type == 'manager')
+        $(".csv-manager").click();
+    else if(export_format == 'xlsx' && tab_type == 'sales_man')
+        $(".excel-salesman").click();
+    else
+        $(".csv-salesman").click();
+});
