@@ -15,11 +15,15 @@
     <script src="{{asset('js/custom.js')}}"></script>
     <script src="{{asset('public/app/lib/datatables/js/jquery.dataTables.js')}}"></script>
     <script src="{{asset('public/app/lib/datatables-responsive/js/dataTables.responsive.js')}}"></script>
+    <script src="{{asset('public/app/lib/datatables/js/dataTables.buttons.min.js')}}"></script>
+    <script src="{{asset('public/app/lib/datatables/js/jszip.min.js')}}"></script>
+    <script src="{{asset('public/app/lib/datatables/js/buttons.html5.min.js')}}"></script>
     <script src="{{asset('public/app/lib/select2/js/select2.min.js')}}"></script>
     <script src="{{asset('public/app/lib/fullcalendar/js/moment.js')}}"></script>
     <script src="{{asset('public/app/lib/fullcalendar/js/fullcalendar.js')}}"></script>
     <script src="{{asset('js/better-dom.min.js')}}"></script>
     <script src="{{asset('js/better-dateinput-polyfill.js')}}"></script>
+
 
     <script type="text/javascript">
         var page_name = "{{ Route::currentRouteName() }}";

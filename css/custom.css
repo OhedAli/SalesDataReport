@@ -150,6 +150,25 @@ input {
         outline: 0px;
     }
 
+    #pifs_checkbox{
+        width: 16px;
+        height: 16px;
+        font-size: 94px;
+        position: relative;
+        top: 2px;
+        margin-right: 4px;
+    }
+    .mb-cstm{
+        margin-bottom: 15px !important;
+    }
+    .pif-input{
+        text-align: right;
+        margin-bottom: 15px;
+        color: #343a40;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
 .controls {
     padding: 0px 15px;
 }
@@ -208,6 +227,17 @@ input {
     text-align: center;
     color: #343a40;
 }
+.adv_srch.dflex{
+
+    display: flex;
+    -webkit-display: flex;
+    /*justify-content: space-between;
+    -webkit-justify-content: space-between;*/
+
+}
+.adv_srch.dflex .pif-input{
+        margin-left: 25px;
+}
 
 @keyframes pulse {
     0% {
@@ -251,6 +281,10 @@ input {
 
 #datatable1 th {
     min-width: 100px !important;
+}
+
+.dt-buttons{
+    display: none;
 }
 
 .fc-lead,.fc-call,.fc-cancel,.fc-cvr {
@@ -1001,6 +1035,10 @@ p.text-black{
     }
     .fc-lead, .fc-call, .fc-cancel, .fc-cvr, .fc-content-skeleton table td.fc-day-top {
             font-size: 12px;
+        }
+
+        .adv_srch.dflex{
+            display: block;
         }
 
 }
