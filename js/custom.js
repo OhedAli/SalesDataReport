@@ -240,7 +240,7 @@ function datatable_reset(table_id) {
                 { extend: 'excel', className: 'excel-salesman', title: 'Autoprotect USA Sales Agent Info'}
             ],
 	        "order": [[1, "desc"]],
-	        "columnDefs" : [{targets:5, type:"num-html"},{targets:6, type:"num-html"}],
+	        "columnDefs" : [{targets:2, type:"num-html"},{targets:4, type:"num-html"},{targets:5, type:"num-html"},{targets:6, type:"num-html"}],
 	        language: {
 	            searchPlaceholder: 'Search...',
 	            sSearch: '',
@@ -257,7 +257,7 @@ function datatable_reset(table_id) {
                 { extend: 'excel', className: 'excel-manager', title: 'Autoprotect USA Manager Info'}
             ],
             "order": [[1, "desc"]],
-            "columnDefs" : [{targets:5, type:"num-html"},{targets:6, type:"num-html"}],
+            "columnDefs" : [{targets:2, type:"num-html"},{targets:4, type:"num-html"},{targets:5, type:"num-html"},{targets:6, type:"num-html"}],
             language: {
                 searchPlaceholder: 'Search...',
                 sSearch: '',
@@ -610,7 +610,8 @@ $(function () {
 
     $.extend($.fn.dataTableExt.oSort, {
         "num-html-pre": function ( a ) {
-            var x = String(a).replace( /<[\s\S]*?>/g, "" );
+            var x = String(a).replace( /[^\d\-\.]/g, "" );
+            // console.log(a);
             return parseFloat( x );
         },
      
