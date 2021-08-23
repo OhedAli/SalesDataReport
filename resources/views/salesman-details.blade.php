@@ -1,5 +1,5 @@
 @include('common/header')
-@include('common/navbar')
+{{-- @include('common/navbar') --}}
 
 <div class="slim-mainpanel">
       <div class="container pd-t-50">
