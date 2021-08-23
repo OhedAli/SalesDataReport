@@ -1,5 +1,5 @@
 @include('common/header')
-@include('common/navbar')
+
  
     <div class="slim-mainpanel">
       <div class="container">
@@ -79,6 +79,22 @@
                     <div class="row my-3">
                         <div class="col-6">
                              <input type="password" id="random-text" class="form-control" placeholder="Generate Random Password" aria-label="" aria-describedby="basic-addon1">
+                        </div>
+
+
+                      
+
+                        <div class="col-6">
+                          <div class="row">
+                            <div class="col-3">
+                      <label for="password_confirmation">Report</label>   
+                                </div>
+                            <div class="col-9">                     
+                         <input type="checkbox" name="data_report[]" id="pifs_checkbox" <?php if($user->daily_report =='1') echo "checked";?> value="daily">Daily
+                      <input type="checkbox" name="data_report[]" id="pifs_checkbox" <?php if($user->weekly_report =='1') echo "checked"; ?> value="weekly">Weekly
+                      <input type="checkbox" name="data_report[]" id="pifs_checkbox" <?php if($user->monthly_report =='1') echo "checked"; ?> value="monthly">Monthly
+                                       </div>
+                             </div>
                         </div>
                     </div>
 
