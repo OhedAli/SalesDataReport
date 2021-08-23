@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TvDashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SalesExportController;
+use App\Http\Controllers\EmailingController;
 
 
 
@@ -49,7 +50,11 @@ Route::get('sales/{id}',[SaleslogsController::class, 'showdetails'])->name('sale
 Route::get('/profile',[ProfileController::class, 'index'])->name('profile');
 Route::resource('/user', UserController::class);
 
+Route::get('/userReport',[UserController::class,'userReportview']);
 });
+
+Route::get('/emailsend/{time_range}',[EmailingController::class, 'emailsend'])->name('emailsend');
+Route::get('/testemailsend',[EmailingController::class, 'testemailsend'])->name('testemailsend');
 
 
 //Route::get('/profile-page', function(){

@@ -75,6 +75,12 @@ class UserController extends Controller
 
     }
 
+      public function userReportview()
+    {
+            $users = User::all();
+            return view('user.userReport',compact('users'));
+    }
+
     /**
      * Display the specified resource.
      *
@@ -110,7 +116,30 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
 
-        //dd($request->all());
+        $reports = $request->data_report;
+        
+        $daily_report ='0';
+        $weekly_report ='0';
+        $monthly_report ='0';
+        if(!empty($reports))
+        {
+              if(in_array('weekly', $reports) )
+        {
+          $weekly_report ='1';
+                }
+            if(in_array('monthly', $reports))
+            {
+                $monthly_report ='1';
+                    }
+            if(in_array('daily', $reports))
+              {
+                $daily_report ='1';
+                    }
+        }
+      
+       // echo 'Daily Report--'.$daily_report."monthly-->".$monthly_report."weekly-->".$weekly_report;
+
+        
 
         $request->validate([
             'type' => 'required|string',
@@ -122,6 +151,10 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->type = $request->type;
         $user->email = $request->email;
+        $user->daily_report = $daily_report;
+        $user->weekly_report = $weekly_report;
+        $user->monthly_report = $monthly_report;
+
 
         if($request->hasFile('avatar'))
         {
@@ -154,4 +187,6 @@ class UserController extends Controller
 
         return redirect()->route('user.index')->with('success', 'User deleted successfully!');
     }
+
+
 }
