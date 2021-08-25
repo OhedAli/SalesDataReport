@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Auto Protect'),
+    'name' => env('APP_NAME', 'AutoProtect USA'),
 
     /*
     |--------------------------------------------------------------------------
