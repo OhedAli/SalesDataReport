@@ -569,7 +569,7 @@ class DashboardActiveController extends Controller
             
             $sub_res =  Salescalls::select('user','phone_number')
                         ->where('user','=',$agentValue['user'])
-                        ->where('list_id','999')
+                        // ->where('list_id','999')
                         ->where('length_in_sec','>','20')
                         ->where('campaign_id','=','To')
                         ->whereBetween('call_date',[$start_range,$end_range])
@@ -653,7 +653,7 @@ class DashboardActiveController extends Controller
                             
                             $sub_res = Salescalls::select('user','phone_number')
                                       ->where('user','=',$agentvalue['user'])
-                                      ->where('list_id','999')
+                                      // ->where('list_id','999')
                                       ->where('length_in_sec','>','20')
                                       ->where('campaign_id','=','Sales')
                                       ->whereBetween('call_date',[$start_range,$end_range])
@@ -707,7 +707,7 @@ class DashboardActiveController extends Controller
                             // echo $agentvalue['user']."<br>";
                             $sub_res = Salescalls::select(Salescalls::raw('CAST(call_date AS DATE) as call_date'),'phone_number')
                                       ->where('user','=',$agentvalue['user'])
-                                      ->where('list_id','999')
+                                      // ->where('list_id','999')
                                       ->where('length_in_sec','>','20')
                                       ->where('campaign_id','=','Sales')
                                       ->whereBetween('call_date',[$start_range,$end_range])
@@ -752,8 +752,7 @@ class DashboardActiveController extends Controller
         
             if($day_by_day == 0){
 
-                $result = Salescalls::where('list_id','999')
-                      ->where('length_in_sec','>','20')
+                $result = Salescalls::where('length_in_sec','>','20')
                       ->where('campaign_id','=','Sales')
                       ->whereBetween('call_date',[$start_range,$end_range])
                       ->distinct('phone_number')
@@ -768,7 +767,7 @@ class DashboardActiveController extends Controller
             else{
 
                 $sub_res = Salescalls::select(Salescalls::raw('CAST(call_date AS DATE) as call_date'),'phone_number')
-                		  ->where('list_id','999')
+                		  // ->where('list_id','999')
                           ->where('length_in_sec','>','20')
                           ->where('campaign_id','=','Sales')
                           ->whereBetween('call_date',[$start_range,$end_range])
@@ -1113,7 +1112,7 @@ class DashboardActiveController extends Controller
                         $join2->on('vicidial_closer_log.closecallid','=','recording_log.vicidial_id')
                         ->whereIn('recording_log.user',$user_ids);
                     })
-                    ->where('vicidial_closer_log.list_id','999')
+                    // ->where('vicidial_closer_log.list_id','999')
                     ->where('vicidial_closer_log.length_in_sec','>','420')
                     ->where('vicidial_closer_log.campaign_id','=','Sales')
                     ->whereIn('vicidial_closer_log.user',$user_ids)
