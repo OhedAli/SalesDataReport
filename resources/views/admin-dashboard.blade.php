@@ -820,15 +820,15 @@
 
           if(pifs_check == false){
             $(".pifs-cnt").hide();
-            $(".today-finterm").text((today_finterm/(today_total_sales - today_sales_pifs)).toFixed(2));
-            $(".week-finterm").text((weekly_finterm/(weekly_total_sales - weekly_sales_pifs)).toFixed(2));
-            $(".month-finterm").text((monthly_finterm/(monthly_total_sales - monthly_sales_pifs)).toFixed(2));
+            $(".today-finterm").text(today_finterm != '' ? (today_finterm/(today_total_sales - today_sales_pifs)).toFixed(2) : '0.00');
+            $(".week-finterm").text(weekly_finterm != '' ? (weekly_finterm/(weekly_total_sales - weekly_sales_pifs)).toFixed(2) : '0.00');
+            $(".month-finterm").text(monthly_finterm != '' ? (monthly_finterm/(monthly_total_sales - monthly_sales_pifs)).toFixed(2) : '0.00');
           }
           else{
             $(".pifs-cnt").show();
-            $(".today-finterm").text((today_finterm/today_total_sales ).toFixed(2));
-            $(".week-finterm").text((weekly_finterm/weekly_total_sales ).toFixed(2));
-            $(".month-finterm").text((monthly_finterm/monthly_total_sales ).toFixed(2));
+            $(".today-finterm").text(today_finterm != '' ? (today_finterm/today_total_sales ).toFixed(2) : '0.00');
+            $(".week-finterm").text(weekly_finterm != '' ? (weekly_finterm/weekly_total_sales ).toFixed(2) : '0.00');
+            $(".month-finterm").text(monthly_finterm != '' ? (monthly_finterm/monthly_total_sales ).toFixed(2) : '0.00');
           }
 
         }
