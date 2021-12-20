@@ -365,8 +365,8 @@
 
             <div class="export-sec">
               <select name="export_select" id="exprt_frmt">
-                <option value="xlsx">XLs forrmat</option>
-                <option value="csv">CSV forrmat</option>
+                <option value="xlsx">XLS format</option>
+                <option value="csv">CSV format</option>
               </select>
 
               <div class="export-btn">
@@ -538,9 +538,9 @@
       $(document).on('click','.sm_name',function(){
             var salesman = $(this).text();
             if(salesman.indexOf('-') != -1 ){
-              salesman = salesman.replace('-','_');
+              salesman = salesman.replaceAll('-','_');
             }
-            var name = (salesman.replace(' ','-'));
+            var name = (salesman.replaceAll(' ','-'));
             var url = "{{ route('salesman-details',':name') }}";
             url = url.replace(':name',name);
             window.location.href = url;
